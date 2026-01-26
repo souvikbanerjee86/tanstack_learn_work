@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Navbar() {
