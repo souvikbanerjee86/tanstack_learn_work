@@ -15,11 +15,14 @@ import {
     FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { signupSchema } from "@/schemas/auth"
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '@/lib/firebase'
+import { toast } from "sonner"
 
 export function SignupForm() {
-
+    const navigate = useNavigate()
     const form = useForm({
         defaultValues: {
             fullName: "",
@@ -31,7 +34,18 @@ export function SignupForm() {
             onSubmit: signupSchema,
         },
         onSubmit: async ({ value }) => {
-            console.log(value)
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, value.email, value.password);
+                const user = userCredential.user;
+                console.log(user);
+                toast.success("Account created successfully")
+                navigate({ to: "/" })
+            } catch (error: any) {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error(errorCode, errorMessage);
+                toast.error(errorMessage)
+            }
         },
     })
 

@@ -1,0 +1,24 @@
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
+
+# Environment variables and Secrets mapping
+env:
+  # 1. Public variables (safe to commit)
+  - variable: VITE_FIREBASE_API_KEY
+    value: "AIzaSyDrJnLFhs5sHD3idbn5THrCVCW5ZWEjH1c"
+  - variable: VITE_FIREBASE_AUTH_DOMAIN
+    value: "project-716b1c69-ee04-40fd-ba6.firebaseapp.com"
+  - variable: VITE_FIREBASE_PROJECT_ID
+    value: "project-716b1c69-ee04-40fd-ba6"
+  - variable: VITE_FIREBASE_STORAGE_BUCKET
+    value: "project-716b1c69-ee04-40fd-ba6.firebasestorage.app"
+  - variable: VITE_FIREBASE_MESSAGING_SENDER_ID
+    value: "820672860724"
+  - variable: VITE_FIREBASE_APP_ID
+    value: "1:820672860724:web:40cdc53b956eb7d6633061"
+  - variable: VITE_FIREBASE_MEASUREMENT_ID
+    value: "G-92MZHY7P0Y"
