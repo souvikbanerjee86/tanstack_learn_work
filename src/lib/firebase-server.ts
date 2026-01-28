@@ -3,6 +3,9 @@ import { getAuth } from "firebase-admin/auth";
 
 
 if (!getApps().length) {
+    console.log(process.env.APP_FIREBASE_PROJECT_ID)
+    console.log(process.env.APP_FIREBASE_CLIENT_EMAIL)
+    console.log(process.env.APP_FIREBASE_PRIVATE_KEY)
     initializeApp({
         credential: cert({
             projectId: process.env.APP_FIREBASE_PROJECT_ID,
