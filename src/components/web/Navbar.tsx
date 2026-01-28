@@ -5,6 +5,7 @@ import { User, onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { logoutFn } from "@/lib/auth";
 
 export function Navbar() {
     const [user, setUser] = useState<User | null>(null)
@@ -26,6 +27,7 @@ export function Navbar() {
             console.log(error);
             toast(error.message)
         });
+        await logoutFn();
     }
 
     return (

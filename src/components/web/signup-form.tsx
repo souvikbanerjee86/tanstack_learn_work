@@ -20,7 +20,8 @@ import { signupSchema } from "@/schemas/auth"
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { toast } from "sonner"
-
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { loginFn } from "@/lib/auth"
 export function SignupForm() {
     const navigate = useNavigate()
     const form = useForm({
@@ -48,7 +49,19 @@ export function SignupForm() {
             }
         },
     })
-
+    const handleGoogleSignUp = async () => {
+        try {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+            const idToken = await result.user.getIdToken();
+            await loginFn({ data: idToken });
+            toast.success("Login successful")
+            navigate({ to: "/" })
+        } catch (error: any) {
+            const errorMessage = error.message;
+            toast.error(errorMessage)
+        }
+    }
 
     return (
         <Card className="max-w-md w-full">
@@ -171,7 +184,7 @@ export function SignupForm() {
                         <FieldGroup>
                             <Field>
                                 <Button type="submit">Create Account</Button>
-                                <Button variant="outline" type="button">
+                                <Button variant="outline" type="button" onClick={handleGoogleSignUp}>
                                     Sign up with Google
                                 </Button>
                                 <FieldDescription className="px-6 text-center">

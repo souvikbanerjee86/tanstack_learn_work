@@ -19,6 +19,8 @@ import { auth } from "@/lib/firebase"
 import { loginSchema } from "@/schemas/auth"
 import { useForm } from "@tanstack/react-form"
 import { Link, useNavigate } from "@tanstack/react-router"
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { loginFn } from "@/lib/auth"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { toast } from "sonner"
 
@@ -36,7 +38,9 @@ export function LoginForm() {
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, value.email, value.password);
                 const user = userCredential.user;
-                console.log(user);
+                const idToken = await user.getIdToken();
+                const res = await loginFn({ data: idToken });
+                console.log(res);
                 toast.success("Login successful")
                 navigate({ to: "/" })
             } catch (error: any) {
@@ -45,6 +49,20 @@ export function LoginForm() {
             }
         },
     })
+
+    const handleGoogleLogin = async () => {
+        try {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+            const idToken = await result.user.getIdToken();
+            await loginFn({ data: idToken });
+            toast.success("Login successful")
+            navigate({ to: "/" })
+        } catch (error: any) {
+            const errorMessage = error.message;
+            toast.error(errorMessage)
+        }
+    }
 
     return (
 
@@ -115,7 +133,7 @@ export function LoginForm() {
                         />
                         <Field>
                             <Button type="submit">Login</Button>
-                            <Button variant="outline" type="button">
+                            <Button variant="outline" type="button" onClick={handleGoogleLogin}>
                                 Login with Google
                             </Button>
                             <FieldDescription className="text-center">
