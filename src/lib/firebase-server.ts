@@ -26,9 +26,10 @@ if (!getApps().length) {
         );
     }
     const serviceAccount = JSON.parse(serviceAccountString);
-    initializeApp({
-        credential: cert(serviceAccount),
-    });
+    // initializeApp({
+    //     credential: cert(serviceAccount),
+    // });
+    initializeApp()
 }
 
 export const adminAuth = getAuth();
