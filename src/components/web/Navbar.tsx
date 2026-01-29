@@ -35,14 +35,14 @@ export function Navbar() {
             <div className="mx-auto flex h-16 items-center justify-between px-4">
                 <div className="flex items-center gap-2">
                     <img src="https://tanstack.com/images/logos/logo-color-banner-600.png" alt="Tanstack Start" className="size-8" />
-                    <p className="text-lg font-semibold">TanStack</p>
+                    <p className="text-lg font-semibold">EasyAI</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <ThemeToggle />
                     {loading ? null : user ? (
                         <>
                             <Button onClick={handleSignout}>Logout</Button>
-                            <Link to="/" className={buttonVariants({ 'variant': 'secondary' })}>Dashboard</Link>
+                            <Link to="/dashboard" className={buttonVariants({ 'variant': 'secondary' })}>Dashboard</Link>
                         </>
 
                     ) : (
