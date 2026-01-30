@@ -55,19 +55,19 @@ export function SignupForm() {
         },
     })
     const handleGoogleSignUp = async () => {
-        startTransition(async () => {
-            try {
-                const provider = new GoogleAuthProvider();
-                const result = await signInWithPopup(auth, provider);
-                const idToken = await result.user.getIdToken();
-                await loginFn({ data: idToken });
-                toast.success("Login successful")
-                navigate({ to: "/" })
-            } catch (error: any) {
-                const errorMessage = error.message;
-                toast.error(errorMessage)
-            }
-        })
+
+        try {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+            const idToken = await result.user.getIdToken();
+            await loginFn({ data: idToken });
+            toast.success("Login successful")
+            navigate({ to: "/" })
+        } catch (error: any) {
+            const errorMessage = error.message;
+            toast.error(errorMessage)
+        }
+
     }
 
     return (
