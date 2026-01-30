@@ -1,10 +1,16 @@
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/web/app-sidebar'
-import { createFileRoute, Outlet } from '@tanstack/react-router'
-
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { getUserFn } from '@/lib/auth'
 
 export const Route = createFileRoute('/dashboard')({
+    beforeLoad: async ({ }) => {
+        const user = await getUserFn()
+        if (!user?.uid) {
+            throw redirect({ to: "/" })
+        }
+    },
     component: RouteComponent,
 })
 
@@ -22,7 +28,6 @@ function RouteComponent() {
                         />
                     </div>
                 </header>
-
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <Outlet />
                 </div>

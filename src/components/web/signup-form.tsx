@@ -22,8 +22,10 @@ import { auth } from '@/lib/firebase'
 import { toast } from "sonner"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { loginFn } from "@/lib/auth"
+import { useTransition } from "react"
 export function SignupForm() {
     const navigate = useNavigate()
+    const [isPending, startTransition] = useTransition();
     const form = useForm({
         defaultValues: {
             fullName: "",
@@ -35,32 +37,37 @@ export function SignupForm() {
             onSubmit: signupSchema,
         },
         onSubmit: async ({ value }) => {
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, value.email, value.password);
-                const user = userCredential.user;
-                console.log(user);
-                toast.success("Account created successfully")
-                navigate({ to: "/" })
-            } catch (error: any) {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error(errorCode, errorMessage);
-                toast.error(errorMessage)
-            }
+            startTransition(async () => {
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, value.email, value.password);
+                    const user = userCredential.user;
+                    console.log(user);
+                    toast.success("Account created successfully")
+                    navigate({ to: "/" })
+                } catch (error: any) {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error(errorCode, errorMessage);
+                    toast.error(errorMessage)
+                }
+            })
+
         },
     })
     const handleGoogleSignUp = async () => {
-        try {
-            const provider = new GoogleAuthProvider();
-            const result = await signInWithPopup(auth, provider);
-            const idToken = await result.user.getIdToken();
-            await loginFn({ data: idToken });
-            toast.success("Login successful")
-            navigate({ to: "/" })
-        } catch (error: any) {
-            const errorMessage = error.message;
-            toast.error(errorMessage)
-        }
+        startTransition(async () => {
+            try {
+                const provider = new GoogleAuthProvider();
+                const result = await signInWithPopup(auth, provider);
+                const idToken = await result.user.getIdToken();
+                await loginFn({ data: idToken });
+                toast.success("Login successful")
+                navigate({ to: "/" })
+            } catch (error: any) {
+                const errorMessage = error.message;
+                toast.error(errorMessage)
+            }
+        })
     }
 
     return (
