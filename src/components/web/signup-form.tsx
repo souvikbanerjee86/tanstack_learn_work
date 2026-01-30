@@ -190,9 +190,9 @@ export function SignupForm() {
                         />
                         <FieldGroup>
                             <Field>
-                                <Button type="submit">Create Account</Button>
-                                <Button variant="outline" type="button" onClick={handleGoogleSignUp}>
-                                    Sign up with Google
+                                <Button type="submit" disabled={isPending}>{isPending ? "Creating account..." : "Create Account"}</Button>
+                                <Button variant="outline" type="button" onClick={handleGoogleSignUp} disabled={isPending}>
+                                    {isPending ? "Creating account..." : "Sign up with Google"}
                                 </Button>
                                 <FieldDescription className="px-6 text-center">
                                     Already have an account? <Link to="/login">Sign in</Link>
