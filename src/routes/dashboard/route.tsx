@@ -1,23 +1,22 @@
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/web/app-sidebar'
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { getUserFn } from '@/lib/auth'
-
+import { NavUserProps } from '@/lib/types'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 export const Route = createFileRoute('/dashboard')({
-    beforeLoad: async ({ }) => {
-        const user = await getUserFn()
-        if (!user?.uid) {
-            throw redirect({ to: "/" })
-        }
-    },
     component: RouteComponent,
+    loader: async () => {
+        const user = await getUserFn()
+        return user
+    }
 })
 
 function RouteComponent() {
+    const user: NavUserProps = Route.useLoaderData()
     return (
         <SidebarProvider>
-            <AppSidebar />
+            <AppSidebar user={user} />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                     <div className="flex items-center gap-2 px-4">

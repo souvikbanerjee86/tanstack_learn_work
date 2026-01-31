@@ -24,15 +24,12 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
-import { User, signOut } from 'firebase/auth'
+import { signOut } from 'firebase/auth'
 import { logoutFn } from "@/lib/auth"
 import { auth } from "@/lib/firebase"
 import { useNavigate } from "@tanstack/react-router"
-export function NavUser({
-    user,
-}: {
-    user: User | null
-}) {
+import { NavUserProps } from "@/lib/types"
+export function NavUser({ user }: { user: NavUserProps }) {
     const { isMobile } = useSidebar()
     const navigate = useNavigate()
     const handleLogout = async () => {
@@ -55,11 +52,11 @@ export function NavUser({
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarImage src={user?.photoURL ?? ''} alt={user?.displayName ?? ''} />
-                                <AvatarFallback className="rounded-lg">{user?.displayName?.split(' ').map(name => name[0]).join('')}</AvatarFallback>
+                                <AvatarImage src={user?.picture ?? 'https://api.dicebear.com/9.x/glass/svg?seed=Aidan'} alt={user.name} />
+                                <AvatarFallback className="rounded-lg">{user?.name?.split(' ').map(name => name[0]).join('')}</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{user?.displayName}</span>
+                                <span className="truncate font-medium">{user?.name}</span>
                                 <span className="truncate text-xs">{user?.email}</span>
                             </div>
                             <ChevronsUpDown className="ml-auto size-4" />
@@ -74,11 +71,11 @@ export function NavUser({
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={user?.photoURL ?? ''} alt={user?.displayName ?? ''} />
-                                    <AvatarFallback className="rounded-lg">{user?.displayName?.split(' ').map(name => name[0]).join('')}</AvatarFallback>
+                                    <AvatarImage src={user?.picture ?? 'https://api.dicebear.com/9.x/glass/svg?seed=Aidan'} alt={user?.name ?? ''} />
+                                    <AvatarFallback className="rounded-lg">{user?.name?.split(' ').map(name => name[0]).join('')}</AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-medium">{user?.displayName}</span>
+                                    <span className="truncate font-medium">{user?.name}</span>
                                     <span className="truncate text-xs">{user?.email}</span>
                                 </div>
                             </div>

@@ -10,3 +10,10 @@ export interface NavPrimaryProps {
         }
     }[]
 }
+
+export interface NavUserProps {
+    email: string
+    name?: string
+    picture?: string
+    user_id: string
+}

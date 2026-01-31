@@ -1,5 +1,3 @@
-
-import * as React from "react"
 import {
   BookMarkedIcon,
   BookmarkIcon,
@@ -20,9 +18,7 @@ import {
 import { NavPrimary } from "./nav-primary"
 import { NavUser } from "./nav-user"
 import { Link, linkOptions } from "@tanstack/react-router"
-import { User, onAuthStateChanged } from 'firebase/auth'
-import { auth } from "@/lib/firebase";
-import { NavPrimaryProps } from "@/lib/types"
+import { NavPrimaryProps, NavUserProps } from "@/lib/types"
 
 const navItems: NavPrimaryProps['items'] = linkOptions([
   {
@@ -45,19 +41,9 @@ const navItems: NavPrimaryProps['items'] = linkOptions([
   },
 ])
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [user, setUser] = React.useState<User | null>(null)
-  React.useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-
-
-  }, [])
-
+export function AppSidebar({ user }: { user: NavUserProps }) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
