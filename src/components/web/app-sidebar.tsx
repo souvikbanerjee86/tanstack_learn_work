@@ -1,10 +1,10 @@
 
 import * as React from "react"
 import {
+  BookMarkedIcon,
   BookmarkIcon,
-  Frame,
-  Map,
-  PieChart,
+  CompassIcon,
+  Import
 } from "lucide-react"
 
 import {
@@ -19,29 +19,31 @@ import {
 } from "@/components/ui/sidebar"
 import { NavPrimary } from "./nav-primary"
 import { NavUser } from "./nav-user"
-import { Link } from "@tanstack/react-router"
+import { Link, linkOptions } from "@tanstack/react-router"
 import { User, onAuthStateChanged } from 'firebase/auth'
 import { auth } from "@/lib/firebase";
-// This is sample data.
-const data = {
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+import { NavPrimaryProps } from "@/lib/types"
+
+const navItems: NavPrimaryProps['items'] = linkOptions([
+  {
+    title: "Items",
+    to: "/dashboard/items",
+    icon: BookMarkedIcon,
+    activeOptions: { exact: false }
+  },
+  {
+    title: "Import",
+    to: "/dashboard/import",
+    icon: Import,
+    activeOptions: { exact: false }
+  },
+  {
+    title: "Discover",
+    to: "/dashboard/discover",
+    icon: CompassIcon,
+    activeOptions: { exact: false }
+  },
+])
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [user, setUser] = React.useState<User | null>(null)
@@ -76,7 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavPrimary projects={data.projects} />
+        <NavPrimary items={navItems} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />
