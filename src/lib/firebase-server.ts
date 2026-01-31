@@ -25,7 +25,7 @@ if (!getApps().length) {
             "The FIREBASE_SERVICE_ACCOUNT_JSON environment variable is not set."
         );
     }
-    const serviceAccount = JSON.parse(serviceAccountString);
+    // const serviceAccount = JSON.parse(serviceAccountString);
     // initializeApp({
     //     credential: cert(serviceAccount),
     // });
