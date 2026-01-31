@@ -1,5 +1,6 @@
 
 
+import { redirect } from "@tanstack/react-router";
 import { adminAuth } from "./firebase-server";
 import { createServerFn } from "@tanstack/react-start";
 import { setCookie, deleteCookie, getCookie } from '@tanstack/react-start/server';
@@ -34,7 +35,9 @@ export const logoutFn = createServerFn({ method: 'POST' }).handler(async () => {
 export const getUserFn = createServerFn({ method: 'GET' }).handler(async () => {
     const session = getCookie("session");
 
-    if (!session) return null;
+    if (!session) {
+        throw redirect({ to: "/login" })
+    }
 
     try {
         const decodedClaims = await adminAuth.verifySessionCookie(session, true);
