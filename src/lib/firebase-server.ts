@@ -29,6 +29,7 @@ if (!getApps().length) {
     // initializeApp({
     //     credential: cert(serviceAccount),
     // });
+
     initializeApp()
 }
 
