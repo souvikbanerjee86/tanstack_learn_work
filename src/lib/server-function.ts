@@ -7,6 +7,7 @@ const auth = new GoogleAuth();
 
 export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(async (): Promise<BucketListResponse> => {
 
+    console.log(API_PATH.BUCKET_LIST_API.GET_BASE_URL)
     const client = await auth.getIdTokenClient(API_PATH.BUCKET_LIST_API.GET_BASE_URL);
     const url = API_PATH.BUCKET_LIST_API.GET_BASE_URL + API_PATH.BUCKET_LIST_API.PATH_URL;
     const response = await client.request({
@@ -14,5 +15,6 @@ export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(asy
         method: 'GET',
     });
     const data = await response.data;
+    console.log(data)
     return data as BucketListResponse;
 })
