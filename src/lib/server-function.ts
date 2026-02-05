@@ -2,8 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
 import { BucketListResponse, ProfileSearchResponse, RagProcessRecord } from './types';
-// import { db } from './firebase-server'
-
+import { db } from './db.server'
 const auth = new GoogleAuth();
 
 export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(async (): Promise<BucketListResponse> => {
