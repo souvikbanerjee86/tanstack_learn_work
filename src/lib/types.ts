@@ -63,3 +63,10 @@ export interface ProfileSearchCritieria {
     skills: string;
     preferedDomain: string;
 }
+
+export interface RagProcessRecord {
+    id: string;
+    date: string;
+    rag_file_ids: string[];
+    processed_at: string;
+}

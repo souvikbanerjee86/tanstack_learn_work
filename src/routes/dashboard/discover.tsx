@@ -1,20 +1,25 @@
 
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CandidateResultCard } from '@/components/web/candidate-result-card';
 import { EmptyState } from '@/components/web/empty-state';
 import { MultiStepLoader } from '@/components/web/multi-step-loader';
 import { SearchProfileForm } from '@/components/web/search-profile-form';
-import { getSearchProfileDetails } from '@/lib/server-function';
-import { ProfileSearchCritieria, ProfileSearchResponse } from '@/lib/types';
+import { getProcessedIndex, getSearchProfileDetails } from '@/lib/server-function';
+import { ProfileSearchCritieria, ProfileSearchResponse, RagProcessRecord } from '@/lib/types';
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
 
 export const Route = createFileRoute('/dashboard/discover')({
-    component: RouteComponent
+    component: RouteComponent,
+    loader: async () => {
+        const data: RagProcessRecord[] = await getProcessedIndex()
+        return data
+    }
 })
 
 function RouteComponent() {
+    const data: RagProcessRecord[] = Route.useLoaderData()
     const [results, setResults] = useState<ProfileSearchResponse | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const onProfileSearchSubmit = async (formData: ProfileSearchCritieria) => {
@@ -41,15 +46,20 @@ function RouteComponent() {
             <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg border">
                 {/* LEFT SIDE: Random Selection Dropdown */}
                 <div className="flex items-center gap-2">
-                    <Label className="text-sm font-medium">Profile:</Label>
+                    <Label className="text-sm font-medium">Select CV store Date:</Label>
                     <Select>
                         <SelectTrigger className="w-[200px]">
-                            <SelectValue placeholder="Select Profile" />
+                            <SelectValue placeholder="Select CV store Date" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="eng">Software Engineer</SelectItem>
-                            <SelectItem value="pm">Product Manager</SelectItem>
-                            <SelectItem value="da">Data Analyst</SelectItem>
+                            <SelectGroup>
+                                <SelectLabel>Select CV store Date</SelectLabel>
+                                {data.map((item, idx) => (
+                                    <SelectItem key={idx} value={item.id}>
+                                        {item.date}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>

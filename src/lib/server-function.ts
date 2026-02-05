@@ -1,7 +1,8 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, ProfileSearchResponse } from './types';
+import { BucketListResponse, ProfileSearchResponse, RagProcessRecord } from './types';
+import { db } from './firebase-server'
 
 const auth = new GoogleAuth();
 
@@ -15,7 +16,6 @@ export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(asy
         method: 'GET',
     });
     const data = await response.data;
-    console.log(data)
     return data as BucketListResponse;
 })
 
@@ -47,3 +47,32 @@ export const getSearchProfileDetails = createServerFn({ method: 'GET' })
         const returnData = await response.data;
         return returnData as ProfileSearchResponse;
     })
+
+
+export const getProcessedIndex = createServerFn({ method: 'GET' }).handler(async (): Promise<RagProcessRecord[]> => {
+    try {
+        const data = await db.collection('rag_file_updates')
+            .orderBy('processed_at', 'desc')
+            .get()
+
+        const uniqueMap = new Map()
+
+        data.docs.forEach(doc => {
+            const data = doc.data()
+            const key = data.date
+            if (!uniqueMap.has(key)) {
+                uniqueMap.set(key, {
+                    id: doc.id,
+                    ...data,
+                    processed_at: data.processed_at?.toDate().toISOString()
+                })
+            }
+        })
+        return Array.from(uniqueMap.values())
+
+
+    } catch (error) {
+        console.error('Error fetching Firestore collection:', error)
+        throw new Error('Internal Server Error')
+    }
+})
