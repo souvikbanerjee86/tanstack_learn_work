@@ -33,13 +33,5 @@ if (!getApps().length) {
     initializeApp()
 }
 
-export const db = (() => {
-    if (getApps().length === 0) {
-        initializeApp({
-
-        })
-    }
-    return getFirestore("default")
-})()
-
 export const adminAuth = getAuth();
+export const db = getFirestore("default")
