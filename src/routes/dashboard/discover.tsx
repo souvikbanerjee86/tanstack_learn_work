@@ -1,117 +1,80 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { CandidateResultCard } from '@/components/web/candidate-result-card';
+import { EmptyState } from '@/components/web/empty-state';
+import { MultiStepLoader } from '@/components/web/multi-step-loader';
+import { SearchProfileForm } from '@/components/web/search-profile-form';
+import { getSearchProfileDetails } from '@/lib/server-function';
+import { ProfileSearchCritieria, ProfileSearchResponse } from '@/lib/types';
 import { createFileRoute } from '@tanstack/react-router'
-import { PlusCircle, Settings2 } from 'lucide-react';
+import { useState } from 'react';
 
 export const Route = createFileRoute('/dashboard/discover')({
-    component: RouteComponent,
+    component: RouteComponent
 })
 
 function RouteComponent() {
-    const experienceYears = Array.from({ length: 31 }, (_, i) => i.toString());
-    const thresholds = Array.from({ length: 9 }, (_, i) => (40 + i * 5).toString());
+    const [results, setResults] = useState<ProfileSearchResponse | null>(null)
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const onProfileSearchSubmit = async (formData: ProfileSearchCritieria) => {
+        try {
+            setIsSubmitting(true)
+            const jobDescription = formData.jobDescription;
+            const preferedDomain = formData.preferedDomain;
+            const skills = formData.skills;
+            const experience = formData.experience;
+            const results: ProfileSearchResponse = await getSearchProfileDetails({ data: { jobDescription, preferedDomain, skills, experience } })
+            setResults(results)
+            setIsSubmitting(false)
+        } catch (e) {
+            console.log(e)
+            setIsSubmitting(false)
+        }
+
+    }
+    const hasResults = results && results.matches && results.matches.length > 0;
+
     return (
-        <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg border">
-            {/* LEFT SIDE: Random Selection Dropdown */}
-            <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium">Profile:</Label>
-                <Select>
-                    <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Select Profile" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="eng">Software Engineer</SelectItem>
-                        <SelectItem value="pm">Product Manager</SelectItem>
-                        <SelectItem value="da">Data Analyst</SelectItem>
-                    </SelectContent>
-                </Select>
+        <>
+
+            <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg border">
+                {/* LEFT SIDE: Random Selection Dropdown */}
+                <div className="flex items-center gap-2">
+                    <Label className="text-sm font-medium">Profile:</Label>
+                    <Select>
+                        <SelectTrigger className="w-[200px]">
+                            <SelectValue placeholder="Select Profile" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="eng">Software Engineer</SelectItem>
+                            <SelectItem value="pm">Product Manager</SelectItem>
+                            <SelectItem value="da">Data Analyst</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {/* RIGHT SIDE: Modal Trigger */}
+                <SearchProfileForm onProfileSearchSubmit={onProfileSearchSubmit} />
             </div>
-
-            {/* RIGHT SIDE: Modal Trigger */}
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button className="gap-2">
-                        <PlusCircle className="h-4 w-4" />
-                        Create Matching Profile
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
-                            <Settings2 className="h-5 w-5" />
-                            Job Matching Criteria
-                        </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="grid gap-6 py-4">
-                        {/* Job Description */}
-                        <div className="grid gap-2">
-                            <Label htmlFor="jd">Job Description</Label>
-                            <Textarea
-                                id="jd"
-                                placeholder="Paste the full job description here..."
-                                className="min-h-[100px]"
-                            />
+            {isSubmitting && <MultiStepLoader isLoading={isSubmitting} />}
+            <div className="container py-8 mx-auto">
+                {!hasResults ? (
+                    <EmptyState />
+                ) : (
+                    <div className="grid grid-cols-1 gap-6">
+                        <div className="flex items-center justify-between mb-2">
+                            <h2 className="text-2xl font-bold">Matching Candidates</h2>
+                            <span className="text-sm font-medium text-muted-foreground">
+                                {results.matches.length} profiles found
+                            </span>
                         </div>
-
-                        {/* Preferred Domains */}
-                        <div className="grid gap-2">
-                            <Label htmlFor="domains">Preferred Domains</Label>
-                            <Input id="domains" placeholder="e.g. Fintech, E-commerce, Healthcare" />
-                        </div>
-
-                        {/* Required Skills */}
-                        <div className="grid gap-2">
-                            <Label htmlFor="skills">Required Skills (comma separated)</Label>
-                            <Input id="skills" placeholder="React, TypeScript, Node.js" />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            {/* Experience Dropdown */}
-                            <div className="grid gap-2">
-                                <Label>Required Experience</Label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select Years" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {experienceYears.map((year) => (
-                                            <SelectItem key={year} value={year}>
-                                                {year} {year === "1" ? "Year" : "Years"}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            {/* Threshold Dropdown */}
-                            <div className="grid gap-2">
-                                <Label>Matching Threshold</Label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select %" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {thresholds.map((t) => (
-                                            <SelectItem key={t} value={t}>
-                                                {t}% Match
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
+                        {results.matches.map((candidate, idx) => (
+                            <CandidateResultCard key={idx} data={candidate} />
+                        ))}
                     </div>
-
-                    <DialogFooter>
-                        <Button type="submit" className="w-full">Search Profile</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </div>
+                )}
+            </div>
+        </>
     );
 }

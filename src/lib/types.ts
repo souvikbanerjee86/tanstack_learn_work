@@ -37,3 +37,29 @@ export interface BucketListResponse {
     root_files: FileAsset[];
     next_page_token: string | null;
 }
+
+
+export interface CandidateMatch {
+    candidate_name: string;
+    years_of_experience: number;
+    primary_skills: string[];
+    summary: string;
+    notice_period: string | null;
+    image: string | null;
+    source_ref: string;
+    matched_criteria: string[];
+    missing_information: string[];
+    seniority_level: "Junior" | "Mid" | "Senior" | "Lead"; // Literal types for better safety
+    matched_score: number;
+}
+
+export interface ProfileSearchResponse {
+    matches: CandidateMatch[];
+}
+
+export interface ProfileSearchCritieria {
+    jobDescription: string;
+    experience: number;
+    skills: string;
+    preferedDomain: string;
+}
