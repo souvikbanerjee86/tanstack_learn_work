@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
 import { BucketListResponse, ProfileSearchResponse, RagProcessRecord } from './types';
-// import { db } from './db.server'
+
 const auth = new GoogleAuth();
 
 export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(async (): Promise<BucketListResponse> => {
@@ -48,30 +48,15 @@ export const getSearchProfileDetails = createServerFn({ method: 'GET' })
     })
 
 
-// export const getProcessedIndex = createServerFn({ method: 'GET' }).handler(async (): Promise<RagProcessRecord[]> => {
-//     try {
-//         const data = await db.collection('rag_file_updates')
-//             .orderBy('processed_at', 'desc')
-//             .get()
+export const getProcessedIndexFilesId = createServerFn({ method: 'GET' }).handler(async (): Promise<RagProcessRecord[]> => {
 
-//         const uniqueMap = new Map()
-
-//         data.docs.forEach(doc => {
-//             const data = doc.data()
-//             const key = data.date
-//             if (!uniqueMap.has(key)) {
-//                 uniqueMap.set(key, {
-//                     id: doc.id,
-//                     ...data,
-//                     processed_at: data.processed_at?.toDate().toISOString()
-//                 })
-//             }
-//         })
-//         return Array.from(uniqueMap.values())
-
-
-//     } catch (error) {
-//         console.error('Error fetching Firestore collection:', error)
-//         throw new Error('Internal Server Error')
-//     }
-// })
+    console.log(API_PATH.PROCESSED_FILES_ID.GET_BASE_URL)
+    const client = await auth.getIdTokenClient(API_PATH.PROCESSED_FILES_ID.GET_BASE_URL);
+    const url = API_PATH.PROCESSED_FILES_ID.GET_BASE_URL + API_PATH.PROCESSED_FILES_ID.PATH_URL;
+    const response = await client.request({
+        url: url,
+        method: 'GET',
+    });
+    const data = await response.data;
+    return data as RagProcessRecord[];
+})

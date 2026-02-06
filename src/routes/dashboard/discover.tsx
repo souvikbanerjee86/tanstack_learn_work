@@ -5,21 +5,21 @@ import { CandidateResultCard } from '@/components/web/candidate-result-card';
 import { EmptyState } from '@/components/web/empty-state';
 import { MultiStepLoader } from '@/components/web/multi-step-loader';
 import { SearchProfileForm } from '@/components/web/search-profile-form';
-import { getSearchProfileDetails } from '@/lib/server-function';
+import { getProcessedIndexFilesId, getSearchProfileDetails } from '@/lib/server-function';
 import { ProfileSearchCritieria, ProfileSearchResponse, RagProcessRecord } from '@/lib/types';
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
 
 export const Route = createFileRoute('/dashboard/discover')({
     component: RouteComponent,
-    // loader: async () => {
-    //     const data: RagProcessRecord[] = await getProcessedIndex()
-    //     return data
-    // }
+    loader: async () => {
+        const data: RagProcessRecord[] = await getProcessedIndexFilesId()
+        return data
+    }
 })
 
 function RouteComponent() {
-    // const data: RagProcessRecord[] = Route.useLoaderData()
+    const data: RagProcessRecord[] = Route.useLoaderData()
     const [results, setResults] = useState<ProfileSearchResponse | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const onProfileSearchSubmit = async (formData: ProfileSearchCritieria) => {
@@ -54,11 +54,11 @@ function RouteComponent() {
                         <SelectContent>
                             <SelectGroup>
                                 <SelectLabel>Select CV store Date</SelectLabel>
-                                {/* {data.map((item, idx) => (
+                                {data.map((item, idx) => (
                                     <SelectItem key={idx} value={item.id}>
                                         {item.date}
                                     </SelectItem>
-                                ))} */}
+                                ))}
                             </SelectGroup>
                         </SelectContent>
                     </Select>
