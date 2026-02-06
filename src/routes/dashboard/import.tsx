@@ -1,4 +1,4 @@
-import { fetchBucketListInfo } from '@/lib/server-function'
+import { fetchBucketListInfo, triggerIndexes } from '@/lib/server-function'
 import { createFileRoute } from '@tanstack/react-router'
 import { ChevronRight, FileIcon, FolderIcon } from "lucide-react"
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,8 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
+import { toast } from 'sonner';
+import { useState } from 'react';
 export const Route = createFileRoute('/dashboard/import')({
   component: RouteComponent,
   loader: async () => {
@@ -25,9 +27,27 @@ export const Route = createFileRoute('/dashboard/import')({
 
 function RouteComponent() {
   const { root_folders } = Route.useLoaderData()
+  const [loading, setLoading] = useState<boolean>(false);
   const formatSize = (bytes: number) => {
     return (bytes / 1024).toFixed(2) + " KB";
   };
+
+  const triggeringIndexCreation = async (date: string) => {
+    try {
+      setLoading(true)
+      const response = await triggerIndexes({ data: { date } })
+      if (response.success) {
+        toast.success(response.message)
+      } else {
+        toast.error(response.message)
+      }
+    } catch (e) {
+      toast.error("Indexing failed")
+    } finally {
+      setLoading(false)
+    }
+
+  }
 
   return (<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -47,7 +67,7 @@ function RouteComponent() {
                 {folder.name}
                 <span className="text-xs font-normal text-muted-foreground ml-2">
                   ({folder.files.length} files)
-                  <Button size="xs">Import</Button>
+                  <Button size="xs" onClick={() => triggeringIndexCreation(folder.name)} disabled={loading}>{loading ? "Importing strated please wait..." : "Import"}</Button>
                 </span>
               </h3>
               <CollapsibleTrigger asChild>

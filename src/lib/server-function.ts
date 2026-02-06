@@ -21,19 +21,23 @@ export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(asy
 
 
 export const getSearchProfileDetails = createServerFn({ method: 'GET' })
-    .inputValidator((data: { jobDescription: string, preferedDomain: string, skills: string, experience: number }) => data)
+    .inputValidator((data: { jobDescription: string, preferedDomain: string, skills: string, experience: number, fileIds: string[] | null }) => data)
     .handler(async ({ data }): Promise<ProfileSearchResponse> => {
 
         const client = await auth.getIdTokenClient(API_PATH.RAG_SEARCH_API.GET_BASE_URL);
         const url = API_PATH.RAG_SEARCH_API.GET_BASE_URL + API_PATH.RAG_SEARCH_API.PATH_URL;
-
-
-        const postData = {
+        let postData: any = {
             "job_description": data.jobDescription,
             "years_of_experience": data.experience,
             "primary_skills": data.skills.split(','),
             "prefered_domain": data.preferedDomain
         }
+
+        if (data.fileIds && data.fileIds.length > 0) {
+            postData["rag_file_ids"] = data.fileIds
+        }
+        console.log(postData)
+
         const sendData = JSON.stringify(postData)
         const response = await client.request({
             url: url,
@@ -60,3 +64,35 @@ export const getProcessedIndexFilesId = createServerFn({ method: 'GET' }).handle
     const data = await response.data;
     return data as RagProcessRecord[];
 })
+
+
+export const triggerIndexes = createServerFn({ method: 'GET' })
+    .inputValidator((data: { date: string }) => data)
+    .handler(async ({ data }): Promise<{ success: boolean, message: string }> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.TRIGGER_INDEX.GET_BASE_URL);
+        const url = API_PATH.TRIGGER_INDEX.GET_BASE_URL + API_PATH.TRIGGER_INDEX.PATH_URL;
+
+
+        const postData = {
+            "date": data.date,
+            "corpus_id": API_PATH.TRIGGER_INDEX.CORPUS_ID
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'POST',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            await response.data;
+            return { "success": true, "message": "Indexing triggered successfully" }
+        } catch (e) {
+            return { "success": false, "message": "Indexing failed" }
+        }
+
+
+    })
