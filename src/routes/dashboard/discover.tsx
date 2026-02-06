@@ -22,14 +22,22 @@ function RouteComponent() {
     const data: RagProcessRecord[] = Route.useLoaderData()
     const [results, setResults] = useState<ProfileSearchResponse | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const [documentId, setDocumentId] = useState<string>('')
     const onProfileSearchSubmit = async (formData: ProfileSearchCritieria) => {
+        let fileIds: string[] | null = null
         try {
+            if (documentId.length > 0) {
+                const filteredData = data.filter((item) => item.id === documentId)
+                const ragPaths = filteredData[0].rag_file_ids
+                fileIds = ragPaths.map(path => path.split('/').pop() ?? null).filter(item => item !== null);
+
+            }
             setIsSubmitting(true)
             const jobDescription = formData.jobDescription;
             const preferedDomain = formData.preferedDomain;
             const skills = formData.skills;
             const experience = formData.experience;
-            const results: ProfileSearchResponse = await getSearchProfileDetails({ data: { jobDescription, preferedDomain, skills, experience } })
+            const results: ProfileSearchResponse = await getSearchProfileDetails({ data: { jobDescription, preferedDomain, skills, experience, fileIds } })
             setResults(results)
             setIsSubmitting(false)
         } catch (e) {
@@ -37,6 +45,9 @@ function RouteComponent() {
             setIsSubmitting(false)
         }
 
+    }
+    const bucketChangeHandler = (id: string) => {
+        setDocumentId(id)
     }
     const hasResults = results && results.matches && results.matches.length > 0;
 
@@ -47,7 +58,7 @@ function RouteComponent() {
                 {/* LEFT SIDE: Random Selection Dropdown */}
                 <div className="flex items-center gap-2">
                     <Label className="text-sm font-medium">Select CV store Date:</Label>
-                    <Select>
+                    <Select onValueChange={(value) => bucketChangeHandler(value)}>
                         <SelectTrigger className="w-[200px]">
                             <SelectValue placeholder="Select CV store Date" />
                         </SelectTrigger>

@@ -10,5 +10,10 @@ export const API_PATH = {
     PROCESSED_FILES_ID: {
         GET_BASE_URL: "https://indexed-files-list-api-820672860724.europe-west1.run.app",
         PATH_URL: "/api/indexed-list-api"
+    },
+    TRIGGER_INDEX: {
+        GET_BASE_URL: "https://trigger-index-api-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/trigger-indexing",
+        CORPUS_ID: "137359788634800128"
     }
 }
