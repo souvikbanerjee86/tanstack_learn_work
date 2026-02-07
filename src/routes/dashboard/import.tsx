@@ -32,7 +32,6 @@ export const Route = createFileRoute('/dashboard/import')({
 function RouteComponent() {
   const router = useRouter()
   const { data: { root_folders }, processedIndexFiles } = Route.useLoaderData()
-  console.log(processedIndexFiles)
   const [loading, setLoading] = useState<boolean>(false);
 
   const totalRagFiles = processedIndexFiles && processedIndexFiles.reduce((acc, item) => {
@@ -100,27 +99,28 @@ function RouteComponent() {
             <CollapsibleContent className="transition-all data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
                 {folder.files.map((file, idx) => (
-                  <Card key={idx} className="hover:ring-1 hover:ring-primary transition-all">
-                    <CardHeader className="flex flex-row items-center space-x-3 pb-2">
-                      <FileIcon className="h-5 w-5 text-muted-foreground" />
-                      <CardTitle className="text-sm truncate">{file.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-[10px] text-muted-foreground break-all line-clamp-1">
-                        {file.full_path}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="flex justify-between items-center pt-2">
-                      <span className="text-xs font-mono">{formatSize(file.size)}</span>
-                      <a
-                        href={file.url}
-                        target="_blank"
-                        className="text-xs font-medium text-primary hover:underline"
-                      >
-                        Download
-                      </a>
-                    </CardFooter>
-                  </Card>
+                  file.name.length > 0 ?
+                    <Card key={idx} className="hover:ring-1 hover:ring-primary transition-all">
+                      <CardHeader className="flex flex-row items-center space-x-3 pb-2">
+                        <FileIcon className="h-5 w-5 text-muted-foreground" />
+                        <CardTitle className="text-sm truncate">{file.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-[10px] text-muted-foreground break-all line-clamp-1">
+                          {file.full_path}
+                        </p>
+                      </CardContent>
+                      <CardFooter className="flex justify-between items-center pt-2">
+                        <span className="text-xs font-mono">{formatSize(file.size)}</span>
+                        <a
+                          href={file.url}
+                          target="_blank"
+                          className="text-xs font-medium text-primary hover:underline"
+                        >
+                          Download
+                        </a>
+                      </CardFooter>
+                    </Card> : null
                 ))}
               </div>
             </CollapsibleContent>
