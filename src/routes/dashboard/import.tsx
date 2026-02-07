@@ -62,15 +62,11 @@ function RouteComponent() {
 
   return (<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-      <div>
-        <ImportPageCard key={processedIndexFiles[0].processed_at} cardDescription="Total Processed Indexes" processedCount={processedIndexFiles.length} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />
-      </div>
-      <div>
-        <ImportPageCard key={processedIndexFiles[0].processed_at} cardDescription="Total Processed Files" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />
-      </div>
-      <div>
-        <ImportPageCard key={processedIndexFiles[0].processed_at} cardDescription="Last Processed Index" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />
-      </div>
+
+      {processedIndexFiles && <ImportPageCard cardDescription="Total Processed Indexes" processedCount={processedIndexFiles.length} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
+      {processedIndexFiles && <ImportPageCard cardDescription="Total Processed Files" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
+      {processedIndexFiles && <ImportPageCard cardDescription="Last Processed Index" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
+
     </div>
     <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min ">
       <div className="p-6 space-y-8">
