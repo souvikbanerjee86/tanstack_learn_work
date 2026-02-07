@@ -1,8 +1,7 @@
-import { fetchBucketListInfo, triggerIndexes } from '@/lib/server-function'
-import { createFileRoute } from '@tanstack/react-router'
+import { fetchBucketListInfo, getProcessedIndexFilesId, triggerIndexes } from '@/lib/server-function'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { ChevronRight, FileIcon, FolderIcon } from "lucide-react"
 import { Button } from '@/components/ui/button';
-import { BucketListResponse } from '@/lib/types'
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,17 +16,29 @@ import {
 } from "@/components/ui/card";
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { ImportPageCard } from '@/components/web/import-page-card';
 export const Route = createFileRoute('/dashboard/import')({
   component: RouteComponent,
   loader: async () => {
-    const data: BucketListResponse = await fetchBucketListInfo()
-    return data;
-  }
+    const [data, processedIndexFiles] = await Promise.all([
+      fetchBucketListInfo(),
+      getProcessedIndexFilesId()
+    ])
+    return { data, processedIndexFiles };
+  },
+  staleTime: 0
 })
 
 function RouteComponent() {
-  const { root_folders } = Route.useLoaderData()
+  const router = useRouter()
+  const { data: { root_folders }, processedIndexFiles } = Route.useLoaderData()
+  console.log(processedIndexFiles)
   const [loading, setLoading] = useState<boolean>(false);
+
+  const totalRagFiles = processedIndexFiles && processedIndexFiles.reduce((acc, item) => {
+    return acc + (item.rag_file_ids?.length || 0);
+  }, 0);
+
   const formatSize = (bytes: number) => {
     return (bytes / 1024).toFixed(2) + " KB";
   };
@@ -37,6 +48,7 @@ function RouteComponent() {
       setLoading(true)
       const response = await triggerIndexes({ data: { date } })
       if (response.success) {
+        router.invalidate()
         toast.success(response.message)
       } else {
         toast.error(response.message)
@@ -51,9 +63,15 @@ function RouteComponent() {
 
   return (<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-      <div className="bg-muted/50 aspect-video rounded-xl" />
-      <div className="bg-muted/50 aspect-video rounded-xl" />
-      <div className="bg-muted/50 aspect-video rounded-xl" />
+      <div>
+        <ImportPageCard key={processedIndexFiles[0].processed_at} cardDescription="Total Processed Indexes" processedCount={processedIndexFiles.length} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />
+      </div>
+      <div>
+        <ImportPageCard key={processedIndexFiles[0].processed_at} cardDescription="Total Processed Files" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />
+      </div>
+      <div>
+        <ImportPageCard key={processedIndexFiles[0].processed_at} cardDescription="Last Processed Index" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />
+      </div>
     </div>
     <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min ">
       <div className="p-6 space-y-8">

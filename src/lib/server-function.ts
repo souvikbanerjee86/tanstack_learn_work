@@ -1,3 +1,4 @@
+'use server'
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
@@ -36,7 +37,6 @@ export const getSearchProfileDetails = createServerFn({ method: 'GET' })
         if (data.fileIds && data.fileIds.length > 0) {
             postData["rag_file_ids"] = data.fileIds
         }
-        console.log(postData)
 
         const sendData = JSON.stringify(postData)
         const response = await client.request({
