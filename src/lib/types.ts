@@ -41,6 +41,7 @@ export interface BucketListResponse {
 
 export interface CandidateMatch {
     candidate_name: string;
+    candidate_email: string;
     years_of_experience: number;
     primary_skills: string[];
     summary: string;

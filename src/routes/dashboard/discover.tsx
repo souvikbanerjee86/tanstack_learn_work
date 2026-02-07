@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CandidateResultCard } from '@/components/web/candidate-result-card';
@@ -23,6 +24,15 @@ function RouteComponent() {
     const [results, setResults] = useState<ProfileSearchResponse | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string>('')
+
+    const [selectedItems, setSelectedItems] = useState<string[]>([])
+
+    const handleCheckedChange = (id: string, checked: boolean) => {
+        setSelectedItems((prev) =>
+            checked ? [...prev, id] : prev.filter((item) => item !== id)
+        )
+    }
+
     const onProfileSearchSubmit = async (formData: ProfileSearchCritieria) => {
         let fileIds: string[] | null = null
         try {
@@ -49,6 +59,11 @@ function RouteComponent() {
     const bucketChangeHandler = (id: string) => {
         setDocumentId(id)
     }
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        console.log(selectedItems)
+    }
+
     const hasResults = results && results.matches && results.matches.length > 0;
 
     return (
@@ -90,9 +105,13 @@ function RouteComponent() {
                                 {results.matches.length} profiles found
                             </span>
                         </div>
-                        {results.matches.map((candidate, idx) => (
-                            <CandidateResultCard key={idx} data={candidate} />
-                        ))}
+                        <form onSubmit={handleSubmit}>
+                            <div className="text-right pb-2"><Button className="right-4" type="submit" disabled={selectedItems.length === 0}>Send Acceptance Email</Button></div>
+                            {results.matches.map((candidate, idx) => (
+                                <CandidateResultCard key={idx} data={candidate} selectedItems={selectedItems} handleCheckedChange={handleCheckedChange} />
+                            ))}
+                        </form>
+
                     </div>
                 )}
             </div>

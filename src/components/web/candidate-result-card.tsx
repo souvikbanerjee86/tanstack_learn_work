@@ -5,8 +5,11 @@ import { Separator } from "@/components/ui/separator";
 
 // Use the interface from our previous step
 import { CandidateMatch } from "@/lib/types";
+import { Checkbox } from "../ui/checkbox";
+import { Field, FieldGroup, FieldLabel } from "../ui/field";
 
-export function CandidateResultCard({ data }: { data: CandidateMatch }) {
+export function CandidateResultCard({ data, selectedItems, handleCheckedChange }: { data: CandidateMatch, selectedItems: string[], handleCheckedChange: (id: string, checked: boolean) => void }) {
+
     return (
         <Card className="w-full border-l-4 border-l-primary shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="pb-3">
@@ -23,10 +26,27 @@ export function CandidateResultCard({ data }: { data: CandidateMatch }) {
                             </CardDescription>
                         </div>
                     </div>
-                    <div className="text-right">
-                        <Badge variant={data.matched_score > 70 ? "default" : "secondary"} className="text-lg px-3 py-1">
-                            {data.matched_score}% Match
-                        </Badge>
+                    <div className="">
+                        <div className="flex flex-row gap-2 items-center">
+                            <FieldGroup className="mx-auto w-56">
+                                <Field orientation="horizontal" data-invalid>
+                                    <Checkbox
+                                        id={data.candidate_email}
+                                        name={data.candidate_email}
+                                        aria-relevant="additions text"
+                                        checked={selectedItems.includes(data.candidate_email)}
+                                        onCheckedChange={(checked: boolean) => handleCheckedChange(data.candidate_email, checked)}
+                                    />
+                                    <FieldLabel htmlFor={data.candidate_name}>
+                                        Accept Profile
+                                    </FieldLabel>
+                                </Field>
+                            </FieldGroup>
+                            <Badge variant={data.matched_score > 70 ? "default" : "secondary"} className="text-lg px-3 py-1">
+                                {data.matched_score}% Match
+                            </Badge>
+                        </div>
+
                         <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">Source: {data.source_ref}</p>
                     </div>
                 </div>
@@ -90,5 +110,6 @@ export function CandidateResultCard({ data }: { data: CandidateMatch }) {
                 </button>
             </CardFooter>
         </Card>
+
     );
 }
