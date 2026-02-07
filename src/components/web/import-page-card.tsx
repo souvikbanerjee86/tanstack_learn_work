@@ -15,7 +15,7 @@ export function ImportPageCard({ cardDescription, processedCount, footerDescript
             <CardFooter className="flex-col items-start gap-1.5 text-sm">
 
                 <div className="text-muted-foreground text-center">
-                    {footerDescription} {format(new Date(processedIndexFiles[0].processed_at), "PPPp")}
+                    {footerDescription} {processedIndexFiles && format(new Date(processedIndexFiles[0].processed_at), "PPPp")}
                 </div>
             </CardFooter>
         </Card>
