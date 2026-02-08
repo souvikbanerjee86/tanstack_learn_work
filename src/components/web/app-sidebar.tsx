@@ -22,8 +22,8 @@ import { NavPrimaryProps, NavUserProps } from "@/lib/types"
 
 const navItems: NavPrimaryProps['items'] = linkOptions([
   {
-    title: "Items",
-    to: "/dashboard/items",
+    title: "Jobs",
+    to: "/dashboard/jobs",
     icon: BookMarkedIcon,
     activeOptions: { exact: false }
   },
