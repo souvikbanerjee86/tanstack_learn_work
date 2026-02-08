@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, ProfileSearchResponse, RagProcessRecord } from './types';
+import { BucketListResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord } from './types';
 
 const auth = new GoogleAuth();
 
@@ -96,3 +96,17 @@ export const triggerIndexes = createServerFn({ method: 'GET' })
 
 
     })
+
+export const getJobDetails = createServerFn({ method: 'GET' }).handler(async (): Promise<PaginatedJobResponse> => {
+
+    console.log(API_PATH.JOB_DETAILS.GET_BASE_URL)
+    const client = await auth.getIdTokenClient(API_PATH.JOB_DETAILS.GET_BASE_URL);
+    const url = API_PATH.JOB_DETAILS.GET_BASE_URL + API_PATH.JOB_DETAILS.PATH_URL;
+    const response = await client.request({
+        url: url,
+        method: 'GET',
+    });
+    const data = await response.data;
+    return data as PaginatedJobResponse;
+
+})

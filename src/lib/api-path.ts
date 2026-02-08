@@ -15,5 +15,9 @@ export const API_PATH = {
         GET_BASE_URL: "https://trigger-index-api-820672860724.europe-west1.run.app",
         PATH_URL: "/api/trigger-indexing",
         CORPUS_ID: "137359788634800128"
+    },
+    JOB_DETAILS: {
+        GET_BASE_URL: "https://jobs-list-api-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/jobs-list-api"
     }
 }

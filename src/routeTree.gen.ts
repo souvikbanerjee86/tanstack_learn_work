@@ -15,7 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardImportRouteImport } from './routes/dashboard/import'
 import { Route as DashboardDiscoverRouteImport } from './routes/dashboard/discover'
-import { Route as DashboardItemsIndexRouteImport } from './routes/dashboard/items/index'
+import { Route as DashboardJobsIndexRouteImport } from './routes/dashboard/jobs/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/_auth/signup/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login/index'
 
@@ -48,9 +48,9 @@ const DashboardDiscoverRoute = DashboardDiscoverRouteImport.update({
   path: '/discover',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-const DashboardItemsIndexRoute = DashboardItemsIndexRouteImport.update({
-  id: '/items/',
-  path: '/items/',
+const DashboardJobsIndexRoute = DashboardJobsIndexRouteImport.update({
+  id: '/jobs/',
+  path: '/jobs/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
@@ -72,7 +72,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/login/': typeof AuthLoginIndexRoute
   '/signup/': typeof AuthSignupIndexRoute
-  '/dashboard/items/': typeof DashboardItemsIndexRoute
+  '/dashboard/jobs/': typeof DashboardJobsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -81,7 +81,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/login': typeof AuthLoginIndexRoute
   '/signup': typeof AuthSignupIndexRoute
-  '/dashboard/items': typeof DashboardItemsIndexRoute
+  '/dashboard/jobs': typeof DashboardJobsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,7 +93,7 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
   '/_auth/signup/': typeof AuthSignupIndexRoute
-  '/dashboard/items/': typeof DashboardItemsIndexRoute
+  '/dashboard/jobs/': typeof DashboardJobsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,7 +105,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/login/'
     | '/signup/'
-    | '/dashboard/items/'
+    | '/dashboard/jobs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -114,7 +114,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/signup'
-    | '/dashboard/items'
+    | '/dashboard/jobs'
   id:
     | '__root__'
     | '/'
@@ -125,7 +125,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/_auth/login/'
     | '/_auth/signup/'
-    | '/dashboard/items/'
+    | '/dashboard/jobs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -178,11 +178,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardDiscoverRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/items/': {
-      id: '/dashboard/items/'
-      path: '/items'
-      fullPath: '/dashboard/items/'
-      preLoaderRoute: typeof DashboardItemsIndexRouteImport
+    '/dashboard/jobs/': {
+      id: '/dashboard/jobs/'
+      path: '/jobs'
+      fullPath: '/dashboard/jobs/'
+      preLoaderRoute: typeof DashboardJobsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_auth/signup/': {
@@ -220,14 +220,14 @@ interface DashboardRouteRouteChildren {
   DashboardDiscoverRoute: typeof DashboardDiscoverRoute
   DashboardImportRoute: typeof DashboardImportRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
-  DashboardItemsIndexRoute: typeof DashboardItemsIndexRoute
+  DashboardJobsIndexRoute: typeof DashboardJobsIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardDiscoverRoute: DashboardDiscoverRoute,
   DashboardImportRoute: DashboardImportRoute,
   DashboardIndexRoute: DashboardIndexRoute,
-  DashboardItemsIndexRoute: DashboardItemsIndexRoute,
+  DashboardJobsIndexRoute: DashboardJobsIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(

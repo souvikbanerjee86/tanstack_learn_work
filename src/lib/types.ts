@@ -71,3 +71,24 @@ export interface RagProcessRecord {
     rag_file_ids: string[];
     processed_at: string;
 }
+
+export type JobDetail = {
+    id: string;
+    job_title: string;
+    location: string;
+    job_id: string;
+    start_date: string;
+    end_date: string;
+    job_type: "Full Time" | "Part Time" | "Contract" | "Internship";
+    job_description: string;
+    created_at: string;
+    status: "Active" | "Inactive" | "Archived";
+}
+
+
+
+export interface PaginatedJobResponse {
+    count: number;
+    next_cursor: string | null;
+    data: JobDetail[];
+}
