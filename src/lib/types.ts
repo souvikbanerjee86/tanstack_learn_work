@@ -59,6 +59,7 @@ export interface ProfileSearchResponse {
 }
 
 export interface ProfileSearchCritieria {
+    jobId: string;
     jobDescription: string;
     experience: number;
     skills: string;

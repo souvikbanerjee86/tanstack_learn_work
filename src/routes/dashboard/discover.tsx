@@ -6,10 +6,11 @@ import { CandidateResultCard } from '@/components/web/candidate-result-card';
 import { EmptyState } from '@/components/web/empty-state';
 import { MultiStepLoader } from '@/components/web/multi-step-loader';
 import { SearchProfileForm } from '@/components/web/search-profile-form';
-import { getJobDetails, getProcessedIndexFilesId, getSearchProfileDetails } from '@/lib/server-function';
+import { getJobDetails, getProcessedIndexFilesId, getSearchProfileDetails, jobInterviewCandidates } from '@/lib/server-function';
 import { PaginatedJobResponse, ProfileSearchCritieria, ProfileSearchResponse, RagProcessRecord } from '@/lib/types';
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/dashboard/discover')({
     component: RouteComponent,
@@ -27,6 +28,7 @@ function RouteComponent() {
     const [results, setResults] = useState<ProfileSearchResponse | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string>('')
+    const [selectedJobId, setSelectedJobId] = useState<string>('')
 
     const [selectedItems, setSelectedItems] = useState<string[]>([])
 
@@ -46,11 +48,13 @@ function RouteComponent() {
 
             }
             setIsSubmitting(true)
+            setSelectedJobId(formData.jobId)
             const jobDescription = formData.jobDescription;
             const preferedDomain = formData.preferedDomain;
             const skills = formData.skills;
             const experience = formData.experience;
             const results: ProfileSearchResponse = await getSearchProfileDetails({ data: { jobDescription, preferedDomain, skills, experience, fileIds } })
+            console.log
             setResults(results)
             setIsSubmitting(false)
         } catch (e) {
@@ -62,9 +66,22 @@ function RouteComponent() {
     const bucketChangeHandler = (id: string) => {
         setDocumentId(id)
     }
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log(selectedItems)
+        try {
+            setIsSubmitting(true)
+            const results: { success: boolean, message: string } = await jobInterviewCandidates({ data: { job_id: selectedJobId, candidates: selectedItems } })
+            if (results.success) {
+                toast.success(results.message)
+            } else {
+                toast.error(results.message)
+            }
+        } catch (e: any) {
+            toast.error(e.message)
+        } finally {
+            setIsSubmitting(false)
+            setSelectedItems([])
+        }
     }
 
     const hasResults = results && results.matches && results.matches.length > 0;
@@ -109,7 +126,7 @@ function RouteComponent() {
                             </span>
                         </div>
                         <form onSubmit={handleSubmit}>
-                            <div className="text-right pb-2"><Button className="right-4" type="submit" disabled={selectedItems.length === 0}>Send Acceptance Email</Button></div>
+                            <div className="text-right pb-2"><Button className="right-4" type="submit" disabled={selectedItems.length === 0 || isSubmitting}>Send Acceptance Email</Button></div>
                             {results.matches.map((candidate, idx) => (
                                 <CandidateResultCard key={idx} data={candidate} selectedItems={selectedItems} handleCheckedChange={handleCheckedChange} />
                             ))}
