@@ -121,3 +121,35 @@ export const getJobDetails = createServerFn({ method: 'GET' })
         return returnData as PaginatedJobResponse;
 
     })
+
+
+export const jobInterviewCandidates = createServerFn({ method: 'GET' })
+    .inputValidator((data: { job_id: string, candidates: string[] }) => data)
+    .handler(async ({ data }): Promise<{ success: boolean, message: string }> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.JOB_INTERVIEW_CANDIDATES.GET_BASE_URL);
+        const url = API_PATH.JOB_INTERVIEW_CANDIDATES.GET_BASE_URL + API_PATH.JOB_INTERVIEW_CANDIDATES.PATH_URL;
+
+
+        const postData = {
+            "job_id": data.job_id,
+            "candidates": data.candidates
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'POST',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            await response.data;
+            return { "success": true, "message": "Email Initiated, Candidate will receive the interview email" }
+        } catch (e) {
+            return { "success": false, "message": "Indexing failed" }
+        }
+
+
+    })
