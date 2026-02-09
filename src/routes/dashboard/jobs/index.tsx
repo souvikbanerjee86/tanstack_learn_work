@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/dashboard/jobs/')({
   component: RouteComponent,
   loader: async () => {
-    const data: PaginatedJobResponse = await getJobDetails()
+    const data: PaginatedJobResponse = await getJobDetails({ data: { limit: null, status: null, last_doc_id: null } })
     return { data }
   }
 })
