@@ -6,21 +6,24 @@ import { CandidateResultCard } from '@/components/web/candidate-result-card';
 import { EmptyState } from '@/components/web/empty-state';
 import { MultiStepLoader } from '@/components/web/multi-step-loader';
 import { SearchProfileForm } from '@/components/web/search-profile-form';
-import { getProcessedIndexFilesId, getSearchProfileDetails } from '@/lib/server-function';
-import { ProfileSearchCritieria, ProfileSearchResponse, RagProcessRecord } from '@/lib/types';
+import { getJobDetails, getProcessedIndexFilesId, getSearchProfileDetails } from '@/lib/server-function';
+import { PaginatedJobResponse, ProfileSearchCritieria, ProfileSearchResponse, RagProcessRecord } from '@/lib/types';
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
 
 export const Route = createFileRoute('/dashboard/discover')({
     component: RouteComponent,
     loader: async () => {
-        const data: RagProcessRecord[] = await getProcessedIndexFilesId()
-        return data
+        const data: RagProcessRecord[] = await getProcessedIndexFilesId();
+        const jobDetails: PaginatedJobResponse = await getJobDetails({ data: { limit: null, status: null, last_doc_id: null } })
+
+        return { data, jobDetails };
+
     }
 })
 
 function RouteComponent() {
-    const data: RagProcessRecord[] = Route.useLoaderData()
+    const { data, jobDetails } = Route.useLoaderData()
     const [results, setResults] = useState<ProfileSearchResponse | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string>('')
@@ -91,7 +94,7 @@ function RouteComponent() {
                 </div>
 
                 {/* RIGHT SIDE: Modal Trigger */}
-                <SearchProfileForm onProfileSearchSubmit={onProfileSearchSubmit} />
+                <SearchProfileForm onProfileSearchSubmit={onProfileSearchSubmit} jobDetails={jobDetails} />
             </div>
             {isSubmitting && <MultiStepLoader isLoading={isSubmitting} />}
             <div className="container py-8 mx-auto">
