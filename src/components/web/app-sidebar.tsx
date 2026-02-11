@@ -2,7 +2,8 @@ import {
   BookMarkedIcon,
   BookmarkIcon,
   CompassIcon,
-  Import
+  Import,
+  MailIcon
 } from "lucide-react"
 
 import {
@@ -37,6 +38,12 @@ const navItems: NavPrimaryProps['items'] = linkOptions([
     title: "Discover",
     to: "/dashboard/discover",
     icon: CompassIcon,
+    activeOptions: { exact: false }
+  },
+  {
+    title: "Interview Email",
+    to: "/dashboard/interview",
+    icon: MailIcon,
     activeOptions: { exact: false }
   },
 ])

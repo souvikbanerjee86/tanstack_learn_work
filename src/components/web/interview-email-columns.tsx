@@ -11,58 +11,62 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { JobDetail } from "@/lib/types"
+import { CandidateRecord } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 
-export const columns: ColumnDef<JobDetail>[] = [
+export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
     {
         accessorKey: "job_id",
-        header: "Id",
+        header: "JobId",
     },
     {
-        accessorKey: "job_title",
-        header: "Job Title",
+        accessorKey: "candidate_email",
+        header: "Candidate Email",
     },
 
     {
-        accessorKey: "start_date",
-        header: "Start Date",
+        accessorKey: "processed_at",
+        header: "Processed Date",
         cell: ({ row }) => {
-            const formatted = format(row.getValue("start_date"), "PPP")
-
-            return <div className="font-medium">{formatted}</div>
-        },
-    },
-    {
-        accessorKey: "end_date",
-        header: "End Date",
-        cell: ({ row }) => {
-            const formatted = format(row.getValue("start_date"), "PPP")
+            if (row.getValue("processed_at") === null || row.getValue("processed_at") === undefined) return <div className="font-medium">Not Processed</div>
+            const formatted = format(row.getValue("processed_at"), "PPP")
 
             return <div className="font-medium">{formatted}</div>
         },
     },
     {
-        accessorKey: "location",
-        header: "Location",
-    },
-    {
-        accessorKey: "job_type",
-        header: "Job Type",
-    },
-    {
-        accessorKey: "status",
-        header: "Status",
+        accessorKey: "sent_at",
+        header: "Email Sent Date",
         cell: ({ row }) => {
-            const status = row.getValue("status") as string
+            if (row.getValue("sent_at") === null || row.getValue("sent_at") === undefined) return <div className="font-medium">Not Sent</div>
+            const formatted = format(row.getValue("sent_at"), "PPP")
+
+            return <div className="font-medium">{formatted}</div>
+        },
+    },
+    {
+        accessorKey: "message_id",
+        header: "Message Id",
+        cell: ({ row }) => {
+            if (row.getValue("message_id") === null || row.getValue("message_id") === undefined) return <div className="font-medium">Not Sent Yet</div>
+
+            return <div className="font-medium">{row.getValue("message_id")}</div>
+        },
+    },
+
+    {
+        accessorKey: "email_sent",
+        header: "Email Sent Status",
+        cell: ({ row }) => {
+            const status = row.getValue("email_sent") as boolean
+
             return <div className={cn(
                 "px-2 py-1 rounded-full text-xs font-medium w-fit",
-                status === "Active" && "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-                status === "Inactive" && "bg-gray-100 text-gray-700",
-                status === "Archived" && "bg-red-100 text-red-700"
+                status === true && "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+                status === false && "bg-gray-100 text-gray-700"
             )}>
-                {status}
+                {status ? "Sent" : "Not Sent"}
             </div>
         },
     },

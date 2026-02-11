@@ -93,3 +93,20 @@ export interface PaginatedJobResponse {
     next_cursor: string | null;
     data: JobDetail[];
 }
+
+
+export interface CandidateRecord {
+    id: string;
+    processed_at: string;
+    email_sent: boolean;
+    candidate_email: string;
+    sent_at: string;
+    message_id: string;
+    job_id: string;
+}
+
+export interface CandidatePaginationResponse {
+    count: number;
+    next_cursor: string | null;
+    data: CandidateRecord[];
+}

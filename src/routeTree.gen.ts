@@ -13,6 +13,7 @@ import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardInterviewRouteImport } from './routes/dashboard/interview'
 import { Route as DashboardImportRouteImport } from './routes/dashboard/import'
 import { Route as DashboardDiscoverRouteImport } from './routes/dashboard/discover'
 import { Route as DashboardJobsIndexRouteImport } from './routes/dashboard/jobs/index'
@@ -36,6 +37,11 @@ const IndexRoute = IndexRouteImport.update({
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardInterviewRoute = DashboardInterviewRouteImport.update({
+  id: '/interview',
+  path: '/interview',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardImportRoute = DashboardImportRouteImport.update({
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
+  '/dashboard/interview': typeof DashboardInterviewRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/login/': typeof AuthLoginIndexRoute
   '/signup/': typeof AuthSignupIndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
+  '/dashboard/interview': typeof DashboardInterviewRoute
   '/dashboard': typeof DashboardIndexRoute
   '/login': typeof AuthLoginIndexRoute
   '/signup': typeof AuthSignupIndexRoute
@@ -90,6 +98,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
+  '/dashboard/interview': typeof DashboardInterviewRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
   '/_auth/signup/': typeof AuthSignupIndexRoute
@@ -102,6 +111,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/discover'
     | '/dashboard/import'
+    | '/dashboard/interview'
     | '/dashboard/'
     | '/login/'
     | '/signup/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard/discover'
     | '/dashboard/import'
+    | '/dashboard/interview'
     | '/dashboard'
     | '/login'
     | '/signup'
@@ -122,6 +133,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/discover'
     | '/dashboard/import'
+    | '/dashboard/interview'
     | '/dashboard/'
     | '/_auth/login/'
     | '/_auth/signup/'
@@ -162,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/interview': {
+      id: '/dashboard/interview'
+      path: '/interview'
+      fullPath: '/dashboard/interview'
+      preLoaderRoute: typeof DashboardInterviewRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/import': {
@@ -219,6 +238,7 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 interface DashboardRouteRouteChildren {
   DashboardDiscoverRoute: typeof DashboardDiscoverRoute
   DashboardImportRoute: typeof DashboardImportRoute
+  DashboardInterviewRoute: typeof DashboardInterviewRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardJobsIndexRoute: typeof DashboardJobsIndexRoute
 }
@@ -226,6 +246,7 @@ interface DashboardRouteRouteChildren {
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardDiscoverRoute: DashboardDiscoverRoute,
   DashboardImportRoute: DashboardImportRoute,
+  DashboardInterviewRoute: DashboardInterviewRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardJobsIndexRoute: DashboardJobsIndexRoute,
 }
