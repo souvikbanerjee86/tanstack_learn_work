@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { JobDetail } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { useNavigate } from "@tanstack/react-router"
+
 
 
 export const columns: ColumnDef<JobDetail>[] = [
@@ -69,7 +71,18 @@ export const columns: ColumnDef<JobDetail>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
+            const extraData = {
+                job_id: row.original.job_id,
+                job_description: row.original.job_description,
+                job_title: row.original.job_title,
+                start_date: format(row.original.start_date, "PPP"),
+                end_date: format(row.original.end_date, "PPP"),
+                location: row.original.location,
+                job_type: row.original.job_type,
+                status: row.original.status,
 
+            };
+            const navigate = useNavigate()
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -80,7 +93,13 @@ export const columns: ColumnDef<JobDetail>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>View details</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() =>
+                            navigate({
+                                to: '/dashboard/jobs/$id',
+                                params: { id: row.original.job_id },
+                                state: extraData as any,
+                            })
+                        }>View details</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
