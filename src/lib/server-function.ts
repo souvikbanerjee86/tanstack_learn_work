@@ -176,3 +176,36 @@ export const getInterviewCandidateEmailList = createServerFn({ method: 'GET' })
         return returnData as CandidatePaginationResponse;
 
     })
+
+
+
+export const getDownloadURL = createServerFn({ method: 'GET' })
+    .inputValidator((data: { bucket_name: string, file_path: string }) => data)
+    .handler(async ({ data }): Promise<{ download_url: string | null }> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.DOWNLOAD_FILE_URL.GET_BASE_URL);
+        const url = API_PATH.DOWNLOAD_FILE_URL.GET_BASE_URL + API_PATH.DOWNLOAD_FILE_URL.PATH_URL;
+
+
+        const postData = {
+            "bucket_name": data.bucket_name,
+            "full_path": data.file_path
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'POST',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            return finalData as { download_url: string };
+        } catch (e) {
+            return { "download_url": null }
+        }
+
+
+    })

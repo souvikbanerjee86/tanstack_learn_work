@@ -1,6 +1,6 @@
-import { fetchBucketListInfo, getProcessedIndexFilesId, triggerIndexes } from '@/lib/server-function'
+import { fetchBucketListInfo, getDownloadURL, getProcessedIndexFilesId, triggerIndexes } from '@/lib/server-function'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { ChevronRight, FileIcon, FolderIcon } from "lucide-react"
+import { ChevronRight, DownloadIcon, FileIcon, FolderIcon } from "lucide-react"
 import { Button } from '@/components/ui/button';
 import {
   Collapsible,
@@ -17,6 +17,7 @@ import {
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { ImportPageCard } from '@/components/web/import-page-card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 export const Route = createFileRoute('/dashboard/import')({
   component: RouteComponent,
   loader: async () => {
@@ -33,7 +34,9 @@ function RouteComponent() {
   const router = useRouter()
   const { data: { root_folders }, processedIndexFiles } = Route.useLoaderData()
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [downloading, setDownloading] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [fileUrl, setFileUrl] = useState<string>("");
   const totalRagFiles = processedIndexFiles && processedIndexFiles.reduce((acc, item) => {
     return acc + (item.rag_file_ids?.length || 0);
   }, 0);
@@ -58,6 +61,23 @@ function RouteComponent() {
       setLoading(false)
     }
 
+  }
+
+  const downlaodUrl = async (url: string) => {
+    try {
+      setDownloading(true)
+      setFileUrl("")
+      setIsOpen(false)
+      const response = await getDownloadURL({ data: { bucket_name: "cv_bucket_project-716b1c69-ee04-40fd-ba6", file_path: url } })
+      if (response.download_url) {
+        setFileUrl(encodeURIComponent(response.download_url))
+        setIsOpen(true)
+      }
+    } catch (e) {
+      toast.error("Download failed")
+    } finally {
+      setDownloading(false)
+    }
   }
 
   return (<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -104,17 +124,15 @@ function RouteComponent() {
                       <CardContent>
                         <p className="text-[10px] text-muted-foreground break-all line-clamp-1">
                           {file.full_path}
-                        </p>
+                        </p>setLoading
                       </CardContent>
                       <CardFooter className="flex justify-between items-center pt-2">
                         <span className="text-xs font-mono">{formatSize(file.size)}</span>
-                        <a
-                          href={file.url}
-                          target="_blank"
-                          className="text-xs font-medium text-primary hover:underline"
-                        >
-                          Download
-                        </a>
+                        <Button disabled={downloading} size="sm" variant="outline" onClick={() => downlaodUrl(file.full_path)}>
+                          <DownloadIcon className="mr-2 h-4 w-3" />
+                          Download Resume
+                        </Button>
+
                       </CardFooter>
                     </Card> : null
                 ))}
@@ -123,6 +141,27 @@ function RouteComponent() {
 
           </Collapsible>
         ))}
+
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+
+          <DialogContent className='sm:max-w-[50vw]'>
+            <DialogHeader>
+              <DialogTitle>Candidate Resume</DialogTitle>
+
+            </DialogHeader>
+            <div className="no-scrollbar -mx-4 max-h-[90vh] overflow-y-auto px-4">
+
+              <p key={fileUrl} className="mb-4 leading-normal">
+                <iframe
+                  src={`https://docs.google.com/gview?url=${fileUrl}&embedded=true`}
+                  style={{ width: "100%", height: "600px" }}
+                  frameBorder="0">
+                </iframe>
+              </p>
+
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
     </div>
