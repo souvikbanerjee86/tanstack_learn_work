@@ -17,7 +17,7 @@ import {
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { ImportPageCard } from '@/components/web/import-page-card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 export const Route = createFileRoute('/dashboard/import')({
   component: RouteComponent,
   loader: async () => {
