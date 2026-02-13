@@ -42,7 +42,6 @@ const config = defineConfig({
         }
       }
     }),
-    }),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
