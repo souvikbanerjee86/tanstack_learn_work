@@ -10,7 +10,14 @@ import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
   nitro: {
-    noExternals: ['firebase-admin']
+    noExternals: ['firebase-admin'],
+    externals: {
+      external: [
+        '@google-cloud/dialogflow-cx', 
+        'google-gax', 
+        'google-auth-library'
+      ]
+    }
   },
   resolve: {
     alias: {
