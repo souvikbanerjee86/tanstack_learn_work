@@ -26,9 +26,9 @@ const config = defineConfig({
   },
   plugins: [
     devtools(),
-    nitro({
-      noExternals: ['firebase-admin']
-    }),
+    // nitro({
+    //   noExternals: ['firebase-admin']
+    // }),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
