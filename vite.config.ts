@@ -14,8 +14,7 @@ const config = defineConfig({
     externals: {
       external: [
         '@google-cloud/dialogflow-cx', 
-        'google-gax', 
-        'google-auth-library'
+        'google-gax'
       ]
     }
   },
@@ -43,7 +42,7 @@ const config = defineConfig({
   },
   build: {
     rollupOptions: {
-      external: ['@google-cloud/dialogflow-cx', 'google-gax', 'google-auth-library'],
+      external: ['@google-cloud/dialogflow-cx', 'google-gax'],
     },
   },
 })
