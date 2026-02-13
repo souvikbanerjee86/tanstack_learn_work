@@ -26,7 +26,6 @@ const config = defineConfig({
   plugins: [
     devtools(),
     nitro({
-      preset: 'node-server',
       noExternals: ['firebase-admin']
     }),
     // this is the plugin that enables path aliases
