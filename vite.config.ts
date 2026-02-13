@@ -31,6 +31,9 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  ssr: {
+    external: ['@google-cloud/dialogflow-cx', 'google-gax'],
+  },
 })
 
 export default config
