@@ -26,7 +26,22 @@ const config = defineConfig({
   plugins: [
     devtools(),
     nitro({
-      noExternals: ['firebase-admin']
+      noExternals: ['firebase-admin'],
+      rollupConfig: {
+        output: {
+          format: 'es',
+          banner: `
+            import { createRequire as __createRequire } from 'module';
+            import { fileURLToPath as __fileURLToPath } from 'url';
+            import { dirname as __pathDirname } from 'path';
+            
+            const require = __createRequire(import.meta.url);
+            const __filename = __fileURLToPath(import.meta.url);
+            const __dirname = __pathDirname(__filename);
+          `
+        }
+      }
+    }),
     }),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
@@ -40,23 +55,7 @@ const config = defineConfig({
   ssr: {
     external: ['@google-cloud/dialogflow-cx', 'google-gax'],
   },
-  build: {
-    rollupOptions: {
-      output: {
-        format: 'es',
-        banner: `
-          import { createRequire as __createRequire } from 'module';
-          import { fileURLToPath as __fileURLToPath } from 'url';
-          import { dirname as __pathDirname } from 'path';
-          
-          // Create the polyfills using our unique variables
-          const require = __createRequire(import.meta.url);
-          const __filename = __fileURLToPath(import.meta.url);
-          const __dirname = __pathDirname(__filename);
-        `,
-      },
-    },
-  },
+ 
 })
 
 export default config
