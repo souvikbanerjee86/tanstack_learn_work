@@ -108,6 +108,7 @@ function RouteComponent() {
         } catch (error) {
             console.error('Audio Error:', error);
         } finally {
+
             setIsProcessing(false);
         }
     };
