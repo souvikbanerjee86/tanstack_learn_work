@@ -16,6 +16,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardInterviewRouteImport } from './routes/dashboard/interview'
 import { Route as DashboardImportRouteImport } from './routes/dashboard/import'
 import { Route as DashboardDiscoverRouteImport } from './routes/dashboard/discover'
+import { Route as DashboardAudioInterviewRouteImport } from './routes/dashboard/audio-interview'
 import { Route as DashboardJobsIndexRouteImport } from './routes/dashboard/jobs/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/_auth/signup/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login/index'
@@ -55,6 +56,11 @@ const DashboardDiscoverRoute = DashboardDiscoverRouteImport.update({
   path: '/discover',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardAudioInterviewRoute = DashboardAudioInterviewRouteImport.update({
+  id: '/audio-interview',
+  path: '/audio-interview',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const DashboardJobsIndexRoute = DashboardJobsIndexRouteImport.update({
   id: '/jobs/',
   path: '/jobs/',
@@ -79,6 +85,7 @@ const DashboardJobsIdRoute = DashboardJobsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/dashboard/audio-interview': typeof DashboardAudioInterviewRoute
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
   '/dashboard/interview': typeof DashboardInterviewRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard/audio-interview': typeof DashboardAudioInterviewRoute
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
   '/dashboard/interview': typeof DashboardInterviewRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/dashboard/audio-interview': typeof DashboardAudioInterviewRoute
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
   '/dashboard/interview': typeof DashboardInterviewRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/dashboard/audio-interview'
     | '/dashboard/discover'
     | '/dashboard/import'
     | '/dashboard/interview'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard/audio-interview'
     | '/dashboard/discover'
     | '/dashboard/import'
     | '/dashboard/interview'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_auth'
     | '/dashboard'
+    | '/dashboard/audio-interview'
     | '/dashboard/discover'
     | '/dashboard/import'
     | '/dashboard/interview'
@@ -209,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardDiscoverRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/audio-interview': {
+      id: '/dashboard/audio-interview'
+      path: '/audio-interview'
+      fullPath: '/dashboard/audio-interview'
+      preLoaderRoute: typeof DashboardAudioInterviewRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/dashboard/jobs/': {
       id: '/dashboard/jobs/'
       path: '/jobs'
@@ -255,6 +274,7 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface DashboardRouteRouteChildren {
+  DashboardAudioInterviewRoute: typeof DashboardAudioInterviewRoute
   DashboardDiscoverRoute: typeof DashboardDiscoverRoute
   DashboardImportRoute: typeof DashboardImportRoute
   DashboardInterviewRoute: typeof DashboardInterviewRoute
@@ -264,6 +284,7 @@ interface DashboardRouteRouteChildren {
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardAudioInterviewRoute: DashboardAudioInterviewRoute,
   DashboardDiscoverRoute: DashboardDiscoverRoute,
   DashboardImportRoute: DashboardImportRoute,
   DashboardInterviewRoute: DashboardInterviewRoute,
