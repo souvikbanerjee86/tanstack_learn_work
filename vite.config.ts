@@ -25,9 +25,9 @@ const config = defineConfig({
   },
   plugins: [
     devtools(),
-    // nitro({
-    //   noExternals: ['firebase-admin','@google-cloud/dialogflow-cx', 'google-gax']
-    // }),
+    nitro({
+      noExternals: ['firebase-admin','@google-cloud/dialogflow-cx', 'google-gax']
+    }),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
