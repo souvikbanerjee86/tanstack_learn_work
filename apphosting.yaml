@@ -7,6 +7,11 @@ runConfig:
 
 # Environment variables and Secrets mapping
 env:
+  - variable: NODE_OPTIONS
+    value: "--max-old-space-size=4096"
+    availability:
+      - BUILD
+      - RUNTIME
   # 1. Public variables (safe to commit)
   - variable: VITE_FIREBASE_API_KEY
     value: "AIzaSyDrJnLFhs5sHD3idbn5THrCVCW5ZWEjH1c"
