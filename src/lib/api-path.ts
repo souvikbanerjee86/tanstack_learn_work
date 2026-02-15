@@ -31,5 +31,9 @@ export const API_PATH = {
     DOWNLOAD_FILE_URL: {
         GET_BASE_URL: "https://file-url-api-820672860724.europe-west1.run.app",
         PATH_URL: "/api/file-url"
+    },
+    SPEECH_TO_TEXT: {
+        GET_BASE_URL: "https://speech-to-text-api-git-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/transcribe-v2"
     }
 }

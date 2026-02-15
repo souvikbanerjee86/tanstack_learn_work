@@ -15,6 +15,7 @@ function RouteComponent() {
     const [inputText, setInputText] = useState('');
     const [isRecording, setIsRecording] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [sessionId, setSessionId] = useState('');
 
     // Refs for Audio
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -26,6 +27,9 @@ function RouteComponent() {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
     }, [messages]);
+    useEffect(() => {
+        setSessionId(crypto.randomUUID())
+    }, [])
 
     const handleResponse = (response: { text: string; audio: string | null }) => {
 
@@ -51,7 +55,7 @@ function RouteComponent() {
 
         const formData = new FormData();
         formData.append('text', textToSend);
-        formData.append('sessionId', 'session-user-1'); // Use real session ID in prod
+        formData.append('sessionId', sessionId); // Use real session ID in prod
 
         try {
             const response = await interactWithAgent({ data: formData });
@@ -100,7 +104,7 @@ function RouteComponent() {
 
         const formData = new FormData();
         formData.append('audio', audioBlob, 'input.webm');
-        formData.append('sessionId', 'session-user-1');
+        formData.append('sessionId', sessionId);
 
         try {
             const response = await interactWithAgent({ data: formData });
