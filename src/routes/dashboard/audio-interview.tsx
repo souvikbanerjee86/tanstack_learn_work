@@ -1,7 +1,7 @@
 import { interactWithAgent } from '@/lib/dialogflow-server';
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react';
-import { Send, Mic, Bot, User, Loader2 } from "lucide-react";
+import { Send, Mic, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";

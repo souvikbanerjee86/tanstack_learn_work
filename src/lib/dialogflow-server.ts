@@ -38,6 +38,7 @@ export const interactWithAgent = createServerFn({ method: 'POST' })
         console.log(sessionId)
 
         let queryInput;
+        let queryParams = {};
         if (textInput) {
             queryInput = {
                 text: {
@@ -55,11 +56,21 @@ export const interactWithAgent = createServerFn({ method: 'POST' })
                 data: data
             });
 
-            const returnResponse = speechResponse.data as { text: string | null, language: string | null }
-
+            const returnResponse = speechResponse.data as { text: string | null, language: string | null };
+            if (returnResponse.text && returnResponse.text?.length > 250) {
+                queryParams = {
+                    parameters: {
+                        fields: {
+                            long_input_content: {
+                                stringValue: returnResponse.text
+                            }
+                        }
+                    }
+                }
+            }
             queryInput = {
                 text: {
-                    text: returnResponse.text,
+                    text: returnResponse.text!.length > 250 ? returnResponse.text!.slice(0, 250) : returnResponse.text,
                 },
                 languageCode,
             };
@@ -79,15 +90,17 @@ export const interactWithAgent = createServerFn({ method: 'POST' })
         } else {
             throw new Error('No text or audio provided');
         }
-        console.log(queryInput)
 
         const request: any = {
             session: sessionPath,
             queryInput,
+            queryParams,
             outputAudioConfig: {
                 audioEncoding: 'OUTPUT_AUDIO_ENCODING_MP3',
             },
         };
+
+        console.log(request)
 
         const [response]: any = await client.detectIntent(request);
 
