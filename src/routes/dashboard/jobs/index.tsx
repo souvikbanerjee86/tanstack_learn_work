@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/jobs/')({
   component: RouteComponent,
@@ -13,13 +13,20 @@ import { columns } from "@/components/web/columns"
 import { DataTable } from "@/components/web/data-table"
 import { getJobDetails } from '@/lib/server-function'
 import { PaginatedJobResponse } from '@/lib/types'
+import { Button } from '@/components/ui/button'
 
 
 function RouteComponent() {
   const { data } = Route.useLoaderData()
   return (
     <div className="container max-w-full">
-      <p className="text-2xl font-semibold mb-4">Job Details</p>
+      <div className="flex justify-between items-center mb-4">
+        <p className="text-2xl font-semibold">Job Details</p>
+        <Link to='/dashboard/jobs/add'>
+          <Button>Add Job</Button>
+        </Link>
+      </div>
+
       <DataTable columns={columns} data={data.data} />
     </div>
   )

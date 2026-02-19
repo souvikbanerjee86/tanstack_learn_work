@@ -20,6 +20,7 @@ import { Route as DashboardAudioInterviewRouteImport } from './routes/dashboard/
 import { Route as DashboardJobsIndexRouteImport } from './routes/dashboard/jobs/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/_auth/signup/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login/index'
+import { Route as DashboardJobsAddRouteImport } from './routes/dashboard/jobs/add'
 import { Route as DashboardJobsIdRouteImport } from './routes/dashboard/jobs/$id'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
@@ -76,6 +77,11 @@ const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
   path: '/login/',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const DashboardJobsAddRoute = DashboardJobsAddRouteImport.update({
+  id: '/jobs/add',
+  path: '/jobs/add',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const DashboardJobsIdRoute = DashboardJobsIdRouteImport.update({
   id: '/jobs/$id',
   path: '/jobs/$id',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/interview': typeof DashboardInterviewRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
+  '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/login/': typeof AuthLoginIndexRoute
   '/signup/': typeof AuthSignupIndexRoute
   '/dashboard/jobs/': typeof DashboardJobsIndexRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/dashboard/interview': typeof DashboardInterviewRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
+  '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/login': typeof AuthLoginIndexRoute
   '/signup': typeof AuthSignupIndexRoute
   '/dashboard/jobs': typeof DashboardJobsIndexRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/dashboard/interview': typeof DashboardInterviewRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
+  '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
   '/_auth/signup/': typeof AuthSignupIndexRoute
   '/dashboard/jobs/': typeof DashboardJobsIndexRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/dashboard/interview'
     | '/dashboard/'
     | '/dashboard/jobs/$id'
+    | '/dashboard/jobs/add'
     | '/login/'
     | '/signup/'
     | '/dashboard/jobs/'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/dashboard/interview'
     | '/dashboard'
     | '/dashboard/jobs/$id'
+    | '/dashboard/jobs/add'
     | '/login'
     | '/signup'
     | '/dashboard/jobs'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/dashboard/interview'
     | '/dashboard/'
     | '/dashboard/jobs/$id'
+    | '/dashboard/jobs/add'
     | '/_auth/login/'
     | '/_auth/signup/'
     | '/dashboard/jobs/'
@@ -249,6 +261,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginIndexRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/dashboard/jobs/add': {
+      id: '/dashboard/jobs/add'
+      path: '/jobs/add'
+      fullPath: '/dashboard/jobs/add'
+      preLoaderRoute: typeof DashboardJobsAddRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/dashboard/jobs/$id': {
       id: '/dashboard/jobs/$id'
       path: '/jobs/$id'
@@ -280,6 +299,7 @@ interface DashboardRouteRouteChildren {
   DashboardInterviewRoute: typeof DashboardInterviewRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardJobsIdRoute: typeof DashboardJobsIdRoute
+  DashboardJobsAddRoute: typeof DashboardJobsAddRoute
   DashboardJobsIndexRoute: typeof DashboardJobsIndexRoute
 }
 
@@ -290,6 +310,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardInterviewRoute: DashboardInterviewRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardJobsIdRoute: DashboardJobsIdRoute,
+  DashboardJobsAddRoute: DashboardJobsAddRoute,
   DashboardJobsIndexRoute: DashboardJobsIndexRoute,
 }
 
