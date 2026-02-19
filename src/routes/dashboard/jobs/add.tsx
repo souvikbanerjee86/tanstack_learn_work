@@ -1,14 +1,19 @@
 
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 import { jobPostSchema } from '@/schemas/auth';
 import { useForm } from '@tanstack/react-form';
 import { createFileRoute } from '@tanstack/react-router'
+import { Check, ChevronDown } from 'lucide-react';
 
 export const Route = createFileRoute('/dashboard/jobs/add')({
     component: RouteComponent,
@@ -43,6 +48,8 @@ function RouteComponent() {
 
         },
     });
+
+
     return (
         <div className="flex justify-center p-4 md:p-10 dark:bg-slate-950 min-h-screen">
             <Card className="max-w-3xl w-full">
@@ -87,10 +94,10 @@ function RouteComponent() {
                                     children={(field) => (
                                         <Field>
                                             <FieldLabel>Job Type</FieldLabel>
-                                            <Select value={field.state.value.toString()}
-                                                onValueChange={(value: any) => {
-                                                    field.handleChange((value))
-                                                }}>
+                                            <Select
+                                                value={field.state.value.toString()}
+                                                onValueChange={(value: any) => field.handleChange(value)}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select type" />
                                                 </SelectTrigger>
@@ -103,29 +110,69 @@ function RouteComponent() {
                                     )}
                                 />
 
-                                {/* Location Dropdown (India States) */}
+                                {/* Multi-Select Location Dropdown */}
                                 <form.Field
                                     name="locations"
                                     children={(field) => {
                                         const isInvalid = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+
+                                        const selectedValues = new Set(field.state.value || []);
+
+                                        const toggleLocation = (location: string) => {
+                                            const nextValue = new Set(selectedValues);
+                                            if (nextValue.has(location)) {
+                                                nextValue.delete(location);
+                                            } else {
+                                                nextValue.add(location);
+                                            }
+                                            field.handleChange(Array.from(nextValue));
+                                        };
+
                                         return (
                                             <Field data-invalid={isInvalid}>
-                                                <FieldLabel>Work Location (State)</FieldLabel>
-                                                <Select value={field.state.value.toString()}
-                                                    onValueChange={(value: any) => {
-                                                        field.handleChange((value))
-                                                    }}>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select State" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {indianStates.map((state) => (
-                                                            <SelectItem key={state} value={state}>
-                                                                {state}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                <FieldLabel>Work Locations (States)</FieldLabel>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="w-full justify-between h-auto min-h-10 px-3 py-2"
+                                                        >
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {selectedValues.size > 0 ? (
+                                                                    indianStates
+                                                                        .filter(s => selectedValues.has(s))
+                                                                        .map(s => (
+                                                                            <Badge key={s} variant="secondary" className="font-normal">
+                                                                                {s}
+                                                                            </Badge>
+                                                                        ))
+                                                                ) : (
+                                                                    <span className="text-muted-foreground">Select States</span>
+                                                                )}
+                                                            </div>
+                                                            <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                                                        <Command>
+                                                            <CommandInput placeholder="Search states..." />
+                                                            {/* IMPORTANT: CommandList MUST be here */}
+                                                            <CommandList>
+                                                                <CommandEmpty>No state found.</CommandEmpty>
+                                                                <CommandGroup>
+                                                                    {indianStates.map((state) => (
+                                                                        <CommandItem
+                                                                            key={state}
+                                                                            onSelect={() => toggleLocation(state)}
+                                                                        >
+                                                                            {state}
+                                                                        </CommandItem>
+                                                                    ))}
+                                                                </CommandGroup>
+                                                            </CommandList>
+                                                        </Command>
+                                                    </PopoverContent>
+                                                </Popover>
                                                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
                                             </Field>
                                         );
@@ -138,17 +185,19 @@ function RouteComponent() {
                                 name="jobDescription"
                                 children={(field) => {
                                     const isInvalid = field.state.meta.isTouched && field.state.meta.errors.length > 0;
-                                    return (<Field>
-                                        <FieldLabel htmlFor={field.name}>Job Description</FieldLabel>
-                                        <Textarea
-                                            id={field.name}
-                                            value={field.state.value}
-                                            onChange={(e) => field.handleChange(e.target.value)}
-                                            placeholder="Describe responsibilities and requirements..."
-                                            className="min-h-[120px]"
-                                        />
-                                        {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                                    </Field>)
+                                    return (
+                                        <Field data-invalid={isInvalid}>
+                                            <FieldLabel htmlFor={field.name}>Job Description</FieldLabel>
+                                            <Textarea
+                                                id={field.name}
+                                                value={field.state.value}
+                                                onChange={(e) => field.handleChange(e.target.value)}
+                                                placeholder="Describe responsibilities and requirements..."
+                                                className="min-h-[120px]"
+                                            />
+                                            {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                                        </Field>
+                                    )
                                 }}
                             />
 
