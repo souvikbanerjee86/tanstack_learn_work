@@ -70,7 +70,7 @@ export const interactWithAgent = createServerFn({ method: 'POST' })
             }
             queryInput = {
                 text: {
-                    text: returnResponse.text!.length > 250 ? returnResponse.text!.slice(0, 250) : returnResponse.text,
+                    text: returnResponse.text!.length > 250 ? "CHECK_PARAMS" : returnResponse.text,
                 },
                 languageCode,
             };
