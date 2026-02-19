@@ -11,3 +11,12 @@ export const signupSchema = z.object({
     password: z.string().min(8),
     confirmPassword: z.string().min(8),
 })
+
+export const jobPostSchema = z.object({
+    jobTitle: z.string().min(2),
+    jobType: z.enum(['fulltime', 'parttime']),
+    jobDescription: z.string().min(100),
+    startDate: z.string(),
+    endDate: z.string(),
+    locations: z.array(z.string()).min(1),
+})
