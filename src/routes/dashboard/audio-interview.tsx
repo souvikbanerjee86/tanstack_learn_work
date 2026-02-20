@@ -6,11 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { getUserFn } from '@/lib/auth';
+import { NavUserProps } from '@/lib/types';
 export const Route = createFileRoute('/dashboard/audio-interview')({
+    loader: async () => {
+        const user = await getUserFn()
+        return { user }
+    },
     component: RouteComponent,
 })
 
 function RouteComponent() {
+    const { user }: { user: NavUserProps } = Route.useLoaderData()
+    console.log(user.user_id)
     const [messages, setMessages] = useState<{ role: string; text: string }[]>([]);
     const [inputText, setInputText] = useState('');
     const [isRecording, setIsRecording] = useState(false);
@@ -28,8 +36,8 @@ function RouteComponent() {
         }
     }, [messages]);
     useEffect(() => {
-        setSessionId(crypto.randomUUID())
-    }, [])
+        setSessionId(user.user_id.concat("#").concat(user.email))
+    }, [user])
 
     const handleResponse = (response: { text: string; audio: string | null }) => {
 

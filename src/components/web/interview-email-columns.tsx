@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { CandidateRecord } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { useNavigate } from "@tanstack/react-router"
 
 
 export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
@@ -73,6 +74,7 @@ export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
+            const navigate = useNavigate()
 
             return (
                 <DropdownMenu>
@@ -84,7 +86,15 @@ export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>View details</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() =>
+                            navigate({
+                                to: '/dashboard/interview/$id',
+                                params: { id: row.original.job_id },
+                                search: {
+                                    email: row.original.candidate_email
+                                }
+                            })
+                        }>View details</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
