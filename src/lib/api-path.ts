@@ -35,5 +35,9 @@ export const API_PATH = {
     SPEECH_TO_TEXT: {
         GET_BASE_URL: "https://speech-to-text-api-git-820672860724.europe-west1.run.app",
         PATH_URL: "/api/transcribe-v2"
+    },
+    CANDIDATE_INTERVIEW_ANSWER_LIST: {
+        GET_BASE_URL: "https://interview-answer-list-api-git-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/answers"
     }
 }
