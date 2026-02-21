@@ -134,3 +134,28 @@ export interface EvaluationResponse {
     count: number;
     data: EvaluationData[];
 }
+
+export interface AnalysisResult {
+    conclusion?: "Human" | "AI-generated" | string;
+    reasoning?: string;
+    confidence_score?: number;
+}
+
+export interface InterviewRecord {
+    gcs_uri: string;
+    bucket_name: string;
+    status: "success" | "failed" | string;
+    file_name: string;
+    job_id: string;
+    analysis_result?: AnalysisResult;
+    timestamp: string;
+    candidate: string;
+    session_id: string;
+    id: string;
+}
+
+export interface InterviewVoiceOutcomeResponse {
+    success: boolean;
+    count: number;
+    data: InterviewRecord[];
+}
