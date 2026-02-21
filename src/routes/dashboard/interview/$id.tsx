@@ -76,11 +76,11 @@ function RouteComponent() {
                                 </SheetDescription>
                             </SheetHeader>
                             <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-                                {/* Scrollable Container */}
+
                                 {voiceAnswers.data.map((data, index) => (
 
                                     <div key={index}>
-                                        {/* Section 1: Conclusion & Confidence */}
+
                                         <div className="space-y-4">
                                             <h4 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                                                 <BrainCircuit className="w-4 h-4" /> AI Verdict
@@ -101,7 +101,6 @@ function RouteComponent() {
                                             </div>
                                         </div>
 
-                                        {/* Section 2: Technical Reasoning (Long Text) */}
                                         <div className="space-y-3">
                                             <h4 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                                                 <FileSearch className="w-4 h-4" /> Forensic Reasoning
@@ -113,7 +112,7 @@ function RouteComponent() {
                                             </div>
                                         </div>
 
-                                        {/* Section 3: Metadata & Storage */}
+
                                         <div className="space-y-4">
                                             <h4 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                                                 <Database className="w-4 h-4" /> File & Session Info
@@ -142,7 +141,7 @@ function RouteComponent() {
                                             </div>
                                         </div>
 
-                                        {/* Section 4: Action Button */}
+
                                         <div className="pt-4">
                                             <Button variant="outline" className="w-full gap-2" asChild>
                                                 <a href={data.gcs_uri.replace('gs://', 'https://storage.googleapis.com/')} target="_blank" rel="noreferrer">
