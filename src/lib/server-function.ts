@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord } from './types';
 
 const auth = new GoogleAuth();
 
@@ -205,6 +205,38 @@ export const getDownloadURL = createServerFn({ method: 'GET' })
             return finalData as { download_url: string };
         } catch (e) {
             return { "download_url": null }
+        }
+
+
+    })
+
+
+export const getInterviewAnswersList = createServerFn({ method: 'GET' })
+    .inputValidator((data: { candidate: string, job_id: string }) => data)
+    .handler(async ({ data }): Promise<EvaluationResponse> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.CANDIDATE_INTERVIEW_ANSWER_LIST.GET_BASE_URL);
+        const url = API_PATH.CANDIDATE_INTERVIEW_ANSWER_LIST.GET_BASE_URL + API_PATH.CANDIDATE_INTERVIEW_ANSWER_LIST.PATH_URL;
+
+
+        const postData = {
+            "candidate": data.candidate,
+            "job_id": data.job_id
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'POST',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            return finalData as EvaluationResponse;
+        } catch (e) {
+            return { "success": false, "count": 0, "data": [] }
         }
 
 

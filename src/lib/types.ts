@@ -110,3 +110,27 @@ export interface CandidatePaginationResponse {
     next_cursor: string | null;
     data: CandidateRecord[];
 }
+
+export interface EvaluationData {
+    id: string;
+    question: string;
+    answer: string;
+    candidate: string;
+    job_id: string;
+    createdAt: string | Date;
+    evaluated_at: string | Date;
+    answer_evaluation: boolean;
+    voice_evaluation: boolean;
+    text_evaluation: boolean;
+
+    ai_verdict?: string;
+    domain?: string;
+    reasoning?: string;
+    score?: number;
+}
+
+export interface EvaluationResponse {
+    success: boolean;
+    count: number;
+    data: EvaluationData[];
+}
