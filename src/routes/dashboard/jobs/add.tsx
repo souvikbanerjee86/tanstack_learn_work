@@ -9,18 +9,20 @@ import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { createJob } from '@/lib/server-function';
 import { jobPostSchema } from '@/schemas/auth';
 import { useForm } from '@tanstack/react-form';
-import { createFileRoute } from '@tanstack/react-router'
-import { Check, ChevronDown } from 'lucide-react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { ChevronDown } from 'lucide-react';
+import { useTransition } from 'react';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/dashboard/jobs/add')({
     component: RouteComponent,
 })
 
 function RouteComponent() {
-
+    const navigate = useNavigate()
     const indianStates = [
         "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
         "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
@@ -30,9 +32,11 @@ function RouteComponent() {
         "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
         "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
     ];
+    const [isPending, startTransition] = useTransition()
 
     const form = useForm({
         defaultValues: {
+            jobId: "",
             jobTitle: "",
             jobType: "fulltime" as "fulltime" | "parttime",
             locations: [] as string[],
@@ -44,8 +48,16 @@ function RouteComponent() {
             onSubmit: jobPostSchema,
         },
         onSubmit: async ({ value }) => {
-            console.log(value)
-
+            startTransition(async () => {
+                try {
+                    await createJob({ data: { jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate } });
+                    toast.success("Job created successfully")
+                    navigate({ to: "/dashboard/jobs" })
+                } catch (error: any) {
+                    toast.error(error.message)
+                    console.log(error)
+                }
+            })
         },
     });
 
@@ -66,6 +78,26 @@ function RouteComponent() {
                         }}
                     >
                         <FieldGroup className="space-y-6">
+                            {/* Job Id */}
+                            <form.Field
+                                name="jobId"
+                                children={(field) => {
+                                    const isInvalid = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+                                    return (
+                                        <Field data-invalid={isInvalid}>
+                                            <FieldLabel htmlFor={field.name}>Job Id</FieldLabel>
+                                            <Input
+                                                id={field.name}
+                                                value={field.state.value}
+                                                onBlur={field.handleBlur}
+                                                onChange={(e) => field.handleChange(e.target.value)}
+                                                placeholder="e.g. DATA-ENGINEER-001"
+                                            />
+                                            {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                                        </Field>
+                                    );
+                                }}
+                            />
                             {/* Job Title */}
                             <form.Field
                                 name="jobTitle"
@@ -223,7 +255,7 @@ function RouteComponent() {
                                 />
                             </div>
 
-                            <Button type="submit" className="w-full">Post Job</Button>
+                            <Button disabled={isPending} type="submit" className="w-full">{isPending ? "Creating Job..." : "Post Job"}</Button>
                         </FieldGroup>
                     </form>
                 </CardContent>

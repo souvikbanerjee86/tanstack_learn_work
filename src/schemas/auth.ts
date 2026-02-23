@@ -13,6 +13,7 @@ export const signupSchema = z.object({
 })
 
 export const jobPostSchema = z.object({
+    jobId: z.string().min(2),
     jobTitle: z.string().min(2),
     jobType: z.enum(['fulltime', 'parttime']),
     jobDescription: z.string().min(100),

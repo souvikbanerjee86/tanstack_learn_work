@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, InterviewVoiceOutcomeResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord } from './types';
 
 const auth = new GoogleAuth();
 
@@ -269,6 +269,43 @@ export const getInterviewVoiceAnswersList = createServerFn({ method: 'GET' })
             return finalData as InterviewVoiceOutcomeResponse;
         } catch (e) {
             return { "success": false, "count": 0, "data": [] }
+        }
+
+
+    })
+
+
+export const createJob = createServerFn({ method: 'POST' })
+    .inputValidator((data: JobPosting) => data)
+    .handler(async ({ data }): Promise<{ "id": string, "message": string }> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.ADD_JOB.GET_BASE_URL);
+        const url = API_PATH.ADD_JOB.GET_BASE_URL + API_PATH.ADD_JOB.PATH_URL;
+
+
+        const postData = {
+            "jobId": data.jobId,
+            "jobTitle": data.jobTitle,
+            "jobDescription": data.jobDescription,
+            "jobType": data.jobType,
+            "startDate": data.startDate,
+            "endDate": data.endDate,
+            "location": data.locations
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'POST',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            return finalData as { "id": "", "message": "" };
+        } catch (e) {
+            return { "id": "", "message": "" };
         }
 
 
