@@ -159,3 +159,14 @@ export interface InterviewVoiceOutcomeResponse {
     count: number;
     data: InterviewRecord[];
 }
+
+export interface JobPosting {
+    jobId: string;
+    jobTitle: string;
+    jobDescription: string;
+
+    jobType: 'fulltime' | 'parttime' | 'contract' | 'internship';
+    startDate: string;
+    endDate: string;
+    locations: string[];
+}

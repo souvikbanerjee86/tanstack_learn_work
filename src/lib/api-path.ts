@@ -43,5 +43,9 @@ export const API_PATH = {
     CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST: {
         GET_BASE_URL: "https://interview-voice-outcome-list-api-git-820672860724.europe-west1.run.app",
         PATH_URL: "/api/voice-answers"
+    },
+    ADD_JOB: {
+        GET_BASE_URL: "https://add-job-api-git-820672860724.europe-west1.run.app",
+        PATH_URL: "/jobs"
     }
 }
