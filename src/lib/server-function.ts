@@ -284,13 +284,13 @@ export const createJob = createServerFn({ method: 'POST' })
 
 
         const postData = {
-            "jobId": data.jobId,
             "jobTitle": data.jobTitle,
             "jobDescription": data.jobDescription,
             "jobType": data.jobType,
+            "locations": data.locations,
             "startDate": data.startDate,
             "endDate": data.endDate,
-            "location": data.locations
+            "jobId": data.jobId
         }
         const sendData = JSON.stringify(postData)
         try {
@@ -303,10 +303,28 @@ export const createJob = createServerFn({ method: 'POST' })
                 },
             });
             const finalData = await response.data;
-            return finalData as { "id": "", "message": "" };
+            console.log(finalData)
+            return finalData as { "id": string, "message": string }
         } catch (e) {
             return { "id": "", "message": "" };
         }
 
+    })
 
+export const verifyFaceRecognition = createServerFn({ method: 'POST' })
+    .inputValidator((data: { capturedImageBase64: string, referenceImageBase64: string }) => data)
+    .handler(async ({ data }): Promise<{ "success": boolean, "message": string, "matchScore": number }> => {
+        // mock server behavior as asked in the prompt: it should not call an external API
+        // but the function should have the captured image and reference image as base64 version
+        console.log("Captured Image Base64 length:", data.capturedImageBase64.length);
+        console.log("Reference Image Base64 length:", data.referenceImageBase64.length);
+
+        // Simulating a delay and a successful match
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        return {
+            success: true,
+            message: "Face recognition successful. Match found.",
+            matchScore: 98.5
+        }
     })
