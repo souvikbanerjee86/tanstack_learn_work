@@ -47,5 +47,9 @@ export const API_PATH = {
     ADD_JOB: {
         GET_BASE_URL: "https://add-job-api-git-820672860724.europe-west1.run.app",
         PATH_URL: "/jobs"
+    },
+    FACE_DETECTION: {
+        GET_BASE_URL: "https://face-detection-api-git-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/match"
     }
 }
