@@ -1,5 +1,5 @@
 import { interactWithAgent } from '@/lib/dialogflow-server';
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Send, Mic, Bot, User, Clock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,10 @@ import { getUserFn } from '@/lib/auth';
 import { NavUserProps } from '@/lib/types';
 
 export const Route = createFileRoute('/dashboard/audio-interview')({
-    loader: async () => {
+    loader: async ({ location }: any) => {
+        if (!location.state?.match) {
+            throw redirect({ to: '/dashboard/detection' })
+        }
         const user = await getUserFn()
         return { user }
     },
