@@ -1,15 +1,11 @@
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+
 import { AnswerOutcome } from '@/components/web/answer-outcome'
 import { AudioOutcome } from '@/components/web/audio-outcome'
 import { NoEvaluation } from '@/components/web/no-evaluation'
 import { getInterviewAnswersList, getInterviewVoiceAnswersList } from '@/lib/server-function'
 import { EvaluationResponse, InterviewVoiceOutcomeResponse } from '@/lib/types'
 import { createFileRoute } from '@tanstack/react-router'
-import { BrainCircuit, Briefcase, Calendar, CheckCircle2, Database, ExternalLink, FileSearch, Info, Mail, Quote, ShieldCheck, User, XCircle } from 'lucide-react'
+import { Briefcase } from 'lucide-react'
 
 
 export const Route = createFileRoute('/dashboard/interview/$id')({
