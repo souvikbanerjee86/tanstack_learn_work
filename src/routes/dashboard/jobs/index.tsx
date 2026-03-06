@@ -14,8 +14,9 @@ export const jobsQueryOptions = queryOptions({
 })
 
 export const Route = createFileRoute('/dashboard/jobs/')({
-  loader: ({ context }) =>
-    context.queryClient.prefetchQuery(jobsQueryOptions),
+  loader: ({ context }) => {
+    void context.queryClient.prefetchQuery(jobsQueryOptions)
+  },
   component: RouteComponent,
 })
 
