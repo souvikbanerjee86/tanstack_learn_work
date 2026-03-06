@@ -101,10 +101,6 @@ export const getJobDetails = createServerFn({ method: 'GET' })
     .inputValidator((data: { limit: number | null, status: string | null, last_doc_id: string | null }) => data)
     .handler(async ({ data }): Promise<PaginatedJobResponse> => {
 
-        setTimeout(() => { }, 2000)
-
-        console.log("AFTER TIME OUT ")
-
         console.log(API_PATH.JOB_DETAILS.GET_BASE_URL)
         const client = await auth.getIdTokenClient(API_PATH.JOB_DETAILS.GET_BASE_URL);
         var url = API_PATH.JOB_DETAILS.GET_BASE_URL + API_PATH.JOB_DETAILS.PATH_URL;
