@@ -13,8 +13,9 @@ export const interviewQueryOptions = queryOptions({
 })
 
 export const Route = createFileRoute('/dashboard/interview/')({
-    loader: ({ context }) =>
-        context.queryClient.prefetchQuery(interviewQueryOptions),
+    loader: ({ context }) => {
+        void context.queryClient.prefetchQuery(interviewQueryOptions)
+    },
     component: RouteComponent,
 })
 
