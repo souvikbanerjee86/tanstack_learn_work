@@ -2,9 +2,14 @@ import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/web/app-sidebar'
 import { getUserFn } from '@/lib/auth'
+import { userRoleQueryOptions } from '@/lib/server-function'
 import { NavUserProps } from '@/lib/types'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 export const Route = createFileRoute('/dashboard')({
+    beforeLoad: async ({ context }) => {
+        const role = await context.queryClient.ensureQueryData(userRoleQueryOptions)
+        return { role }
+    },
     component: RouteComponent,
     loader: async () => {
         const user = await getUserFn()
@@ -14,6 +19,7 @@ export const Route = createFileRoute('/dashboard')({
 
 function RouteComponent() {
     const user: NavUserProps = Route.useLoaderData()
+
     return (
         <SidebarProvider>
             <AppSidebar user={user} />

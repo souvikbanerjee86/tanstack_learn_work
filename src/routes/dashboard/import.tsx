@@ -2,6 +2,7 @@ import { fetchBucketListInfo, getDownloadURL, getProcessedIndexFilesId, triggerI
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { ChevronRight, DownloadIcon, FileIcon, FolderIcon } from "lucide-react"
 import { Button } from '@/components/ui/button';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import {
   Collapsible,
   CollapsibleContent,
@@ -15,24 +16,49 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { ImportPageCard } from '@/components/web/import-page-card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DashboardSkeleton } from '@/components/web/dashboard-skeleton';
+
+export const bucketListQueryOptions = queryOptions({
+  queryKey: ['buckets'],
+  queryFn: () => fetchBucketListInfo(),
+})
+
+export const processedIndexQueryOptions = queryOptions({
+  queryKey: ['processed-index'],
+  queryFn: () => getProcessedIndexFilesId(),
+})
+
 export const Route = createFileRoute('/dashboard/import')({
+  beforeLoad: ({ context }) => {
+    return { role: context.role.role }
+  },
   component: RouteComponent,
-  loader: async () => {
-    const [data, processedIndexFiles] = await Promise.all([
-      fetchBucketListInfo(),
-      getProcessedIndexFilesId()
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(bucketListQueryOptions),
+      context.queryClient.ensureQueryData(processedIndexQueryOptions),
     ])
-    return { data, processedIndexFiles };
   },
   staleTime: 0
 })
 
 function RouteComponent() {
+
+
+  return (
+    <Suspense fallback={<DashboardSkeleton />}>
+      <ImportContent />
+    </Suspense>)
+}
+
+function ImportContent() {
   const router = useRouter()
-  const { data: { root_folders }, processedIndexFiles } = Route.useLoaderData()
+  const { role } = Route.useRouteContext()
+  const { data: { root_folders } } = useSuspenseQuery(bucketListQueryOptions)
+  const { data: processedIndexFiles } = useSuspenseQuery(processedIndexQueryOptions)
   const [loading, setLoading] = useState<boolean>(false);
   const [downloading, setDownloading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -79,69 +105,71 @@ function RouteComponent() {
       setDownloading(false)
     }
   }
+  return (
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
 
-  return (<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-    <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+        {processedIndexFiles && <ImportPageCard cardDescription="Total Processed Indexes" processedCount={processedIndexFiles.length} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
+        {processedIndexFiles && <ImportPageCard cardDescription="Total Processed Files" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
+        {processedIndexFiles && <ImportPageCard cardDescription="Last Processed Index" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
 
-      {processedIndexFiles && <ImportPageCard cardDescription="Total Processed Indexes" processedCount={processedIndexFiles.length} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
-      {processedIndexFiles && <ImportPageCard cardDescription="Total Processed Files" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
-      {processedIndexFiles && <ImportPageCard cardDescription="Last Processed Index" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
+      </div>
+      <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min ">
+        <div className="p-6 space-y-8">
+          {root_folders.map((folder) => (
+            <Collapsible key={folder.name} defaultOpen className="group space-y-4">
 
-    </div>
-    <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min ">
-      <div className="p-6 space-y-8">
-        {root_folders.map((folder) => (
-          <Collapsible key={folder.name} defaultOpen className="group space-y-4">
-
-            {/* Header / Trigger */}
-            <div className="flex items-center justify-between space-x-4 px-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <FolderIcon className="h-5 w-5 text-blue-500" />
-                {folder.name}
-                <span className="text-xs font-normal text-muted-foreground ml-2">
-                  ({folder.files.length} files)
-                  <Button size="xs" onClick={() => triggeringIndexCreation(folder.name)} disabled={loading}>{loading ? "Importing strated please wait..." : "Import"}</Button>
-                </span>
-              </h3>
-              <CollapsibleTrigger asChild>
-                <button className="p-2 hover:bg-secondary rounded-md transition-all duration-200 group-data-[state=open]:rotate-90">
-                  <ChevronRight className="h-4 w-4" />
-                  <span className="sr-only">Toggle</span>
-                </button>
-              </CollapsibleTrigger>
-            </div>
-
-            {/* Grid Content */}
-            <CollapsibleContent className="transition-all data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
-                {folder.files.map((file, idx) => (
-                  file.name.length > 0 ?
-                    <Card key={idx} className="hover:ring-1 hover:ring-primary transition-all">
-                      <CardHeader className="flex flex-row items-center space-x-3 pb-2">
-                        <FileIcon className="h-5 w-5 text-muted-foreground" />
-                        <CardTitle className="text-sm truncate">{file.name}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-[10px] text-muted-foreground break-all line-clamp-1">
-                          {file.full_path}
-                        </p>setLoading
-                      </CardContent>
-                      <CardFooter className="flex justify-between items-center pt-2">
-                        <span className="text-xs font-mono">{formatSize(file.size)}</span>
-                        <Button disabled={downloading} size="sm" variant="outline" onClick={() => downlaodUrl(file.full_path)}>
-                          <DownloadIcon className="mr-2 h-4 w-3" />
-                          Download Resume
-                        </Button>
-
-                      </CardFooter>
-                    </Card> : null
-                ))}
+              {/* Header / Trigger */}
+              <div className="flex items-center justify-between space-x-4 px-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <FolderIcon className="h-5 w-5 text-blue-500" />
+                  {folder.name}
+                  <span className="text-xs font-normal text-muted-foreground ml-2">
+                    ({folder.files.length} files)
+                    {role === "admin" && <Button size="xs" onClick={() => triggeringIndexCreation(folder.name)} disabled={loading}>{loading ? "Importing strated please wait..." : "Import"}</Button>}
+                  </span>
+                </h3>
+                <CollapsibleTrigger asChild>
+                  <button className="p-2 hover:bg-secondary rounded-md transition-all duration-200 group-data-[state=open]:rotate-90">
+                    <ChevronRight className="h-4 w-4" />
+                    <span className="sr-only">Toggle</span>
+                  </button>
+                </CollapsibleTrigger>
               </div>
-            </CollapsibleContent>
 
-          </Collapsible>
-        ))}
+              {/* Grid Content */}
+              <CollapsibleContent className="transition-all data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
+                  {folder.files.map((file, idx) => (
+                    file.name.length > 0 ?
+                      <Card key={idx} className="hover:ring-1 hover:ring-primary transition-all">
+                        <CardHeader className="flex flex-row items-center space-x-3 pb-2">
+                          <FileIcon className="h-5 w-5 text-muted-foreground" />
+                          <CardTitle className="text-sm truncate">{file.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-[10px] text-muted-foreground break-all line-clamp-1">
+                            {file.full_path}
+                          </p>setLoading
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center pt-2">
+                          <span className="text-xs font-mono">{formatSize(file.size)}</span>
+                          <Button disabled={downloading} size="sm" variant="outline" onClick={() => downlaodUrl(file.full_path)}>
+                            <DownloadIcon className="mr-2 h-4 w-3" />
+                            Download Resume
+                          </Button>
 
+                        </CardFooter>
+                      </Card> : null
+                  ))}
+                </div>
+              </CollapsibleContent>
+
+            </Collapsible>
+          ))}
+
+
+        </div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
 
           <DialogContent className='sm:max-w-[50vw]'>
@@ -162,8 +190,8 @@ function RouteComponent() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
 
+      </div>
     </div>
-  </div>)
+  )
 }

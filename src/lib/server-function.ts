@@ -3,7 +3,8 @@ import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
 import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse } from './types';
-
+import { isLoginMiddleware } from './middleware';
+import { queryOptions } from '@tanstack/react-query'
 const auth = new GoogleAuth();
 
 export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(async (): Promise<BucketListResponse> => {
@@ -344,10 +345,15 @@ export const verifyFaceRecognition = createServerFn({ method: 'POST' })
 
 
 export const getUserRole = createServerFn({ method: 'GET' })
-    .inputValidator((data: { user_id: string }) => data)
-    .handler(async ({ data }): Promise<UserRoleResponse> => {
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: { user_id: string | null }) => data)
+    .handler(async ({ data, context }): Promise<UserRoleResponse> => {
 
         console.log(API_PATH.USER_ROLE.GET_BASE_URL)
+        if (data.user_id === null) {
+            data.user_id = context?.userInfo?.user_id as string;
+        }
+
         const client = await auth.getIdTokenClient(API_PATH.USER_ROLE.GET_BASE_URL);
         var url = API_PATH.USER_ROLE.GET_BASE_URL + API_PATH.USER_ROLE.PATH_URL + data.user_id;
         try {
@@ -362,3 +368,9 @@ export const getUserRole = createServerFn({ method: 'GET' })
         }
 
     })
+
+export const userRoleQueryOptions = queryOptions({
+    queryKey: ['userRole'],
+    queryFn: () => getUserRole({ data: { user_id: null } }),
+    staleTime: Infinity,
+})
