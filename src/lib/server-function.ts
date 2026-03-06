@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse } from './types';
 
 const auth = new GoogleAuth();
 
@@ -338,6 +338,27 @@ export const verifyFaceRecognition = createServerFn({ method: 'POST' })
             return finalData as { "score": number, "message": string, "match": boolean }
         } catch (e) {
             return { "score": 0, "message": "", "match": false };
+        }
+
+    })
+
+
+export const getUserRole = createServerFn({ method: 'GET' })
+    .inputValidator((data: { user_id: string }) => data)
+    .handler(async ({ data }): Promise<UserRoleResponse> => {
+
+        console.log(API_PATH.USER_ROLE.GET_BASE_URL)
+        const client = await auth.getIdTokenClient(API_PATH.USER_ROLE.GET_BASE_URL);
+        var url = API_PATH.USER_ROLE.GET_BASE_URL + API_PATH.USER_ROLE.PATH_URL + data.user_id;
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'GET',
+            });
+            const returnData = await response.data;
+            return returnData as UserRoleResponse;
+        } catch (e) {
+            return { "user_id": "", "role": "" };
         }
 
     })

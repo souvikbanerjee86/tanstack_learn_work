@@ -51,5 +51,9 @@ export const API_PATH = {
     FACE_DETECTION: {
         GET_BASE_URL: "https://face-detection-api-git-820672860724.europe-west1.run.app",
         PATH_URL: "/api/match"
+    },
+    USER_ROLE: {
+        GET_BASE_URL: "https://user-role-api-820672860724.europe-west1.run.app",
+        PATH_URL: "/user/role/"
     }
 }

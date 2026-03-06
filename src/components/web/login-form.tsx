@@ -24,6 +24,7 @@ import { loginFn } from "@/lib/auth"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { toast } from "sonner"
 import { useTransition } from "react"
+import { getUserRole } from "@/lib/server-function"
 
 export function LoginForm() {
     const navigate = useNavigate()
@@ -43,9 +44,11 @@ export function LoginForm() {
                     const user = userCredential.user;
                     const idToken = await user.getIdToken();
                     const res = await loginFn({ data: idToken });
+                    const roleResponse = await getUserRole({ data: { user_id: user.uid } });
+                    alert(roleResponse)
                     console.log(res);
                     toast.success("Login successful")
-                    navigate({ to: "/" })
+                    // navigate({ to: "/" })
                 } catch (error: any) {
                     const errorMessage = error.message;
                     toast.error(errorMessage)
@@ -61,6 +64,8 @@ export function LoginForm() {
             const result = await signInWithPopup(auth, provider);
             const idToken = await result.user.getIdToken();
             await loginFn({ data: idToken });
+            const roleResponse = await getUserRole({ data: { user_id: result.user.uid } });
+            console.log(roleResponse)
             toast.success("Login successful")
             navigate({ to: "/" })
         } catch (error: any) {
