@@ -170,3 +170,8 @@ export interface JobPosting {
     endDate: string;
     locations: string[];
 }
+
+export interface UserRoleResponse {
+    user_id: string;
+    role: string | null;
+}
