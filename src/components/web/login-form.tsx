@@ -26,6 +26,7 @@ import { toast } from "sonner"
 import { useTransition } from "react"
 import { getUserRole } from "@/lib/server-function"
 
+
 export function LoginForm() {
     const navigate = useNavigate()
     const [isPending, startTransition] = useTransition()
@@ -43,12 +44,12 @@ export function LoginForm() {
                     const userCredential = await signInWithEmailAndPassword(auth, value.email, value.password);
                     const user = userCredential.user;
                     const idToken = await user.getIdToken();
-                    const res = await loginFn({ data: idToken });
+                    await loginFn({ data: idToken });
                     const roleResponse = await getUserRole({ data: { user_id: user.uid } });
-                    alert(roleResponse)
-                    console.log(res);
+                    // if (roleResponse.role != null) {
                     toast.success("Login successful")
-                    // navigate({ to: "/" })
+                    navigate({ to: "/" })
+                    // }
                 } catch (error: any) {
                     const errorMessage = error.message;
                     toast.error(errorMessage)
@@ -158,3 +159,7 @@ export function LoginForm() {
         </Card>
     )
 }
+function queryOptions(arg0: { queryKey: string[]; queryFn: () => any; staleTime: number }) {
+    throw new Error("Function not implemented.")
+}
+

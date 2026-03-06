@@ -30,6 +30,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
   }),
 
+
   component: RootComponent,
   shellComponent: RootDocument,
 })

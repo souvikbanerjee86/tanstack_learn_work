@@ -14,6 +14,9 @@ export const jobsQueryOptions = queryOptions({
 })
 
 export const Route = createFileRoute('/dashboard/jobs/')({
+  beforeLoad: ({ context }) => {
+    return { role: context.role.role }
+  },
   loader: ({ context }) => {
     void context.queryClient.prefetchQuery(jobsQueryOptions)
   },
@@ -29,15 +32,17 @@ function RouteComponent() {
 }
 
 function JobContent() {
+  const { role } = Route.useRouteContext()
   const { data } = useSuspenseQuery(jobsQueryOptions)
 
   return (
     <div className="container max-w-full">
       <div className="flex justify-between items-center mb-4">
         <p className="text-2xl font-semibold">Job Details</p>
-        <Link to='/dashboard/jobs/add'>
-          <Button>Add Job</Button>
-        </Link>
+        {role === "admin" &&
+          <Link to='/dashboard/jobs/add'>
+            <Button>Add Job</Button>
+          </Link>}
       </div>
       <DataTable columns={columns} data={data.data} />
     </div>
