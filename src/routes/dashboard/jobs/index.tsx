@@ -1,6 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
+import { Suspense } from 'react'
 
+import { columns } from "@/components/web/columns"
+import { DataTable } from "@/components/web/data-table"
+import { getJobDetails } from '@/lib/server-function'
+import { Button } from '@/components/ui/button'
+import { JobTableSkeleton } from '@/components/web/Job-table-skeleton'
 
 export const jobsQueryOptions = queryOptions({
   queryKey: ['jobs'],
@@ -8,26 +14,24 @@ export const jobsQueryOptions = queryOptions({
 })
 
 export const Route = createFileRoute('/dashboard/jobs/')({
-
   loader: ({ context }) =>
-    context.queryClient.ensureQueryData(jobsQueryOptions),
+    context.queryClient.prefetchQuery(jobsQueryOptions),
   component: RouteComponent,
 })
 
-
-import { columns } from "@/components/web/columns"
-import { DataTable } from "@/components/web/data-table"
-import { getJobDetails } from '@/lib/server-function'
-import { Button } from '@/components/ui/button'
-import { JobTableSkeleton } from '@/components/web/Job-table-skeleton'
-import { Suspense } from 'react'
-
-
 function RouteComponent() {
+  return (
+    <Suspense fallback={<JobTableSkeleton />}>
+      <JobContent />
+    </Suspense>
+  )
+}
+
+function JobContent() {
   const { data } = useSuspenseQuery(jobsQueryOptions)
 
   return (
-    <Suspense fallback={<JobTableSkeleton />}> <div className="container max-w-full">
+    <div className="container max-w-full">
       <div className="flex justify-between items-center mb-4">
         <p className="text-2xl font-semibold">Job Details</p>
         <Link to='/dashboard/jobs/add'>
@@ -35,7 +39,6 @@ function RouteComponent() {
         </Link>
       </div>
       <DataTable columns={columns} data={data.data} />
-    </div> </Suspense>
-
+    </div>
   )
 }
