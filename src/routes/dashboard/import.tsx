@@ -36,8 +36,8 @@ export const Route = createFileRoute('/dashboard/import')({
     return { role: context.role.role }
   },
   component: RouteComponent,
-  loader: async ({ context }) => {
-    await Promise.all([
+  loader: ({ context }) => {
+    Promise.all([
       context.queryClient.ensureQueryData(bucketListQueryOptions),
       context.queryClient.ensureQueryData(processedIndexQueryOptions),
     ])
