@@ -3,7 +3,8 @@ import {
   BookmarkIcon,
   CompassIcon,
   Import,
-  MailIcon
+  MailIcon,
+  Users
 } from "lucide-react"
 
 import {
@@ -22,6 +23,12 @@ import { Link, linkOptions } from "@tanstack/react-router"
 import { NavPrimaryProps, NavUserProps } from "@/lib/types"
 
 const navItems: NavPrimaryProps['items'] = linkOptions([
+  {
+    title: "Candidates",
+    to: "/dashboard/candidates",
+    icon: Users,
+    activeOptions: { exact: false }
+  },
   {
     title: "Jobs",
     to: "/dashboard/jobs",
