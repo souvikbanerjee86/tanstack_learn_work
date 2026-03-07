@@ -86,12 +86,26 @@ export type JobDetail = {
     status: "Active" | "Inactive" | "Archived";
 }
 
+export type candidate = {
+    id: string;
+    email: string;
+    job_name: string;
+    name: string;
+    resume_url: string;
+    uploaded_at: string;
+}
 
 
 export interface PaginatedJobResponse {
     count: number;
     next_cursor: string | null;
     data: JobDetail[];
+}
+
+export interface PaginatedCandidateResponse {
+    count: number;
+    next_cursor: string | null;
+    data: candidate[];
 }
 
 

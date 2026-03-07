@@ -17,11 +17,13 @@ import { Route as DashboardImportRouteImport } from './routes/dashboard/import'
 import { Route as DashboardDiscoverRouteImport } from './routes/dashboard/discover'
 import { Route as DashboardJobsIndexRouteImport } from './routes/dashboard/jobs/index'
 import { Route as DashboardInterviewIndexRouteImport } from './routes/dashboard/interview/index'
+import { Route as DashboardCandidatesIndexRouteImport } from './routes/dashboard/candidates/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/_auth/signup/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login/index'
 import { Route as DashboardJobsAddRouteImport } from './routes/dashboard/jobs/add'
 import { Route as DashboardJobsIdRouteImport } from './routes/dashboard/jobs/$id'
 import { Route as DashboardInterviewIdRouteImport } from './routes/dashboard/interview/$id'
+import { Route as DashboardCandidatesAddRouteImport } from './routes/dashboard/candidates/add'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
@@ -62,6 +64,12 @@ const DashboardInterviewIndexRoute = DashboardInterviewIndexRouteImport.update({
   path: '/interview/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardCandidatesIndexRoute =
+  DashboardCandidatesIndexRouteImport.update({
+    id: '/candidates/',
+    path: '/candidates/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
   id: '/signup/',
   path: '/signup/',
@@ -87,6 +95,11 @@ const DashboardInterviewIdRoute = DashboardInterviewIdRouteImport.update({
   path: '/interview/$id',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardCandidatesAddRoute = DashboardCandidatesAddRouteImport.update({
+  id: '/candidates/add',
+  path: '/candidates/add',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -94,11 +107,13 @@ export interface FileRoutesByFullPath {
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/candidates/add': typeof DashboardCandidatesAddRoute
   '/dashboard/interview/$id': typeof DashboardInterviewIdRoute
   '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
   '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/login/': typeof AuthLoginIndexRoute
   '/signup/': typeof AuthSignupIndexRoute
+  '/dashboard/candidates/': typeof DashboardCandidatesIndexRoute
   '/dashboard/interview/': typeof DashboardInterviewIndexRoute
   '/dashboard/jobs/': typeof DashboardJobsIndexRoute
 }
@@ -107,11 +122,13 @@ export interface FileRoutesByTo {
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/candidates/add': typeof DashboardCandidatesAddRoute
   '/dashboard/interview/$id': typeof DashboardInterviewIdRoute
   '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
   '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/login': typeof AuthLoginIndexRoute
   '/signup': typeof AuthSignupIndexRoute
+  '/dashboard/candidates': typeof DashboardCandidatesIndexRoute
   '/dashboard/interview': typeof DashboardInterviewIndexRoute
   '/dashboard/jobs': typeof DashboardJobsIndexRoute
 }
@@ -123,11 +140,13 @@ export interface FileRoutesById {
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/candidates/add': typeof DashboardCandidatesAddRoute
   '/dashboard/interview/$id': typeof DashboardInterviewIdRoute
   '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
   '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
   '/_auth/signup/': typeof AuthSignupIndexRoute
+  '/dashboard/candidates/': typeof DashboardCandidatesIndexRoute
   '/dashboard/interview/': typeof DashboardInterviewIndexRoute
   '/dashboard/jobs/': typeof DashboardJobsIndexRoute
 }
@@ -139,11 +158,13 @@ export interface FileRouteTypes {
     | '/dashboard/discover'
     | '/dashboard/import'
     | '/dashboard/'
+    | '/dashboard/candidates/add'
     | '/dashboard/interview/$id'
     | '/dashboard/jobs/$id'
     | '/dashboard/jobs/add'
     | '/login/'
     | '/signup/'
+    | '/dashboard/candidates/'
     | '/dashboard/interview/'
     | '/dashboard/jobs/'
   fileRoutesByTo: FileRoutesByTo
@@ -152,11 +173,13 @@ export interface FileRouteTypes {
     | '/dashboard/discover'
     | '/dashboard/import'
     | '/dashboard'
+    | '/dashboard/candidates/add'
     | '/dashboard/interview/$id'
     | '/dashboard/jobs/$id'
     | '/dashboard/jobs/add'
     | '/login'
     | '/signup'
+    | '/dashboard/candidates'
     | '/dashboard/interview'
     | '/dashboard/jobs'
   id:
@@ -167,11 +190,13 @@ export interface FileRouteTypes {
     | '/dashboard/discover'
     | '/dashboard/import'
     | '/dashboard/'
+    | '/dashboard/candidates/add'
     | '/dashboard/interview/$id'
     | '/dashboard/jobs/$id'
     | '/dashboard/jobs/add'
     | '/_auth/login/'
     | '/_auth/signup/'
+    | '/dashboard/candidates/'
     | '/dashboard/interview/'
     | '/dashboard/jobs/'
   fileRoutesById: FileRoutesById
@@ -240,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardInterviewIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/candidates/': {
+      id: '/dashboard/candidates/'
+      path: '/candidates'
+      fullPath: '/dashboard/candidates/'
+      preLoaderRoute: typeof DashboardCandidatesIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/_auth/signup/': {
       id: '/_auth/signup/'
       path: '/signup'
@@ -275,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardInterviewIdRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/candidates/add': {
+      id: '/dashboard/candidates/add'
+      path: '/candidates/add'
+      fullPath: '/dashboard/candidates/add'
+      preLoaderRoute: typeof DashboardCandidatesAddRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
   }
 }
 
@@ -296,9 +335,11 @@ interface DashboardRouteRouteChildren {
   DashboardDiscoverRoute: typeof DashboardDiscoverRoute
   DashboardImportRoute: typeof DashboardImportRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardCandidatesAddRoute: typeof DashboardCandidatesAddRoute
   DashboardInterviewIdRoute: typeof DashboardInterviewIdRoute
   DashboardJobsIdRoute: typeof DashboardJobsIdRoute
   DashboardJobsAddRoute: typeof DashboardJobsAddRoute
+  DashboardCandidatesIndexRoute: typeof DashboardCandidatesIndexRoute
   DashboardInterviewIndexRoute: typeof DashboardInterviewIndexRoute
   DashboardJobsIndexRoute: typeof DashboardJobsIndexRoute
 }
@@ -307,9 +348,11 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardDiscoverRoute: DashboardDiscoverRoute,
   DashboardImportRoute: DashboardImportRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardCandidatesAddRoute: DashboardCandidatesAddRoute,
   DashboardInterviewIdRoute: DashboardInterviewIdRoute,
   DashboardJobsIdRoute: DashboardJobsIdRoute,
   DashboardJobsAddRoute: DashboardJobsAddRoute,
+  DashboardCandidatesIndexRoute: DashboardCandidatesIndexRoute,
   DashboardInterviewIndexRoute: DashboardInterviewIndexRoute,
   DashboardJobsIndexRoute: DashboardJobsIndexRoute,
 }
