@@ -30,6 +30,10 @@ export const candidateColumns: ColumnDef<candidate>[] = [
         header: "Job Name",
     },
     {
+        accessorKey: "job_id",
+        header: "Job ID",
+    },
+    {
         accessorKey: "uploaded_at",
         header: "Upload Date",
         cell: ({ row }) => {
@@ -48,7 +52,8 @@ export const candidateColumns: ColumnDef<candidate>[] = [
                 name: row.original.name,
                 job_name: row.original.job_name,
                 uploaded_at: format(row.original.uploaded_at, "PPP"),
-                resume_url: row.original.resume_url
+                resume_url: row.original.resume_url,
+                job_id: row.original.job_id,
 
 
             };
@@ -63,12 +68,12 @@ export const candidateColumns: ColumnDef<candidate>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => console.log("clicked")
-                            // navigate({
-                            //     to: '/dashboard/jobs/$id',
-                            //     params: { id: row.original.job_id },
-                            //     state: extraData as any,
-                            // })
+                        <DropdownMenuItem onClick={() =>
+                            navigate({
+                                to: '/dashboard/candidates/$id',
+                                params: { id: row.original.id },
+                                state: extraData as any,
+                            })
                         }>View details</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
