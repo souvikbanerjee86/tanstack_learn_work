@@ -55,5 +55,9 @@ export const API_PATH = {
     USER_ROLE: {
         GET_BASE_URL: "https://user-role-api-820672860724.europe-west1.run.app",
         PATH_URL: "/user/role/"
-    }
+    },
+    CANDIDATE_LIST: {
+        GET_BASE_URL: "https://candidate-list-api-git-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/candidates"
+    },
 }

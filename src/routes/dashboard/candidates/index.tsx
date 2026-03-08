@@ -1,17 +1,15 @@
-import { getJobDetails } from '@/lib/server-function'
+import { getCandidatesList } from '@/lib/server-function'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
-import { JobTableSkeleton } from '@/components/web/Job-table-skeleton'
 import { DataTable } from '@/components/web/data-table'
 import { candidateColumns } from "@/components/web/candidate-columns"
-import { count } from 'console'
-import { PaginatedCandidateResponse } from '@/lib/types'
 import { Button } from '@/components/ui/button'
+import { AppliedCandidatesSkeleton } from '@/components/web/applied-candidates-skeleton'
 
-export const jobsQueryOptions = queryOptions({
-    queryKey: ['jobs'],
-    queryFn: () => getJobDetails({ data: { limit: null, status: null, last_doc_id: null } }),
+export const candidatesQueryOptions = queryOptions({
+    queryKey: ['candidates'],
+    queryFn: () => getCandidatesList({ data: { limit: null, last_doc_id: null } }),
 })
 
 export const Route = createFileRoute('/dashboard/candidates/')({
@@ -19,35 +17,24 @@ export const Route = createFileRoute('/dashboard/candidates/')({
         return { role: context.role.role }
     },
     loader: ({ context }) => {
-        void context.queryClient.prefetchQuery(jobsQueryOptions)
+        void context.queryClient.prefetchQuery(candidatesQueryOptions)
     },
     component: RouteComponent,
 })
 
 function RouteComponent() {
     return (
-        <Suspense fallback={<JobTableSkeleton />}>
-            <JobContent />
+        <Suspense fallback={<AppliedCandidatesSkeleton />}>
+            <CandidatesContent />
         </Suspense>
     )
 }
 
-function JobContent() {
+function CandidatesContent() {
     const { role } = Route.useRouteContext()
-    const { data } = useSuspenseQuery(jobsQueryOptions)
+    const { data } = useSuspenseQuery(candidatesQueryOptions)
 
-    const candiadte: PaginatedCandidateResponse = {
-        count: 1,
-        next_cursor: "",
-        data: [{
-            email: "sss",
-            name: "sss",
-            job_name: "sss",
-            uploaded_at: new Date().toISOString(),
-            resume_url: "sss",
-            id: "ssss"
-        }]
-    }
+
 
     return (
         <div className="container max-w-full">
@@ -58,7 +45,7 @@ function JobContent() {
                         <Button>Add Candidate</Button>
                     </Link>}
             </div>
-            <DataTable columns={candidateColumns} data={candiadte.data} />
+            <DataTable columns={candidateColumns} data={data.data} />
         </div>
     )
 }

@@ -93,6 +93,7 @@ export type candidate = {
     name: string;
     resume_url: string;
     uploaded_at: string;
+    job_id: string;
 }
 
 

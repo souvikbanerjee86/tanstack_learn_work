@@ -24,6 +24,7 @@ import { Route as DashboardJobsAddRouteImport } from './routes/dashboard/jobs/ad
 import { Route as DashboardJobsIdRouteImport } from './routes/dashboard/jobs/$id'
 import { Route as DashboardInterviewIdRouteImport } from './routes/dashboard/interview/$id'
 import { Route as DashboardCandidatesAddRouteImport } from './routes/dashboard/candidates/add'
+import { Route as DashboardCandidatesIdRouteImport } from './routes/dashboard/candidates/$id'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
@@ -100,6 +101,11 @@ const DashboardCandidatesAddRoute = DashboardCandidatesAddRouteImport.update({
   path: '/candidates/add',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardCandidatesIdRoute = DashboardCandidatesIdRouteImport.update({
+  id: '/candidates/$id',
+  path: '/candidates/$id',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/candidates/$id': typeof DashboardCandidatesIdRoute
   '/dashboard/candidates/add': typeof DashboardCandidatesAddRoute
   '/dashboard/interview/$id': typeof DashboardInterviewIdRoute
   '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/candidates/$id': typeof DashboardCandidatesIdRoute
   '/dashboard/candidates/add': typeof DashboardCandidatesAddRoute
   '/dashboard/interview/$id': typeof DashboardInterviewIdRoute
   '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/dashboard/discover': typeof DashboardDiscoverRoute
   '/dashboard/import': typeof DashboardImportRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/candidates/$id': typeof DashboardCandidatesIdRoute
   '/dashboard/candidates/add': typeof DashboardCandidatesAddRoute
   '/dashboard/interview/$id': typeof DashboardInterviewIdRoute
   '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/dashboard/discover'
     | '/dashboard/import'
     | '/dashboard/'
+    | '/dashboard/candidates/$id'
     | '/dashboard/candidates/add'
     | '/dashboard/interview/$id'
     | '/dashboard/jobs/$id'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/dashboard/discover'
     | '/dashboard/import'
     | '/dashboard'
+    | '/dashboard/candidates/$id'
     | '/dashboard/candidates/add'
     | '/dashboard/interview/$id'
     | '/dashboard/jobs/$id'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/dashboard/discover'
     | '/dashboard/import'
     | '/dashboard/'
+    | '/dashboard/candidates/$id'
     | '/dashboard/candidates/add'
     | '/dashboard/interview/$id'
     | '/dashboard/jobs/$id'
@@ -314,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCandidatesAddRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/candidates/$id': {
+      id: '/dashboard/candidates/$id'
+      path: '/candidates/$id'
+      fullPath: '/dashboard/candidates/$id'
+      preLoaderRoute: typeof DashboardCandidatesIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
   }
 }
 
@@ -335,6 +354,7 @@ interface DashboardRouteRouteChildren {
   DashboardDiscoverRoute: typeof DashboardDiscoverRoute
   DashboardImportRoute: typeof DashboardImportRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardCandidatesIdRoute: typeof DashboardCandidatesIdRoute
   DashboardCandidatesAddRoute: typeof DashboardCandidatesAddRoute
   DashboardInterviewIdRoute: typeof DashboardInterviewIdRoute
   DashboardJobsIdRoute: typeof DashboardJobsIdRoute
@@ -348,6 +368,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardDiscoverRoute: DashboardDiscoverRoute,
   DashboardImportRoute: DashboardImportRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardCandidatesIdRoute: DashboardCandidatesIdRoute,
   DashboardCandidatesAddRoute: DashboardCandidatesAddRoute,
   DashboardInterviewIdRoute: DashboardInterviewIdRoute,
   DashboardJobsIdRoute: DashboardJobsIdRoute,
