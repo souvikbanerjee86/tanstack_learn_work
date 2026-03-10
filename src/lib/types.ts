@@ -190,3 +190,16 @@ export interface UserRoleResponse {
     user_id: string;
     role: string | null;
 }
+
+export interface JobQuestion {
+    id: string;
+    question: string;
+}
+
+export interface JobQuestionsResponse {
+    job_id: string;
+    questions: JobQuestion[];
+    limit: number;
+    offset: number;
+    count: number;
+}

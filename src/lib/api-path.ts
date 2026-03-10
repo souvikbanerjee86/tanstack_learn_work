@@ -60,4 +60,8 @@ export const API_PATH = {
         GET_BASE_URL: "https://candidate-list-api-git-820672860724.europe-west1.run.app",
         PATH_URL: "/api/candidates"
     },
+    QUESTION_LIST: {
+        GET_BASE_URL: "https://job-interview-questions-api-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/jobs/"
+    },
 }

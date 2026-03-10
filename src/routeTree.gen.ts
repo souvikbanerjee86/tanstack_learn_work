@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardImportRouteImport } from './routes/dashboard/import'
 import { Route as DashboardDiscoverRouteImport } from './routes/dashboard/discover'
+import { Route as DashboardQuestionsIndexRouteImport } from './routes/dashboard/questions/index'
 import { Route as DashboardJobsIndexRouteImport } from './routes/dashboard/jobs/index'
 import { Route as DashboardInterviewIndexRouteImport } from './routes/dashboard/interview/index'
 import { Route as DashboardCandidatesIndexRouteImport } from './routes/dashboard/candidates/index'
@@ -53,6 +54,11 @@ const DashboardImportRoute = DashboardImportRouteImport.update({
 const DashboardDiscoverRoute = DashboardDiscoverRouteImport.update({
   id: '/discover',
   path: '/discover',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardQuestionsIndexRoute = DashboardQuestionsIndexRouteImport.update({
+  id: '/questions/',
+  path: '/questions/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardJobsIndexRoute = DashboardJobsIndexRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/candidates/': typeof DashboardCandidatesIndexRoute
   '/dashboard/interview/': typeof DashboardInterviewIndexRoute
   '/dashboard/jobs/': typeof DashboardJobsIndexRoute
+  '/dashboard/questions/': typeof DashboardQuestionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/dashboard/candidates': typeof DashboardCandidatesIndexRoute
   '/dashboard/interview': typeof DashboardInterviewIndexRoute
   '/dashboard/jobs': typeof DashboardJobsIndexRoute
+  '/dashboard/questions': typeof DashboardQuestionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/dashboard/candidates/': typeof DashboardCandidatesIndexRoute
   '/dashboard/interview/': typeof DashboardInterviewIndexRoute
   '/dashboard/jobs/': typeof DashboardJobsIndexRoute
+  '/dashboard/questions/': typeof DashboardQuestionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/dashboard/candidates/'
     | '/dashboard/interview/'
     | '/dashboard/jobs/'
+    | '/dashboard/questions/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/dashboard/candidates'
     | '/dashboard/interview'
     | '/dashboard/jobs'
+    | '/dashboard/questions'
   id:
     | '__root__'
     | '/'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/dashboard/candidates/'
     | '/dashboard/interview/'
     | '/dashboard/jobs/'
+    | '/dashboard/questions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -261,6 +273,13 @@ declare module '@tanstack/react-router' {
       path: '/discover'
       fullPath: '/dashboard/discover'
       preLoaderRoute: typeof DashboardDiscoverRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/questions/': {
+      id: '/dashboard/questions/'
+      path: '/questions'
+      fullPath: '/dashboard/questions/'
+      preLoaderRoute: typeof DashboardQuestionsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/jobs/': {
@@ -362,6 +381,7 @@ interface DashboardRouteRouteChildren {
   DashboardCandidatesIndexRoute: typeof DashboardCandidatesIndexRoute
   DashboardInterviewIndexRoute: typeof DashboardInterviewIndexRoute
   DashboardJobsIndexRoute: typeof DashboardJobsIndexRoute
+  DashboardQuestionsIndexRoute: typeof DashboardQuestionsIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
@@ -376,6 +396,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardCandidatesIndexRoute: DashboardCandidatesIndexRoute,
   DashboardInterviewIndexRoute: DashboardInterviewIndexRoute,
   DashboardJobsIndexRoute: DashboardJobsIndexRoute,
+  DashboardQuestionsIndexRoute: DashboardQuestionsIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
