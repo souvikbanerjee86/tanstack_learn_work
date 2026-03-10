@@ -2,6 +2,7 @@ import {
   BookMarkedIcon,
   BookmarkIcon,
   CompassIcon,
+  FileQuestionIcon,
   Import,
   MailIcon,
   Users
@@ -23,16 +24,17 @@ import { Link, linkOptions } from "@tanstack/react-router"
 import { NavPrimaryProps, NavUserProps } from "@/lib/types"
 
 const navItems: NavPrimaryProps['items'] = linkOptions([
-  {
-    title: "Candidates",
-    to: "/dashboard/candidates",
-    icon: Users,
-    activeOptions: { exact: false }
-  },
+
   {
     title: "Jobs",
     to: "/dashboard/jobs",
     icon: BookMarkedIcon,
+    activeOptions: { exact: false }
+  },
+  {
+    title: "Candidates",
+    to: "/dashboard/candidates",
+    icon: Users,
     activeOptions: { exact: false }
   },
   {
@@ -51,6 +53,12 @@ const navItems: NavPrimaryProps['items'] = linkOptions([
     title: "Interview Email",
     to: "/dashboard/interview",
     icon: MailIcon,
+    activeOptions: { exact: false }
+  },
+  {
+    title: "Questions",
+    to: "/dashboard/questions",
+    icon: FileQuestionIcon,
     activeOptions: { exact: false }
   },
 ])

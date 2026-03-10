@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 const auth = new GoogleAuth();
@@ -396,5 +396,23 @@ export const getCandidatesList = createServerFn({ method: 'GET' })
         });
         const returnData = await response.data;
         return returnData as PaginatedCandidateResponse;
+
+    })
+
+export const getInterviewQuestions = createServerFn({ method: 'GET' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: { limit: number | null, offset: number | null, job_id: string }) => data)
+    .handler(async ({ data }): Promise<JobQuestionsResponse> => {
+
+
+        const client = await auth.getIdTokenClient(API_PATH.QUESTION_LIST.GET_BASE_URL);
+        var url = API_PATH.QUESTION_LIST.GET_BASE_URL + API_PATH.QUESTION_LIST.PATH_URL + data.job_id + "/questions";
+        console.log(url)
+        const response = await client.request({
+            url: url,
+            method: 'GET',
+        });
+        const returnData = await response.data;
+        return returnData as JobQuestionsResponse;
 
     })
