@@ -4,7 +4,7 @@ import { CardContent } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 import { JobQuestion } from "@/lib/types";
 
-export function QuestionsContent({ questions }: { questions: JobQuestion[] }) {
+export function QuestionsContent({ questions, deleteQuestion }: { questions: JobQuestion[], deleteQuestion: (question_id: string) => void }) {
     return <CardContent className="p-0 flex-1 overflow-hidden">
 
         <ScrollArea className="h-full max-h-[60vh] md:max-h-none">
@@ -20,6 +20,7 @@ export function QuestionsContent({ questions }: { questions: JobQuestion[] }) {
                                     <p className="text-sm leading-relaxed">{q.question}</p>
                                 </div>
                                 <Button
+                                    onClick={() => deleteQuestion(q.id)}
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-all"
