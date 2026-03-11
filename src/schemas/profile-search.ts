@@ -7,3 +7,12 @@ export const profileSearchSchema = z.object({
     skills: z.string().min(1, "Skills are required"),
     experience: z.number()
 })
+
+
+export const candidateAddSchema = z.object({
+    jobId: z.string().min(5, "Job Id is required"),
+    jobName: z.string().min(5, "Job Name is required"),
+    candidateName: z.string().min(5, "Candidate Name is required"),
+    candidateEmail: z.email(),
+    candidateCv: z.file().nullable()
+})
