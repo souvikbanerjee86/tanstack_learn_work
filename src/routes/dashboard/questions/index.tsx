@@ -3,13 +3,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { createFileRoute } from '@tanstack/react-router'
-import { ArrowLeft, HelpCircle, Plus } from 'lucide-react'
+import { ArrowLeft, HelpCircle, Loader2, Plus } from 'lucide-react'
 import { Suspense, useState } from 'react'
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { getInterviewQuestions, getJobDetails } from '@/lib/server-function'
+import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { addInterviewQuestion, deleteInterviewQuestion, getInterviewQuestions, getJobDetails } from '@/lib/server-function'
 import { QuestionsSkeleton } from '@/components/web/questions-skeleton'
 import { QuestionsContent } from '@/components/web/questions-content'
 import { JobContent } from '@/components/web/job-content'
+import { toast } from 'sonner'
 
 export const jobsQueryOptions = queryOptions({
     queryKey: ['jobs'],
@@ -32,22 +33,35 @@ function RouteComponent() {
     const [jobs, setJobs] = useState(data.data)
     const [selectedJobId, setSelectedJobId] = useState<string | null>(data.data[0].job_id)
     const [newQuestion, setNewQuestion] = useState("")
-
+    const [loading, setLoading] = useState(false)
+    const queryClient = useQueryClient()
     const selectedJob = jobs.find((j) => j.id === selectedJobId)
 
-    const addQuestion = () => {
+    const addQuestion = async () => {
         if (!newQuestion.trim() || !selectedJobId) return
-        // setJobs(jobs.map(job =>
-        //     job.id === selectedJobId
-        //         ? { ...job, questions: [...job.questions, newQuestion] }
-        //         : job
-        // ))
-        setNewQuestion("")
+        try {
+            setLoading(true)
+            await addInterviewQuestion({ data: { job_id: selectedJobId, question: newQuestion } })
+            toast("Question Added Successfully")
+            queryClient.invalidateQueries({ queryKey: ['questions', selectedJobId] });
+            setNewQuestion("")
+        } catch (e) {
+            toast.error("Something went wrong")
+        } finally {
+            setLoading(false)
+        }
+
     }
 
     function getQuestions(job_id: string | null) {
         console.log(job_id)
         setSelectedJobId(job_id)
+    }
+
+    async function deleteQuestion(question_id: string) {
+        await deleteInterviewQuestion({ data: { question_id: question_id } })
+        toast("Question Deleted Successfully")
+        queryClient.invalidateQueries({ queryKey: ['questions', selectedJobId] });
     }
 
 
@@ -98,14 +112,15 @@ function RouteComponent() {
                                         onKeyDown={(e) => e.key === 'Enter' && addQuestion()}
                                         className="h-15 bg-background"
                                     />
-                                    <Button size="sm" onClick={addQuestion} className="gap-2">
-                                        <Plus className="h-4 w-4" /> Add
+                                    <Button size="sm" onClick={addQuestion} className="gap-2" disabled={loading}>
+                                        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                                        {loading ? "Adding..." : "Add"}
                                     </Button>
                                 </div>
                             </div>
                         </CardHeader>
                         <Suspense fallback={<QuestionsSkeleton />}>
-                            <Questions job_id={selectedJobId} />
+                            <Questions job_id={selectedJobId} deleteQuestion={deleteQuestion} />
                         </Suspense>
 
                     </Card>
@@ -117,8 +132,8 @@ function RouteComponent() {
 }
 
 
-function Questions({ job_id }: { job_id: string | null }) {
+function Questions({ job_id, deleteQuestion }: { job_id: string | null, deleteQuestion: (question_id: string) => void }) {
     const { data } = useSuspenseQuery(questionsQueryOptions(job_id!))
     const questions = data.questions
-    return <QuestionsContent questions={questions} />
+    return <QuestionsContent questions={questions} deleteQuestion={deleteQuestion} />
 }

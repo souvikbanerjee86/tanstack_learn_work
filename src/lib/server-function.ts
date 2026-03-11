@@ -416,3 +416,52 @@ export const getInterviewQuestions = createServerFn({ method: 'GET' })
         return returnData as JobQuestionsResponse;
 
     })
+
+
+export const addInterviewQuestion = createServerFn({ method: 'POST' })
+    .inputValidator((data: { job_id: string, question: string }) => data)
+    .handler(async ({ data }): Promise<{ "job_id": string, "question_id": string, "question": string, "message": string }> => {
+
+
+        const client = await auth.getIdTokenClient(API_PATH.QUESTION_ADD.GET_BASE_URL);
+        const url = API_PATH.QUESTION_ADD.GET_BASE_URL + API_PATH.QUESTION_ADD.PATH_URL;
+
+        const postData = {
+            "job_id": data.job_id,
+            "question": data.question
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'POST',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            return finalData as { "job_id": string, "question_id": string, "question": string, "message": string }
+        } catch (e) {
+            return { "job_id": "", "question_id": "", "question": "", "message": "" };
+        }
+
+    })
+
+export const deleteInterviewQuestion = createServerFn({ method: 'GET' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: { question_id: string }) => data)
+    .handler(async ({ data }): Promise<{ "status": string, "message": string }> => {
+
+
+        const client = await auth.getIdTokenClient(API_PATH.QUESTION_DELETE.GET_BASE_URL);
+        var url = API_PATH.QUESTION_DELETE.GET_BASE_URL + API_PATH.QUESTION_DELETE.PATH_URL + data.question_id;
+        console.log(url)
+        const response = await client.request({
+            url: url,
+            method: 'DELETE',
+        });
+        const returnData = await response.data;
+        return returnData as { "status": string, "message": string };
+
+    })

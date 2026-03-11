@@ -10,7 +10,7 @@ interface JobContentInterface {
 }
 
 export function JobContent({ selectedJobId, jobs, getQuestions }: JobContentInterface) {
-    return <div className={`w-full md:w-80 lg:w-96 flex-shrink-0 ${selectedJobId && 'hidden md:flex'} flex flex-col gap-4`}>
+    return <div className={`w-full md:w-80 lg:w-96 shrink-0 ${selectedJobId && 'hidden md:flex'} flex flex-col gap-4`}>
         <div className="flex items-center justify-between px-2">
             <h2 className="text-xl font-bold tracking-tight">Job Roles</h2>
             <Badge variant="outline">{jobs.length}</Badge>
