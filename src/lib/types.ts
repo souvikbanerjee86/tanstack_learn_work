@@ -94,6 +94,7 @@ export type candidate = {
     resume_url: string;
     uploaded_at: string;
     job_id: string;
+    candidate_image?: string
 }
 
 
@@ -202,4 +203,13 @@ export interface JobQuestionsResponse {
     limit: number;
     offset: number;
     count: number;
+}
+
+export interface GcsUriDetails {
+    status: "success" | "error" | "pending";
+    gcs_uri: string;
+}
+
+interface GcsResponse {
+    gcs_uri: GcsUriDetails;
 }

@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 const auth = new GoogleAuth();
@@ -463,5 +463,25 @@ export const deleteInterviewQuestion = createServerFn({ method: 'GET' })
         });
         const returnData = await response.data;
         return returnData as { "status": string, "message": string };
+
+    })
+
+
+export const addCandidate = createServerFn({ method: 'POST' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: FormData) => data)
+    .handler(async ({ data }): Promise<GcsUriDetails> => {
+
+
+        const client = await auth.getIdTokenClient(API_PATH.ADD_CANDIDATE.GET_BASE_URL);
+        var url = API_PATH.ADD_CANDIDATE.GET_BASE_URL + API_PATH.ADD_CANDIDATE.PATH_URL;
+
+        const response = await client.request({
+            url: url,
+            method: 'POST',
+            data: data,
+        });
+        const returnData = await response.data;
+        return returnData as GcsUriDetails;
 
     })

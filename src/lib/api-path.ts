@@ -72,4 +72,8 @@ export const API_PATH = {
         GET_BASE_URL: "https://job-interview-question-delete-api-820672860724.europe-west1.run.app",
         PATH_URL: "/api/questions/"
     },
+    ADD_CANDIDATE: {
+        GET_BASE_URL: "https://rag-resume-api-git-01-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/upload"
+    },
 }

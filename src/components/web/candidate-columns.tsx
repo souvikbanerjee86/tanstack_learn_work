@@ -54,6 +54,7 @@ export const candidateColumns: ColumnDef<candidate>[] = [
                 uploaded_at: format(row.original.uploaded_at, "PPP"),
                 resume_url: row.original.resume_url,
                 job_id: row.original.job_id,
+                candidate_image: row.original.candidate_image
 
 
             };

@@ -9,6 +9,7 @@ import { getDownloadURL } from '@/lib/server-function'
 import { candidate } from '@/lib/types'
 import { Suspense } from 'react'
 import { CandidateDetailSkeleton } from '@/components/web/candidate-detail-skeleton'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export const candidatesCVQueryOptions = (url: string) => queryOptions({
     queryKey: ['candidates', url],
@@ -38,9 +39,14 @@ function RouteComponent() {
                 <div className="lg:col-span-1 space-y-6">
                     <Card className="border-muted/60 shadow-sm">
                         <CardContent className="pt-6 text-center">
-                            <div className="h-24 w-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-primary/20">
+                            {candidate.candidate_image ? (<Avatar className="h-24 w-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-primary/20">
+                                <AvatarImage src={candidate.candidate_image} alt="@shadcn" />
+                                <AvatarFallback></AvatarFallback>
+                            </Avatar>) : (<div className="h-24 w-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-primary/20">
+
                                 <User className="h-12 w-12 text-primary" />
-                            </div>
+
+                            </div>)}
                             <h2 className="text-xl font-bold">{candidate.name}</h2>
                             <p className="text-sm text-muted-foreground">{candidate.email}</p>
                             <Badge variant="secondary" className="mt-4 px-4 py-1">
