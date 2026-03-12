@@ -17,14 +17,18 @@ import {
 import { Input } from "@/components/ui/input"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { signupSchema } from "@/schemas/auth"
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signOut } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { toast } from "sonner"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { loginFn } from "@/lib/auth"
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
+import { getUserRole } from "@/lib/server-function"
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
+import { AlertTriangleIcon } from "lucide-react"
 export function SignupForm() {
     const navigate = useNavigate()
+    const [error, setError] = useState<string | null>(null)
     const [isPending, startTransition] = useTransition();
     const form = useForm({
         defaultValues: {
@@ -41,9 +45,20 @@ export function SignupForm() {
                 try {
                     const userCredential = await createUserWithEmailAndPassword(auth, value.email, value.password);
                     const user = userCredential.user;
-                    console.log(user);
                     toast.success("Account created successfully")
-                    navigate({ to: "/" })
+                    const roleResponse = await getUserRole({ data: { user_id: user.uid } });
+                    if (roleResponse.role != null) {
+                        toast.success("Login successful")
+                        navigate({ to: "/" })
+                    } else {
+                        await signOut(auth).then(async () => {
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+
+                        setError("Your account is created.You will be notified by admin when role will be assigned")
+                    }
+
                 } catch (error: any) {
                     const errorCode = error.code;
                     const errorMessage = error.message;
@@ -60,9 +75,20 @@ export function SignupForm() {
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
             const idToken = await result.user.getIdToken();
-            await loginFn({ data: idToken });
-            toast.success("Login successful")
-            navigate({ to: "/" })
+            const roleResponse = await getUserRole({ data: { user_id: result.user.uid } });
+            if (roleResponse.role != null) {
+                await loginFn({ data: idToken });
+                toast.success("Login successful")
+                navigate({ to: "/" })
+            } else {
+                await signOut(auth).then(async () => {
+                }).catch((error) => {
+                    console.log(error);
+                });
+
+                setError("Your account is created.You will be notified by admin when role will be assigned")
+            }
+
         } catch (error: any) {
             const errorMessage = error.message;
             toast.error(errorMessage)
@@ -199,6 +225,13 @@ export function SignupForm() {
                                 </FieldDescription>
                             </Field>
                         </FieldGroup>
+                        {error && <Alert className="max-w-md border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
+                            <AlertTriangleIcon />
+                            <AlertTitle>Thank you for Registering!</AlertTitle>
+                            <AlertDescription>
+                                {error}
+                            </AlertDescription>
+                        </Alert>}
                     </FieldGroup>
                 </form>
             </CardContent>

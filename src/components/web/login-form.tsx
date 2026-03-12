@@ -20,7 +20,7 @@ import { loginSchema } from "@/schemas/auth"
 import { useForm } from "@tanstack/react-form"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { loginFn, logoutFn } from "@/lib/auth"
+import { loginFn } from "@/lib/auth"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { toast } from "sonner"
 import { useState, useTransition } from "react"
