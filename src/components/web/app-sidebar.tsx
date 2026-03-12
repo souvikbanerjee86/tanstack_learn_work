@@ -4,6 +4,7 @@ import {
   CompassIcon,
   FileQuestionIcon,
   Import,
+  LayoutDashboardIcon,
   MailIcon,
   Users
 } from "lucide-react"
@@ -24,7 +25,12 @@ import { Link, linkOptions } from "@tanstack/react-router"
 import { NavPrimaryProps, NavUserProps } from "@/lib/types"
 
 const navItems: NavPrimaryProps['items'] = linkOptions([
-
+  {
+    title: "Dashboard",
+    to: "/dashboard",
+    icon: LayoutDashboardIcon,
+    activeOptions: { exact: true }
+  },
   {
     title: "Jobs",
     to: "/dashboard/jobs",
