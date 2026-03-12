@@ -19,17 +19,20 @@ import { auth } from "@/lib/firebase"
 import { loginSchema } from "@/schemas/auth"
 import { useForm } from "@tanstack/react-form"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { loginFn } from "@/lib/auth"
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { loginFn, logoutFn } from "@/lib/auth"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { toast } from "sonner"
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { getUserRole } from "@/lib/server-function"
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
+import { AlertTriangleIcon } from "lucide-react"
 
 
 export function LoginForm() {
     const navigate = useNavigate()
     const [isPending, startTransition] = useTransition()
+    const [error, setError] = useState<string | null>(null)
     const form = useForm({
         defaultValues: {
             email: "",
@@ -46,10 +49,18 @@ export function LoginForm() {
                     const idToken = await user.getIdToken();
                     await loginFn({ data: idToken });
                     const roleResponse = await getUserRole({ data: { user_id: user.uid } });
-                    // if (roleResponse.role != null) {
-                    toast.success("Login successful")
-                    navigate({ to: "/" })
-                    // }
+                    if (roleResponse.role != null) {
+                        toast.success("Login successful")
+                        navigate({ to: "/" })
+                    } else {
+                        await signOut(auth).then(async () => {
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+
+                        setError("You are not authorized to login")
+                    }
+
                 } catch (error: any) {
                     const errorMessage = error.message;
                     toast.error(errorMessage)
@@ -66,9 +77,17 @@ export function LoginForm() {
             const idToken = await result.user.getIdToken();
             await loginFn({ data: idToken });
             const roleResponse = await getUserRole({ data: { user_id: result.user.uid } });
-            console.log(roleResponse)
-            toast.success("Login successful")
-            navigate({ to: "/" })
+            console.log(roleResponse);
+            if (roleResponse.role != null) {
+                toast.success("Login successful")
+                navigate({ to: "/" })
+            } else {
+                await signOut(auth).then(async () => {
+                }).catch((error) => {
+                    console.log(error);
+                });
+                setError("You are not authorized to login")
+            }
         } catch (error: any) {
             const errorMessage = error.message;
             toast.error(errorMessage)
@@ -153,13 +172,19 @@ export function LoginForm() {
                                 Don&apos;t have an account? <Link to="/signup">Sign up</Link>
                             </FieldDescription>
                         </Field>
+                        {error && <Alert className="max-w-md border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
+                            <AlertTriangleIcon />
+                            <AlertTitle>{error}</AlertTitle>
+                            <AlertDescription>
+                                Please check with Admin and and fix the login issue.
+                                You can reach to admin using mail address : admin@easyai.com
+                            </AlertDescription>
+                        </Alert>}
                     </FieldGroup>
                 </form>
             </CardContent>
         </Card>
     )
 }
-function queryOptions(arg0: { queryKey: string[]; queryFn: () => any; staleTime: number }) {
-    throw new Error("Function not implemented.")
-}
+
 
