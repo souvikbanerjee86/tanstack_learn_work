@@ -485,3 +485,32 @@ export const addCandidate = createServerFn({ method: 'POST' })
         return returnData as GcsUriDetails;
 
     })
+
+export const addQuestionUsingAI = createServerFn({ method: 'POST' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: { job_id: string, num_of_questions: number }) => data)
+    .handler(async ({ data }): Promise<{ "questions_generated": number, "message": string }> => {
+
+
+        const client = await auth.getIdTokenClient(API_PATH.QUESTION_ADD_AI.GET_BASE_URL);
+        var url = API_PATH.QUESTION_ADD_AI.GET_BASE_URL + API_PATH.QUESTION_ADD_AI.PATH_URL;
+        console.log(url)
+
+        const postData = {
+            "job_id": data.job_id,
+            "num_of_questions": data.num_of_questions
+        }
+        const sendData = JSON.stringify(postData)
+
+        const response = await client.request({
+            url: url,
+            method: 'POST',
+            data: sendData,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const returnData = await response.data;
+        return returnData as { "questions_generated": number, "message": string };
+
+    })

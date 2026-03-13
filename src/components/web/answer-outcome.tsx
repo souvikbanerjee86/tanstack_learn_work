@@ -15,7 +15,7 @@ export function AnswerOutcome({ answers }: { answers: EvaluationResponse }) {
                         <div className="bg-zinc-900 dark:bg-zinc-800 p-6 text-white flex justify-between items-start">
                             <div className="space-y-1">
                                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Current Question</span>
-                                <h2 className="text-lg md:text-xl font-semibold leading-snug leading-tight">
+                                <h2 className="text-lg md:text-xl font-semibold leading-snug">
                                     {data.question}
                                 </h2>
                             </div>
@@ -33,7 +33,7 @@ export function AnswerOutcome({ answers }: { answers: EvaluationResponse }) {
                             {/* Candidate's Response Section */}
                             <div className="p-6 space-y-4">
                                 <div className="relative p-6 rounded-2xl bg-slate-100 dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800">
-                                    <Quote className="absolute top-4 left-4 w-8 h-8 text-zinc-300 dark:text-zinc-800 -z-0" />
+                                    <Quote className="absolute top-4 left-4 w-8 h-8 text-zinc-300 dark:text-zinc-800 z-0" />
                                     <div className="relative z-10 italic text-lg text-zinc-700 dark:text-zinc-300">
                                         {data.answer}
                                     </div>

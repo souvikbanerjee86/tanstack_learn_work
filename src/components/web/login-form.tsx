@@ -20,7 +20,7 @@ import { loginSchema } from "@/schemas/auth"
 import { useForm } from "@tanstack/react-form"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { loginFn, logoutFn } from "@/lib/auth"
+import { loginFn } from "@/lib/auth"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { toast } from "sonner"
 import { useState, useTransition } from "react"
@@ -71,28 +71,29 @@ export function LoginForm() {
     })
 
     const handleGoogleLogin = async () => {
-        try {
-            const provider = new GoogleAuthProvider();
-            const result = await signInWithPopup(auth, provider);
-            const idToken = await result.user.getIdToken();
-            await loginFn({ data: idToken });
-            const roleResponse = await getUserRole({ data: { user_id: result.user.uid } });
-            console.log(roleResponse);
-            if (roleResponse.role != null) {
-                toast.success("Login successful")
-                navigate({ to: "/" })
-            } else {
-                await signOut(auth).then(async () => {
-                }).catch((error) => {
-                    console.log(error);
-                });
-                setError("You are not authorized to login")
+        startTransition(async () => {
+            try {
+                const provider = new GoogleAuthProvider();
+                const result = await signInWithPopup(auth, provider);
+                const idToken = await result.user.getIdToken();
+                await loginFn({ data: idToken });
+                const roleResponse = await getUserRole({ data: { user_id: result.user.uid } });
+                console.log(roleResponse);
+                if (roleResponse.role != null) {
+                    toast.success("Login successful")
+                    navigate({ to: "/" })
+                } else {
+                    await signOut(auth).then(async () => {
+                    }).catch((error) => {
+                        console.log(error);
+                    });
+                    setError("You are not authorized to login")
+                }
+            } catch (error: any) {
+                const errorMessage = error.message;
+                toast.error(errorMessage)
             }
-        } catch (error: any) {
-            const errorMessage = error.message;
-            toast.error(errorMessage)
-        }
-
+        })
     }
 
 

@@ -48,9 +48,10 @@ function RouteComponent() {
                         <Button variant="outline" size="sm">
                             <Share2 className="mr-2 h-4 w-4" /> Share
                         </Button>
-                        <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                            Apply Now
-                        </Button>
+                        <Link to='/dashboard/candidates/add'>
+                            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                                Apply Now
+                            </Button></Link>
                     </div>
                 </div>
             </div>

@@ -3,14 +3,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { createFileRoute } from '@tanstack/react-router'
-import { ArrowLeft, HelpCircle, Loader2, Plus } from 'lucide-react'
+import { ArrowLeft, HelpCircle, Loader2, Plus, Sparkles } from 'lucide-react'
 import { Suspense, useState } from 'react'
 import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { addInterviewQuestion, deleteInterviewQuestion, getInterviewQuestions, getJobDetails } from '@/lib/server-function'
+import { addInterviewQuestion, addQuestionUsingAI, deleteInterviewQuestion, getInterviewQuestions, getJobDetails } from '@/lib/server-function'
 import { QuestionsSkeleton } from '@/components/web/questions-skeleton'
 import { QuestionsContent } from '@/components/web/questions-content'
 import { JobContent } from '@/components/web/job-content'
 import { toast } from 'sonner'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
+import { Separator } from '@/components/ui/separator'
 
 export const jobsQueryOptions = queryOptions({
     queryKey: ['jobs'],
@@ -29,8 +32,11 @@ export const Route = createFileRoute('/dashboard/questions/')({
 })
 
 function RouteComponent() {
+    const [isOpen, setIsOpen] = useState(false);
     const { data } = useSuspenseQuery(jobsQueryOptions)
     const [jobs, setJobs] = useState(data.data)
+    const [questionCount, setQuestionCount] = useState(0)
+    const [error, setError] = useState<string | null>(null)
     const [selectedJobId, setSelectedJobId] = useState<string | null>(data.data[0].job_id)
     const [newQuestion, setNewQuestion] = useState("")
     const [loading, setLoading] = useState(false)
@@ -64,6 +70,25 @@ function RouteComponent() {
         queryClient.invalidateQueries({ queryKey: ['questions', selectedJobId] });
     }
 
+    const createAIQuestion = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        console.log("createAIQuestion", selectedJobId)
+        console.log("questionCount", questionCount)
+        if (questionCount < 1) {
+            setError("Please select the number of questions")
+        }
+        try {
+            setLoading(true)
+            await addQuestionUsingAI({ data: { job_id: selectedJobId!, num_of_questions: questionCount } })
+            toast("Question Added Successfully")
+            queryClient.invalidateQueries({ queryKey: ['questions', selectedJobId] });
+        } catch (e) {
+            toast.error("Something went wrong")
+        } finally {
+            setLoading(false)
+            setIsOpen(false)
+        }
+    };
 
 
     return (
@@ -116,6 +141,14 @@ function RouteComponent() {
                                         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                                         {loading ? "Adding..." : "Add"}
                                     </Button>
+
+                                    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="outline"><Sparkles className="h-4 w-4" />AI Generated Questions</Button>
+                                        </AlertDialogTrigger>
+                                        <AlertComponent createAIQuestion={createAIQuestion} setQuestionCount={setQuestionCount} error={error} loading={loading} />
+                                    </AlertDialog>
+
                                 </div>
                             </div>
                         </CardHeader>
@@ -136,4 +169,49 @@ function Questions({ job_id, deleteQuestion }: { job_id: string | null, deleteQu
     const { data } = useSuspenseQuery(questionsQueryOptions(job_id!))
     const questions = data.questions
     return <QuestionsContent questions={questions} deleteQuestion={deleteQuestion} />
+}
+
+function AlertComponent({ createAIQuestion, setQuestionCount, error, loading }: { createAIQuestion: (e: React.MouseEvent<HTMLButtonElement>) => void, setQuestionCount: (value: number) => void, error: string | null, loading: boolean }) {
+    return (
+        <AlertDialogContent>
+            <form>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action Will create AI generated questions for the selected job, and save the information in the backend.
+                        Select the Number of Questions that you want to generate.
+                        <Separator />
+                        <br />
+                        <NativeSelect onChange={(e) => setQuestionCount(parseInt(e.target.value))}>
+                            <NativeSelectOption value="">Select Number of Questions</NativeSelectOption>
+                            {Array.from({ length: 10 }, (_, i) => i + 1).map(num => {
+                                return (
+                                    <NativeSelectOption
+                                        key={num} value={num}>{num}</NativeSelectOption>
+                                )
+                            })}
+
+                        </NativeSelect>
+                        {error && <p className='text-red-500'>{error}</p>}
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction asChild>
+                        <Button
+                            variant="destructive"
+                            type='submit'
+                            onClick={(e) => {
+                                createAIQuestion(e)
+                            }}
+                        >
+                            {loading ? "Creating..." : "Create"}
+                            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        </Button>
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </form>
+        </AlertDialogContent >
+    )
 }
