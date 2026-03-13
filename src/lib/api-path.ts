@@ -76,4 +76,8 @@ export const API_PATH = {
         GET_BASE_URL: "https://rag-resume-api-git-01-820672860724.europe-west1.run.app",
         PATH_URL: "/api/upload"
     },
+    QUESTION_ADD_AI: {
+        GET_BASE_URL: "https://add-ai-questions-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/generate-questions"
+    },
 }
