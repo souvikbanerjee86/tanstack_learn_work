@@ -5,7 +5,8 @@ import {
     Briefcase,
     ArrowLeft,
     Share2,
-    Download
+    Download,
+    TimerIcon
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -108,6 +109,15 @@ function RouteComponent() {
                                         <p className="text-xs font-medium text-muted-foreground">Timeline</p>
                                         <p className="text-sm font-semibold">Starts: {job.start_date}</p>
                                         <p className="text-[10px] text-muted-foreground/70">Ends: {job.end_date}</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="p-2 bg-primary/10 rounded-lg h-fit">
+                                        <TimerIcon className="h-5 w-5 text-primary" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-medium text-muted-foreground">Experience</p>
+                                        <p className="text-sm font-semibold">{job.experience} years</p>
                                     </div>
                                 </div>
 

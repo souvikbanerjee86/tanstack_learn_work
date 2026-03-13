@@ -20,4 +20,5 @@ export const jobPostSchema = z.object({
     startDate: z.string(),
     endDate: z.string(),
     locations: z.array(z.string()).min(1),
+    experience: z.number().min(0).max(100),
 })

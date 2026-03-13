@@ -291,7 +291,8 @@ export const createJob = createServerFn({ method: 'POST' })
             "locations": data.locations,
             "startDate": data.startDate,
             "endDate": data.endDate,
-            "jobId": data.jobId
+            "jobId": data.jobId,
+            "experience": data.experience
         }
         const sendData = JSON.stringify(postData)
         try {
