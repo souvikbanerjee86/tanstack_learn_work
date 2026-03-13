@@ -1,120 +1,90 @@
+import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { CheckCircle2, Info, Mail, User, Clock } from "lucide-react"
 
 export default function InterviewFeedbackSkeleton() {
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-zinc-400 p-6 font-sans">
-            {/* Header Actions */}
+        <div className="min-h-screen bg-[#0a0a0a] p-6 space-y-6">
+            {/* Header Button Skeleton */}
             <div className="flex justify-end mb-6">
-                <button className="flex items-center gap-2 px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm hover:bg-zinc-800 transition-colors">
-                    <Info size={16} />
-                    VIEW AUDIO OUTCOME
-                </button>
+                <Skeleton className="h-10 w-44 bg-zinc-800/50 rounded-lg" />
             </div>
 
             <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                {/* Main Content Area */}
+                {/* Main Content Area Skeleton */}
                 <div className="lg:col-span-8 space-y-6">
-                    <Card className="bg-zinc-900/40 border-zinc-800 text-zinc-100 overflow-hidden">
+                    <Card className="bg-zinc-900/40 border-zinc-800 overflow-hidden">
                         <CardContent className="p-0">
-                            {/* Question Header */}
+
+                            {/* Question Header Skeleton */}
                             <div className="p-8 flex justify-between items-start border-b border-zinc-800/50">
-                                <div className="space-y-2">
-                                    <p className="text-xs font-bold tracking-widest text-zinc-500 uppercase">Current Question</p>
-                                    <h2 className="text-2xl font-semibold">When would you choose Dataflow over Dataproc, and vice versa?</h2>
+                                <div className="space-y-3 w-full">
+                                    <Skeleton className="h-3 w-24 bg-zinc-800" />
+                                    <Skeleton className="h-8 w-3/4 bg-zinc-800" />
                                 </div>
-                                <div className="flex flex-col items-center justify-center bg-zinc-800/50 rounded-xl p-4 min-w-[80px] border border-zinc-700/50">
-                                    <span className="text-xs text-zinc-500 font-bold uppercase">Score</span>
-                                    <span className="text-4xl font-bold text-red-500">0</span>
-                                </div>
+                                <Skeleton className="h-20 w-20 bg-zinc-800 rounded-xl ml-4" />
                             </div>
 
-                            {/* Candidate Transcript Section */}
+                            {/* Transcript Box Skeleton */}
                             <div className="p-8">
-                                <div className="bg-zinc-950/50 rounded-2xl p-8 border border-zinc-800/30 italic text-zinc-300 leading-relaxed relative">
-                                    <span className="absolute top-4 left-4 text-6xl text-zinc-800 font-serif leading-none select-none">“</span>
-                                    here is the breakdown of when to choose which one the high level perspective data flow diagrams dfd choose a dfd
-                                </div>
+                                <Skeleton className="h-32 w-full bg-zinc-950/50 rounded-2xl border border-zinc-800/30" />
                             </div>
 
-                            {/* AI Feedback Reasoning */}
-                            <div className="p-8 bg-zinc-900/20 border-t border-zinc-800/50">
-                                <div className="flex items-center gap-2 mb-4 text-zinc-100">
-                                    <div className="p-1 bg-zinc-800 rounded">
-                                        <Info size={14} className="text-zinc-400" />
-                                    </div>
-                                    <span className="text-xs font-bold uppercase tracking-wider">AI Feedback Reasoning</span>
+                            {/* Reasoning Section Skeleton */}
+                            <div className="p-8 space-y-4 bg-zinc-900/20">
+                                <div className="flex items-center gap-2">
+                                    <Skeleton className="h-6 w-6 bg-zinc-800 rounded" />
+                                    <Skeleton className="h-4 w-40 bg-zinc-800" />
                                 </div>
-                                <p className="text-zinc-400 text-sm leading-relaxed">
-                                    The candidate completely misunderstands the question. They confuse Google Cloud Dataflow
-                                    (a big data processing service) with 'data flow diagrams' (DFD), a concept used in software design.
-                                    Their answer is entirely irrelevant and demonstrates no knowledge of the actual services mentioned in the question.
-                                </p>
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-full bg-zinc-800/60" />
+                                    <Skeleton className="h-4 w-full bg-zinc-800/60" />
+                                    <Skeleton className="h-4 w-2/3 bg-zinc-800/60" />
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
 
-                {/* Sidebar: Candidate Data */}
-                <div className="lg:col-span-4 space-y-6">
-                    <Card className="bg-zinc-900/40 border-zinc-800 text-zinc-100 h-full">
+                {/* Sidebar Skeleton */}
+                <div className="lg:col-span-4">
+                    <Card className="bg-zinc-900/40 border-zinc-800 h-full">
                         <CardContent className="p-8 space-y-8">
-                            <h3 className="text-xs font-bold tracking-widest text-zinc-500 uppercase">Candidate Data</h3>
+                            <Skeleton className="h-4 w-32 bg-zinc-800" />
 
-                            {/* Profile Info */}
+                            {/* Candidate Info Skeletons */}
                             <div className="space-y-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="h-10 w-10 bg-orange-500/10 border border-orange-500/20 rounded-lg flex items-center justify-center text-orange-500">
-                                        <Mail size={20} />
+                                {[1, 2].map((i) => (
+                                    <div key={i} className="flex items-center gap-4">
+                                        <Skeleton className="h-10 w-10 bg-zinc-800 rounded-lg" />
+                                        <div className="space-y-2">
+                                            <Skeleton className="h-3 w-16 bg-zinc-800" />
+                                            <Skeleton className="h-4 w-48 bg-zinc-800" />
+                                        </div>
                                     </div>
-                                    <div className="overflow-hidden">
-                                        <p className="text-[10px] uppercase font-bold text-zinc-500">Email</p>
-                                        <p className="text-sm truncate font-medium">souvik.mlindia@gmail.com</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-4">
-                                    <div className="h-10 w-10 bg-orange-500/10 border border-orange-500/20 rounded-lg flex items-center justify-center text-orange-500">
-                                        <User size={20} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] uppercase font-bold text-zinc-500">AI Verdict</p>
-                                        <Badge variant="secondary" className="bg-orange-500/10 text-orange-500 border-none hover:bg-orange-500/20 mt-1">
-                                            Likely Human
-                                        </Badge>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
 
-                            <Separator className="bg-zinc-800" />
+                            <div className="h-px bg-zinc-800 w-full" />
 
-                            {/* Status Checks */}
+                            {/* Status Row Skeletons */}
                             <div className="space-y-4">
-                                <StatusRow label="Logic Check" active />
-                                <StatusRow label="Text Match" active />
-                                <StatusRow label="Voice Match" active />
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="flex justify-between items-center">
+                                        <Skeleton className="h-3 w-24 bg-zinc-800" />
+                                        <Skeleton className="h-5 w-5 rounded-full bg-zinc-800" />
+                                    </div>
+                                ))}
                             </div>
 
-                            <div className="pt-8 flex items-center gap-2 text-[10px] text-zinc-500 font-mono">
-                                <Clock size={12} />
-                                TIMESTAMP: 2026-02-20T17:37:13.709000Z
+                            {/* Timestamp Skeleton */}
+                            <div className="pt-8">
+                                <Skeleton className="h-3 w-56 bg-zinc-800" />
                             </div>
                         </CardContent>
                     </Card>
                 </div>
             </div>
-        </div>
-    )
-}
-
-function StatusRow({ label, active }: { label: string; active?: boolean }) {
-    return (
-        <div className="flex justify-between items-center">
-            <span className="text-xs font-bold uppercase tracking-tighter text-zinc-400">{label}</span>
-            <CheckCircle2 size={18} className={active ? "text-emerald-500" : "text-zinc-700"} />
         </div>
     )
 }
