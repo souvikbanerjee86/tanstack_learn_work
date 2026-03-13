@@ -1,12 +1,33 @@
-import { BrainCircuit, Calendar, CheckCircle2, Mail, Quote, User, XCircle } from "lucide-react";
+import { BrainCircuit, Briefcase, Calendar, CheckCircle2, Mail, Quote, User, XCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
-import { EvaluationResponse } from "@/lib/types";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { getInterviewAnswersList } from "@/lib/server-function";
+import { NoEvaluation } from "./no-evaluation";
 
-export function AnswerOutcome({ answers }: { answers: EvaluationResponse }) {
+export const interviewAnswerQueryOptions = (email: string, job_id: string) => queryOptions({
+    queryKey: ['candidates', email, job_id],
+    queryFn: () => getInterviewAnswersList({ data: { candidate: email, job_id: job_id } })
+})
+export function AnswerOutcome({ email, id }: { email: string, id: string }) {
+    const { data: answers } = useSuspenseQuery(interviewAnswerQueryOptions(email, id))
+
+    if (answers.data.length === 0) {
+        return (
+            <NoEvaluation />
+        );
+    }
     return (
         <>
+            <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <Briefcase className="w-3 h-3" /> {answers.data[0].job_id}
+                    <span className="opacity-30">/</span>
+                    <span>{answers.data[0].domain}</span>
+                </div>
+                <h1 className="text-2xl font-bold tracking-tight">Technical Response Audit</h1>
+            </div>
             {answers.data.map((data, index) => (
                 <div key={index} className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
