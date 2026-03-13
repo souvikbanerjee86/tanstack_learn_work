@@ -212,6 +212,6 @@ export interface GcsUriDetails {
     gcs_uri: string;
 }
 
-interface GcsResponse {
+export interface GcsResponse {
     gcs_uri: GcsUriDetails;
 }

@@ -1,9 +1,17 @@
 import { BrainCircuit, Database, ExternalLink, FileSearch, Info, ShieldCheck } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
-import { InterviewVoiceOutcomeResponse } from "@/lib/types";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { getInterviewVoiceAnswersList } from "@/lib/server-function";
 
-export function AudioOutcome({ voiceAnswers }: { voiceAnswers: InterviewVoiceOutcomeResponse }) {
+export const interviewVoiceAnswerQueryOptions = (email: string, job_id: string) => queryOptions({
+    queryKey: ['interviews', email, job_id],
+    queryFn: () => getInterviewVoiceAnswersList({ data: { candidate: email, job_id: job_id } })
+})
+
+
+export function AudioOutcome({ email, id }: { email: string, id: string }) {
+    const { data: voiceAnswers } = useSuspenseQuery(interviewVoiceAnswerQueryOptions(email, id))
     return (
         <div className='flex flex-row justify-end'>
             <div></div>
@@ -92,9 +100,9 @@ export function AudioOutcome({ voiceAnswers }: { voiceAnswers: InterviewVoiceOut
 
                                 <div className="pt-4">
                                     <Button variant="outline" className="w-full gap-2" asChild>
-                                        <a href={data.gcs_uri.replace('gs://', 'https://storage.googleapis.com/')} target="_blank" rel="noreferrer">
+                                        {data.gcs_uri ? <a href={data.gcs_uri.replace('gs://', 'https://storage.googleapis.com/')} target="_blank" rel="noreferrer">
                                             <ExternalLink className="w-4 h-4" /> Inspect Source Audio
-                                        </a>
+                                        </a> : <></>}
                                     </Button>
                                 </div>
                             </div>
