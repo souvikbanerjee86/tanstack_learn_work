@@ -80,6 +80,7 @@ export const columns: ColumnDef<JobDetail>[] = [
                 location: row.original.location,
                 job_type: row.original.job_type,
                 status: row.original.status,
+                experience: row.original.experience
 
             };
             const navigate = useNavigate()

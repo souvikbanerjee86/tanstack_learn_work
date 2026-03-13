@@ -84,6 +84,7 @@ export type JobDetail = {
     job_description: string;
     created_at: string;
     status: "Active" | "Inactive" | "Archived";
+    experience: number;
 }
 
 export type candidate = {
@@ -185,6 +186,7 @@ export interface JobPosting {
     startDate: string;
     endDate: string;
     locations: string[];
+    experience: number;
 }
 
 export interface UserRoleResponse {

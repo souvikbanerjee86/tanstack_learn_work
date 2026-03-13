@@ -7,7 +7,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { createJob } from '@/lib/server-function';
 import { jobPostSchema } from '@/schemas/auth';
@@ -33,7 +33,7 @@ function RouteComponent() {
         "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
     ];
     const [isPending, startTransition] = useTransition()
-
+    const experienceYears = Array.from({ length: 31 }, (_, i) => i.toString());
     const form = useForm({
         defaultValues: {
             jobId: "",
@@ -43,6 +43,7 @@ function RouteComponent() {
             jobDescription: "",
             startDate: "",
             endDate: "",
+            experience: 0,
         },
         validators: {
             onSubmit: jobPostSchema,
@@ -50,7 +51,7 @@ function RouteComponent() {
         onSubmit: async ({ value }) => {
             startTransition(async () => {
                 try {
-                    await createJob({ data: { jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate } });
+                    await createJob({ data: { jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate, experience: value.experience } });
                     toast.success("Job created successfully")
                     navigate({ to: "/dashboard/jobs" })
                 } catch (error: any) {
@@ -234,7 +235,7 @@ function RouteComponent() {
                             />
 
                             {/* Dates */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <form.Field
                                     name="startDate"
                                     children={(field) => (
@@ -253,6 +254,39 @@ function RouteComponent() {
                                         </Field>
                                     )}
                                 />
+
+
+                                <form.Field
+                                    name="experience"
+                                    children={(field) => {
+                                        const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                                        return (
+                                            <Field data-invalid={isInvalid}>
+                                                <FieldLabel htmlFor={field.name}>Experience</FieldLabel>
+                                                <Select
+                                                    value={field.state.value.toString()}
+                                                    onValueChange={(value) => field.handleChange(Number(value))}
+                                                >
+                                                    <SelectTrigger className="w-full max-w-48">
+                                                        <SelectValue placeholder="Select Years" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectGroup>
+                                                            <SelectLabel>Years of Experience</SelectLabel>
+                                                            {experienceYears.map((year) => (
+                                                                <SelectItem key={year} value={year}>
+                                                                    {year} {year === "1" ? "Year" : "Years"}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectGroup>
+                                                    </SelectContent>
+                                                </Select>
+                                                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                                            </Field>
+                                        );
+                                    }}
+                                />
+
                             </div>
 
                             <Button disabled={isPending} type="submit" className="w-full">{isPending ? "Creating Job..." : "Post Job"}</Button>
