@@ -546,7 +546,7 @@ export const getJobDescription = createServerFn({ method: 'GET' })
     .handler(async ({ data }): Promise<string> => {
 
         const openrouter = new OpenRouter({
-            apiKey: "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"
+            apiKey: process.env.APP_OPENROUTER_KEY
         });
 
         try {
