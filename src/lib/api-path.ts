@@ -80,4 +80,8 @@ export const API_PATH = {
         GET_BASE_URL: "https://add-ai-questions-820672860724.europe-west1.run.app",
         PATH_URL: "/api/generate-questions"
     },
+    DASHBOARD_SUMMARY: {
+        GET_BASE_URL: "https://add-ai-questions-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/dashboard/summary"
+    },
 }
