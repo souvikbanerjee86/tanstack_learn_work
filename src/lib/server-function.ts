@@ -544,7 +544,6 @@ export const getJobDescription = createServerFn({ method: 'GET' })
     .middleware([isLoginMiddleware])
     .inputValidator((data: { job_title: string, experience: number }) => data)
     .handler(async ({ data }): Promise<string> => {
-        console.log("getJobDescription called");
 
         const openrouter = new OpenRouter({
             apiKey: process.env.APP_OPENROUTER_KEY
