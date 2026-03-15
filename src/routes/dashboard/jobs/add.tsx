@@ -9,11 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { createJob } from '@/lib/server-function';
+import { createJob, getJobDescription } from '@/lib/server-function';
 import { jobPostSchema } from '@/schemas/auth';
 import { useForm } from '@tanstack/react-form';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Loader2, Sparkles } from 'lucide-react';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
 
@@ -33,6 +33,7 @@ function RouteComponent() {
         "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
     ];
     const [isPending, startTransition] = useTransition()
+    const [isGenerating, startGenerating] = useTransition()
     const experienceYears = Array.from({ length: 31 }, (_, i) => i.toString());
     const form = useForm({
         defaultValues: {
@@ -62,6 +63,20 @@ function RouteComponent() {
         },
     });
 
+
+    const getAddedJobDescription = async (e: any) => {
+        e.preventDefault();
+        const jobTitle = form.getFieldValue("jobTitle")
+        const experience = form.getFieldValue("experience")
+        if (jobTitle && experience) {
+            startGenerating(async () => {
+                const jobDescription = await getJobDescription({ data: { job_title: jobTitle, experience: experience } })
+                form.setFieldValue("jobDescription", jobDescription)
+            })
+        } else {
+            toast.error("Please fill in the job title and experience")
+        }
+    }
 
     return (
         <div className="flex justify-center p-4 md:p-10 dark:bg-slate-950 min-h-screen">
@@ -214,6 +229,17 @@ function RouteComponent() {
                             </div>
 
                             {/* Job Description */}
+                            <div className='flex flex-row items-end justify-end'>
+                                <div></div>
+                                <div>
+
+                                    <Button onClick={(e) => getAddedJobDescription(e)} disabled={isGenerating}>
+                                        {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                                        Generate Job Description</Button>
+
+                                </div>
+                            </div>
+
                             <form.Field
                                 name="jobDescription"
                                 children={(field) => {

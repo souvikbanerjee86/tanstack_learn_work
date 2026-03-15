@@ -5,6 +5,7 @@ import { API_PATH } from './api-path';
 import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
+import { OpenRouter } from "@openrouter/sdk";
 const auth = new GoogleAuth();
 
 export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(async (): Promise<BucketListResponse> => {
@@ -515,3 +516,58 @@ export const addQuestionUsingAI = createServerFn({ method: 'POST' })
         return returnData as { "questions_generated": number, "message": string };
 
     })
+
+export const getDashbaordSummary = createServerFn({ method: 'GET' })
+    .middleware([isLoginMiddleware])
+    .handler(async (): Promise<UserRoleResponse> => {
+
+        console.log(API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL)
+
+        const client = await auth.getIdTokenClient(API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL);
+        var url = API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL + API_PATH.DASHBOARD_SUMMARY.PATH_URL;
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'GET',
+            });
+            const returnData = await response.data;
+            return returnData as UserRoleResponse;
+        } catch (e) {
+            return { "user_id": "", "role": "" };
+        }
+
+    })
+
+
+
+export const getJobDescription = createServerFn({ method: 'GET' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: { job_title: string, experience: number }) => data)
+    .handler(async ({ data }): Promise<string> => {
+        console.log("getJobDescription called");
+
+        const openrouter = new OpenRouter({
+            apiKey: process.env.APP_OPENROUTER_KEY
+        });
+
+        try {
+            const response = await openrouter.chat.send({
+                chatGenerationParams: {
+                    model: "stepfun/step-3.5-flash:free",
+                    messages: [
+                        {
+                            role: "user",
+                            content: "Give me a JD for a " + data.job_title + " Having " + data.experience + " yrs of Exp.Only provide Job Description, no other values required"
+                        }
+                    ],
+                }
+            });
+
+            const content = response.choices[0].message.content;
+            return content;
+
+        } catch (error) {
+            console.error("OpenRouter Error:", error);
+            throw new Error("Failed to fetch job description");
+        }
+    });
