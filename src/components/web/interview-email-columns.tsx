@@ -47,15 +47,15 @@ export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
             return <div className="font-medium">{formatted}</div>
         },
     },
-    {
-        accessorKey: "message_id",
-        header: "Message Id",
-        cell: ({ row }) => {
-            if (row.getValue("message_id") === null || row.getValue("message_id") === undefined) return <div className="font-medium">Not Sent Yet</div>
+    // {
+    //     accessorKey: "message_id",
+    //     header: "Message Id",
+    //     cell: ({ row }) => {
+    //         if (row.getValue("message_id") === null || row.getValue("message_id") === undefined) return <div className="font-medium">Not Sent Yet</div>
 
-            return <div className="font-medium">{row.getValue("message_id")}</div>
-        },
-    },
+    //         return <div className="font-medium">{row.getValue("message_id")}</div>
+    //     },
+    // },
 
     {
         accessorKey: "email_sent",
@@ -74,13 +74,28 @@ export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
     },
     {
         accessorKey: "interview_status",
-        header: "Status",
+        header: "Evaluation Status",
         cell: ({ row }) => {
             const status = row.getValue("interview_status") as string
             if (status) {
                 return <Badge variant="secondary">{status}</Badge>
             }
             return <Badge variant="secondary">Not Evaluated</Badge>
+
+        },
+    },
+    {
+        accessorKey: "verdict",
+        header: "Status",
+        cell: ({ row }) => {
+            const status = row.getValue("verdict") as string
+            return <div className={cn(
+                "px-2 py-1 rounded-full text-xs font-medium w-fit",
+                status === "ACCEPT" && "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+                status === "REJECT" && "bg-gray-100 text-gray-700"
+            )}>
+                {status}
+            </div>
 
         },
     },
