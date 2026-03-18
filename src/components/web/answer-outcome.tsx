@@ -5,6 +5,9 @@ import { Separator } from "../ui/separator";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { getInterviewAnswersList } from "@/lib/server-function";
 import { NoEvaluation } from "./no-evaluation";
+import { TotalScoreCard } from "./total-score-card";
+import { EvaluationDialog } from "./evaluation-dialog";
+
 
 export const interviewAnswerQueryOptions = (email: string, job_id: string) => queryOptions({
     queryKey: ['candidates', email, job_id],
@@ -12,14 +15,25 @@ export const interviewAnswerQueryOptions = (email: string, job_id: string) => qu
 })
 export function AnswerOutcome({ email, id }: { email: string, id: string }) {
     const { data: answers } = useSuspenseQuery(interviewAnswerQueryOptions(email, id))
-
     if (answers.data.length === 0) {
         return (
             <NoEvaluation />
         );
     }
+
+    const confirmEvaluation = async (data: { verdict: string, feedback: string }) => {
+        console.log(data)
+
+    }
+    const currentScores = answers.data.map((data) => data.score ?? 0);
     return (
         <>
+            <TotalScoreCard scores={currentScores} />
+            <div className="flex justify-between flex-row">
+                <div></div>
+                <div><EvaluationDialog confirmEvaluation={confirmEvaluation} /></div>
+            </div>
+
             <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     <Briefcase className="w-3 h-3" /> {answers.data[0].job_id}
@@ -132,3 +146,5 @@ const CheckItem = ({ label, status }: { label: string; status: boolean }) => (
         )}
     </div>
 );
+
+
