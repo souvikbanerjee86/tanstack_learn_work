@@ -415,6 +415,7 @@ export const getInterviewQuestions = createServerFn({ method: 'GET' })
             method: 'GET',
         });
         const returnData = await response.data;
+
         return returnData as JobQuestionsResponse;
 
     })
