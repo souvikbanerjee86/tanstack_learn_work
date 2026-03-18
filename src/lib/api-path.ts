@@ -84,4 +84,8 @@ export const API_PATH = {
         GET_BASE_URL: "https://add-ai-questions-820672860724.europe-west1.run.app",
         PATH_URL: "/api/dashboard/summary"
     },
+    INTERVIEW_EVALUTE: {
+        GET_BASE_URL: "https://interview-evaluation-api-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/evaluate"
+    }
 }

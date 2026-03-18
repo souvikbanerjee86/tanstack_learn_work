@@ -3,17 +3,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { getInterviewAnswersList } from "@/lib/server-function";
+import { getInterviewAnswersList, interviewEvaluate } from "@/lib/server-function";
 import { NoEvaluation } from "./no-evaluation";
 import { TotalScoreCard } from "./total-score-card";
 import { EvaluationDialog } from "./evaluation-dialog";
+import { toast } from "sonner";
+import { useState, useTransition } from "react";
 
 
 export const interviewAnswerQueryOptions = (email: string, job_id: string) => queryOptions({
     queryKey: ['candidates', email, job_id],
     queryFn: () => getInterviewAnswersList({ data: { candidate: email, job_id: job_id } })
 })
-export function AnswerOutcome({ email, id }: { email: string, id: string }) {
+export function AnswerOutcome({ email, id, interview_evaluation }: { email: string, id: string, interview_evaluation: string }) {
+    const [isPending, startTransition] = useTransition()
+    const [open, setOpen] = useState(false)
+    const [evaluation, setEvaluation] = useState(interview_evaluation)
     const { data: answers } = useSuspenseQuery(interviewAnswerQueryOptions(email, id))
     if (answers.data.length === 0) {
         return (
@@ -22,7 +27,17 @@ export function AnswerOutcome({ email, id }: { email: string, id: string }) {
     }
 
     const confirmEvaluation = async (data: { verdict: string, feedback: string }) => {
-        console.log(data)
+        startTransition(async () => {
+            try {
+                await interviewEvaluate({ data: { job_id: answers.data[0].job_id, candidate_email: answers.data[0].candidate, verdict: data.verdict, feedback: data.feedback } })
+                toast.success("Evaluation Successful")
+                setOpen(false)
+                setEvaluation("EVALUATED")
+            } catch (e: any) {
+                toast.error(e.message)
+            }
+
+        })
 
     }
     const currentScores = answers.data.map((data) => data.score ?? 0);
@@ -31,7 +46,7 @@ export function AnswerOutcome({ email, id }: { email: string, id: string }) {
             <TotalScoreCard scores={currentScores} />
             <div className="flex justify-between flex-row">
                 <div></div>
-                <div><EvaluationDialog confirmEvaluation={confirmEvaluation} /></div>
+                <div><EvaluationDialog confirmEvaluation={confirmEvaluation} isPending={isPending} open={open} setOpen={setOpen} evaluation={evaluation} /></div>
             </div>
 
             <div className="flex flex-col gap-1">

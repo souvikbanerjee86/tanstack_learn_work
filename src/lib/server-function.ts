@@ -569,3 +569,34 @@ export const getJobDescription = createServerFn({ method: 'GET' })
             throw new Error("Failed to fetch job description");
         }
     });
+
+export const interviewEvaluate = createServerFn({ method: 'POST' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: { job_id: string, candidate_email: string, verdict: string, feedback: string }) => data)
+    .handler(async ({ data }): Promise<{ "message": string }> => {
+
+
+        const client = await auth.getIdTokenClient(API_PATH.INTERVIEW_EVALUTE.GET_BASE_URL);
+        var url = API_PATH.INTERVIEW_EVALUTE.GET_BASE_URL + API_PATH.INTERVIEW_EVALUTE.PATH_URL;
+        console.log(url)
+
+        const postData = {
+            "job_id": data.job_id,
+            "candidate_email": data.candidate_email,
+            "verdict": data.verdict,
+            "feedback": data.feedback
+        }
+        const sendData = JSON.stringify(postData)
+
+        const response = await client.request({
+            url: url,
+            method: 'POST',
+            data: sendData,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const returnData = await response.data;
+        return returnData as { "message": string };
+
+    })

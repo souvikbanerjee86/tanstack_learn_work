@@ -2,7 +2,7 @@
 import { AnswerOutcome } from '@/components/web/answer-outcome'
 import { AudioOutcome } from '@/components/web/audio-outcome'
 import { getInterviewAnswersList } from '@/lib/server-function'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useLocation } from '@tanstack/react-router'
 
 import { queryOptions } from '@tanstack/react-query'
 import { Suspense } from 'react'
@@ -27,6 +27,8 @@ export const Route = createFileRoute('/dashboard/interview/$id')({
 
 function RouteComponent() {
     const { email, id } = Route.useLoaderData()
+    const location = useLocation()
+    const { interview_status } = location.state as any;
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 p-4 md:p-8 text-slate-900 dark:text-zinc-100 transition-colors">
@@ -38,7 +40,7 @@ function RouteComponent() {
 
 
                 <Suspense fallback={<InterviewFeedbackSkeleton />}>
-                    <AnswerOutcome email={email} id={id} />
+                    <AnswerOutcome email={email} id={id} interview_evaluation={interview_status} />
                 </Suspense>
 
             </div>
