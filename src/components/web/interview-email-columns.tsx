@@ -14,6 +14,7 @@ import {
 import { CandidateRecord } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useNavigate } from "@tanstack/react-router"
+import { Badge } from "../ui/badge"
 
 
 export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
@@ -58,7 +59,7 @@ export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
 
     {
         accessorKey: "email_sent",
-        header: "Email Sent Status",
+        header: "Email Status",
         cell: ({ row }) => {
             const status = row.getValue("email_sent") as boolean
 
@@ -72,10 +73,24 @@ export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
         },
     },
     {
+        accessorKey: "interview_status",
+        header: "Status",
+        cell: ({ row }) => {
+            const status = row.getValue("interview_status") as string
+            if (status) {
+                return <Badge variant="secondary">{status}</Badge>
+            }
+            return <Badge variant="secondary">Not Evaluated</Badge>
+
+        },
+    },
+    {
         id: "actions",
         cell: ({ row }) => {
             const navigate = useNavigate()
-
+            const extraData = {
+                interview_status: row.original.interview_status,
+            };
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -92,7 +107,8 @@ export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
                                 params: { id: row.original.job_id },
                                 search: {
                                     email: row.original.candidate_email
-                                }
+                                },
+                                state: extraData as any,
                             })
                         }>View details</DropdownMenuItem>
                     </DropdownMenuContent>

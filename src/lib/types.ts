@@ -120,6 +120,7 @@ export interface CandidateRecord {
     sent_at: string;
     message_id: string;
     job_id: string;
+    interview_status?: string;
 }
 
 export interface CandidatePaginationResponse {

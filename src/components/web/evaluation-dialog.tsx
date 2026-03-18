@@ -7,9 +7,18 @@ import { Textarea } from "../ui/textarea";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { useForm } from "@tanstack/react-form";
 import { evaluationSchema } from "@/schemas/evaluate";
+import { Loader2 } from "lucide-react";
+import { Badge } from "../ui/badge";
 
-export function EvaluationDialog({ confirmEvaluation }: { confirmEvaluation: (data: { verdict: string, feedback: string }) => void }) {
+interface EvaluationDialogProps {
+    confirmEvaluation: (data: { verdict: string, feedback: string }) => void;
+    isPending: boolean;
+    open: boolean;
+    setOpen: (open: boolean) => void;
+    evaluation: string;
+}
 
+export function EvaluationDialog({ confirmEvaluation, isPending, open, setOpen, evaluation }: EvaluationDialogProps) {
     const form = useForm({
         defaultValues: {
             verdict: "",
@@ -23,10 +32,11 @@ export function EvaluationDialog({ confirmEvaluation }: { confirmEvaluation: (da
         },
     })
     return (
-        <Dialog>
-            <DialogTrigger asChild>
+        <Dialog open={open} onOpenChange={setOpen}>
+            {evaluation == "EVALUATED" ? <Badge variant={"default"} >Evaluated</Badge> : <DialogTrigger asChild>
                 <Button variant="default">Evaluate</Button>
-            </DialogTrigger>
+            </DialogTrigger>}
+
             <DialogContent className="sm:max-w-sm">
                 {/* Move the form here */}
                 <form onSubmit={(e) => {
@@ -107,7 +117,7 @@ export function EvaluationDialog({ confirmEvaluation }: { confirmEvaluation: (da
                         <DialogClose asChild>
                             <Button type="button" variant="outline">Cancel</Button>
                         </DialogClose>
-                        <Button type="submit">Save changes</Button>
+                        <Button type="submit" disabled={isPending}>{isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Evaluate"}</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
