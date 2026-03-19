@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 import { OpenRouter } from "@openrouter/sdk";
@@ -520,7 +520,7 @@ export const addQuestionUsingAI = createServerFn({ method: 'POST' })
 
 export const getDashbaordSummary = createServerFn({ method: 'GET' })
     .middleware([isLoginMiddleware])
-    .handler(async (): Promise<UserRoleResponse> => {
+    .handler(async (): Promise<DashboardSummaryResponse> => {
 
         console.log(API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL)
 
@@ -532,9 +532,14 @@ export const getDashbaordSummary = createServerFn({ method: 'GET' })
                 method: 'GET',
             });
             const returnData = await response.data;
-            return returnData as UserRoleResponse;
+            return returnData as DashboardSummaryResponse;
         } catch (e) {
-            return { "user_id": "", "role": "" };
+            return {
+                "active_jobs": 0,
+                "total_applicants": 0,
+                "hired": 0,
+                "growth_percentage": 0
+            };
         }
 
     })

@@ -1,6 +1,7 @@
 
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area,
@@ -8,6 +9,9 @@ import {
   Line
 } from 'recharts';
 import { Briefcase, TrendingUp, UserCheck, Users } from 'lucide-react';
+import { getDashbaordSummary } from '@/lib/server-function';
+import { DashboardStatsSkeleton } from '@/components/web/dashboard-stat-skeleton';
+import { Suspense } from 'react';
 
 
 const data = [
@@ -26,6 +30,13 @@ const pieData = [
 
 // Vibrant color palette that works in Light & Dark modes
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+
+
+export const dashboardQueryOptions = queryOptions({
+  queryKey: ['dashboard'],
+  queryFn: () => getDashbaordSummary(),
+})
+
 export const Route = createFileRoute('/dashboard/')({
   // beforeLoad: () => {
   //   throw redirect({
@@ -44,12 +55,11 @@ function RouteComponent() {
       </div>
 
       {/* Stats Section */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard title="Active Jobs" value="24" icon={<Briefcase size={20} />} />
-        <StatCard title="Total Applicants" value="1,429" icon={<Users size={20} />} />
-        <StatCard title="Hired" value="128" icon={<UserCheck size={20} />} />
-        <StatCard title="Growth" value="+14%" icon={<TrendingUp size={20} />} />
-      </div>
+
+      <Suspense fallback={<DashboardStatsSkeleton />}>
+        <DashboardStats />
+      </Suspense>
+
 
       {/* Charts Grid: 2x2 on Large Screens, 1x4 on Mobile */}
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
@@ -134,3 +144,15 @@ const ChartWrapper = ({ title, children }: { title: string, children: React.Reac
     </CardContent>
   </Card>
 );
+
+function DashboardStats() {
+  const { data } = useSuspenseQuery(dashboardQueryOptions)
+  return (
+    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <StatCard title="Active Jobs" value={data.active_jobs.toString()} icon={<Briefcase size={20} />} />
+      <StatCard title="Total Applicants" value={data.total_applicants.toString()} icon={<Users size={20} />} />
+      <StatCard title="Hired" value={data.hired.toString()} icon={<UserCheck size={20} />} />
+      <StatCard title="Growth" value={data.growth_percentage.toString()} icon={<TrendingUp size={20} />} />
+    </div>
+  )
+}
