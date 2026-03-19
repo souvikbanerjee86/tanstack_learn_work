@@ -217,3 +217,10 @@ export interface GcsUriDetails {
 export interface GcsResponse {
     gcs_uri: GcsUriDetails;
 }
+
+export interface DashboardSummaryResponse {
+    active_jobs: number;
+    total_applicants: number;
+    hired: number;
+    growth_percentage: number;
+}

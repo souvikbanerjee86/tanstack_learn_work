@@ -81,7 +81,7 @@ export const API_PATH = {
         PATH_URL: "/api/generate-questions"
     },
     DASHBOARD_SUMMARY: {
-        GET_BASE_URL: "https://add-ai-questions-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://dashboard-graph-api-820672860724.europe-west1.run.app",
         PATH_URL: "/api/dashboard/summary"
     },
     INTERVIEW_EVALUTE: {
