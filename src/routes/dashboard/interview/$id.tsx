@@ -1,17 +1,13 @@
 
 import { AnswerOutcome } from '@/components/web/answer-outcome'
 import { AudioOutcome } from '@/components/web/audio-outcome'
-import { getInterviewAnswersList } from '@/lib/server-function'
 import { createFileRoute, useLocation } from '@tanstack/react-router'
 
-import { queryOptions } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import InterviewFeedbackSkeleton from '@/components/web/interview-feedback-skeleton'
 
-export const interviewAnswerQueryOptions = (email: string, job_id: string) => queryOptions({
-    queryKey: ['candidates', email, job_id],
-    queryFn: () => getInterviewAnswersList({ data: { candidate: email, job_id: job_id } })
-})
+
+
 
 export const Route = createFileRoute('/dashboard/interview/$id')({
     loaderDeps: ({ search }: any) => ({

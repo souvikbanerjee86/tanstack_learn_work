@@ -150,7 +150,7 @@ function ImportContent() {
                         <CardContent>
                           <p className="text-[10px] text-muted-foreground break-all line-clamp-1">
                             {file.full_path}
-                          </p>setLoading
+                          </p>
                         </CardContent>
                         <CardFooter className="flex justify-between items-center pt-2">
                           <span className="text-xs font-mono">{formatSize(file.size)}</span>
