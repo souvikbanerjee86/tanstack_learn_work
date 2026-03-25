@@ -114,7 +114,7 @@ function ImportContent() {
         {processedIndexFiles && <ImportPageCard cardDescription="Last Processed Index" processedCount={totalRagFiles} footerDescription="Last Updated: " processedIndexFiles={processedIndexFiles} />}
 
       </div>
-      <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min ">
+      <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min ">
         <div className="p-6 space-y-8">
           {root_folders.map((folder) => (
             <Collapsible key={folder.name} defaultOpen className="group space-y-4">

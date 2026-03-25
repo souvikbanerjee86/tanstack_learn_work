@@ -34,6 +34,7 @@ export function DashboardStatsSkeleton({ count = 4 }: StatSkeletonProps) {
                     </Card>
                 ))}
             </div>
+            <br />
         </div>
     )
 }

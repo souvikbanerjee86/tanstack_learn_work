@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 import { OpenRouter } from "@openrouter/sdk";
@@ -604,5 +604,30 @@ export const interviewEvaluate = createServerFn({ method: 'POST' })
         });
         const returnData = await response.data;
         return returnData as { "message": string };
+
+    })
+
+
+export const getEmailSyncs = createServerFn({ method: 'GET' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: { limit: number | null, last_doc_id: string | null }) => data)
+    .handler(async ({ data }): Promise<PaginatedEmailSyncResponse> => {
+
+        console.log(API_PATH.EMAIL_SYNC.GET_BASE_URL)
+        const client = await auth.getIdTokenClient(API_PATH.EMAIL_SYNC.GET_BASE_URL);
+        var url = API_PATH.EMAIL_SYNC.GET_BASE_URL + API_PATH.EMAIL_SYNC.PATH_URL;
+
+        if (data.limit) {
+            url += `&limit=${data.limit}`;
+        }
+        if (data.last_doc_id) {
+            url += `&last_doc_id=${data.last_doc_id}`;
+        }
+        const response = await client.request({
+            url: url,
+            method: 'GET',
+        });
+        const returnData = await response.data;
+        return returnData as PaginatedEmailSyncResponse;
 
     })
