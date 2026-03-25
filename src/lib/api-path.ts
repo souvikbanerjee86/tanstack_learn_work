@@ -87,5 +87,9 @@ export const API_PATH = {
     INTERVIEW_EVALUTE: {
         GET_BASE_URL: "https://interview-evaluation-api-820672860724.europe-west1.run.app",
         PATH_URL: "/api/evaluate"
-    }
+    },
+    EMAIL_SYNC: {
+        GET_BASE_URL: "https://email-applied-job-api-820672860724.europe-west1.run.app",
+        PATH_URL: "/api/email-applied-job"
+    },
 }

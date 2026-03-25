@@ -224,3 +224,20 @@ export interface DashboardSummaryResponse {
     hired: number;
     growth_percentage: number;
 }
+
+export interface EmailSyncRecord {
+    id: string;
+    applicant_name: string;
+    email_body: string;
+    processed: boolean;
+    job_id: string;
+    created_at: string;
+    cv_filename: string;
+    applicant_email: string;
+}
+
+export interface PaginatedEmailSyncResponse {
+    count: number;
+    next_cursor: string | null;
+    data: EmailSyncRecord[];
+}
