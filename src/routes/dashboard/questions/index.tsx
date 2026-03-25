@@ -72,8 +72,6 @@ function RouteComponent() {
 
     const createAIQuestion = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        console.log("createAIQuestion", selectedJobId)
-        console.log("questionCount", questionCount)
         if (questionCount < 1) {
             setError("Please select the number of questions")
         }

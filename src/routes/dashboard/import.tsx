@@ -2,7 +2,7 @@ import { fetchBucketListInfo, getDownloadURL, getProcessedIndexFilesId, triggerI
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { ChevronRight, DownloadIcon, FileIcon, FolderIcon } from "lucide-react"
 import { Button } from '@/components/ui/button';
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
+import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import {
   Collapsible,
   CollapsibleContent,
@@ -56,6 +56,7 @@ function RouteComponent() {
 
 function ImportContent() {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const { role } = Route.useRouteContext()
   const { data: { root_folders } } = useSuspenseQuery(bucketListQueryOptions)
   const { data: processedIndexFiles } = useSuspenseQuery(processedIndexQueryOptions)
@@ -76,7 +77,7 @@ function ImportContent() {
       setLoading(true)
       const response = await triggerIndexes({ data: { date } })
       if (response.success) {
-        router.invalidate()
+        queryClient.invalidateQueries({ queryKey: ['processed-index'] });
         toast.success(response.message)
       } else {
         toast.error(response.message)
