@@ -17,7 +17,7 @@ export const API_PATH = {
         CORPUS_ID: "137359788634800128"
     },
     JOB_DETAILS: {
-        GET_BASE_URL: "https://jobs-list-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://jobs-list-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/jobs-list-api"
     },
     JOB_INTERVIEW_CANDIDATES: {
@@ -45,7 +45,7 @@ export const API_PATH = {
         PATH_URL: "/api/voice-answers"
     },
     ADD_JOB: {
-        GET_BASE_URL: "https://add-job-api-git-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://add-job-api-403179946278.europe-west1.run.app",
         PATH_URL: "/jobs"
     },
     FACE_DETECTION: {
