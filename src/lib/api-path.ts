@@ -53,7 +53,7 @@ export const API_PATH = {
         PATH_URL: "/api/match"
     },
     USER_ROLE: {
-        GET_BASE_URL: "https://user-role-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://user-role-api-403179946278.europe-west1.run.app",
         PATH_URL: "/user/role/"
     },
     CANDIDATE_LIST: {
