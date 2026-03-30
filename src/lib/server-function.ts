@@ -120,7 +120,6 @@ export const getJobDetails = createServerFn({ method: 'GET' })
             method: 'GET',
         });
         const returnData = await response.data;
-        console.log(returnData)
         return returnData as PaginatedJobResponse;
 
     })
@@ -365,6 +364,7 @@ export const getUserRole = createServerFn({ method: 'GET' })
                 method: 'GET',
             });
             const returnData = await response.data;
+
             return returnData as UserRoleResponse;
         } catch (e) {
             return { "user_id": "", "role": "" };

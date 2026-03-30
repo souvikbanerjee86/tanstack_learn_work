@@ -9,13 +9,13 @@ export function ImportPageCard({ cardDescription, processedCount, footerDescript
             <CardHeader>
                 <CardDescription className='text-center'>{cardDescription}</CardDescription>
                 <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-center">
-                    {cardDescription === "Last Processed Index" ? processedIndexFiles[0].date : processedCount}
+                    {cardDescription === "Last Processed Index" ? processedIndexFiles[0] && processedIndexFiles[0].date : processedCount}
                 </CardTitle>
             </CardHeader>
             <CardFooter className="flex-col items-start gap-1.5 text-sm">
 
                 <div className="text-muted-foreground text-center">
-                    {footerDescription} {processedIndexFiles && format(new Date(processedIndexFiles[0].processed_at), "PPPp")}
+                    {footerDescription} {processedIndexFiles && processedIndexFiles[0] && format(new Date(processedIndexFiles[0].processed_at), "PPPp")}
                 </div>
             </CardFooter>
         </Card>

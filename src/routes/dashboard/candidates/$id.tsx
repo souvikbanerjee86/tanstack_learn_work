@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export const candidatesCVQueryOptions = (url: string) => queryOptions({
     queryKey: ['candidates', url],
-    queryFn: () => getDownloadURL({ data: { bucket_name: "cv_bucket_project-716b1c69-ee04-40fd-ba6", file_path: url } })
+    queryFn: () => getDownloadURL({ data: { bucket_name: "cv_bucket_project-project-e7c52c57-c7d4-407d-b4b", file_path: url } })
 })
 
 
