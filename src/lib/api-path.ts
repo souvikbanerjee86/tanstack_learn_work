@@ -1,6 +1,6 @@
 export const API_PATH = {
     BUCKET_LIST_API: {
-        GET_BASE_URL: "https://bucket-list-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://bucket-list-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/list-objects?prefix=uploads"
     },
     RAG_SEARCH_API: {
@@ -8,7 +8,7 @@ export const API_PATH = {
         PATH_URL: "/api/rag_search"
     },
     PROCESSED_FILES_ID: {
-        GET_BASE_URL: "https://indexed-files-list-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://indexed-files-list-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/indexed-list-api"
     },
     TRIGGER_INDEX: {
@@ -29,7 +29,7 @@ export const API_PATH = {
         PATH_URL: "/api/job-interview-candidates-list"
     },
     DOWNLOAD_FILE_URL: {
-        GET_BASE_URL: "https://file-url-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://file-url-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/file-url"
     },
     SPEECH_TO_TEXT: {
@@ -53,31 +53,31 @@ export const API_PATH = {
         PATH_URL: "/api/match"
     },
     USER_ROLE: {
-        GET_BASE_URL: "https://user-role-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://user-role-api-403179946278.europe-west1.run.app",
         PATH_URL: "/user/role/"
     },
     CANDIDATE_LIST: {
-        GET_BASE_URL: "https://candidate-list-api-git-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://candidate-list-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/candidates"
     },
     QUESTION_LIST: {
-        GET_BASE_URL: "https://job-interview-questions-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://job-interview-questions-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/jobs/"
     },
     QUESTION_ADD: {
-        GET_BASE_URL: "https://job-interview-question-add-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://job-interview-question-add-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/questions/"
     },
     QUESTION_DELETE: {
-        GET_BASE_URL: "https://job-interview-question-delete-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://job-interview-question-delete-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/questions/"
     },
     ADD_CANDIDATE: {
-        GET_BASE_URL: "https://rag-resume-api-git-01-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://rag-resume-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/upload"
     },
     QUESTION_ADD_AI: {
-        GET_BASE_URL: "https://add-ai-questions-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://add-ai-questions-403179946278.europe-west1.run.app",
         PATH_URL: "/api/generate-questions"
     },
     DASHBOARD_SUMMARY: {
