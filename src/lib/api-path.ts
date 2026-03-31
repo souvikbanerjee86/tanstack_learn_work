@@ -25,7 +25,7 @@ export const API_PATH = {
         PATH_URL: "/api/process-candidates"
     },
     JOB_INTERVIEW_CANDIDATE_EMAIL_LIST: {
-        GET_BASE_URL: "https://job-interview-candidate-list-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://job-interview-candidate-list-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/job-interview-candidates-list"
     },
     DOWNLOAD_FILE_URL: {
