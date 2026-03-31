@@ -37,11 +37,11 @@ export const API_PATH = {
         PATH_URL: "/api/transcribe-v2"
     },
     CANDIDATE_INTERVIEW_ANSWER_LIST: {
-        GET_BASE_URL: "https://interview-answer-list-api-git-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://interview-answer-list-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/answers"
     },
     CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST: {
-        GET_BASE_URL: "https://interview-voice-outcome-list-api-git-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://interview-voice-outcome-list-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/voice-answers"
     },
     ADD_JOB: {
@@ -81,15 +81,15 @@ export const API_PATH = {
         PATH_URL: "/api/generate-questions"
     },
     DASHBOARD_SUMMARY: {
-        GET_BASE_URL: "https://dashboard-graph-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://dashboard-graph-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/dashboard/summary"
     },
     INTERVIEW_EVALUTE: {
-        GET_BASE_URL: "https://interview-evaluation-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://interview-evaluation-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/evaluate"
     },
     EMAIL_SYNC: {
-        GET_BASE_URL: "https://email-applied-job-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://email-applied-job-403179946278.europe-west1.run.app",
         PATH_URL: "/api/email-applied-job"
     },
 }
