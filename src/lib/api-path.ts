@@ -4,7 +4,7 @@ export const API_PATH = {
         PATH_URL: "/api/list-objects?prefix=uploads"
     },
     RAG_SEARCH_API: {
-        GET_BASE_URL: "https://rag-search-api-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://rag-search-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/rag_search"
     },
     PROCESSED_FILES_ID: {
@@ -21,7 +21,7 @@ export const API_PATH = {
         PATH_URL: "/api/jobs-list-api"
     },
     JOB_INTERVIEW_CANDIDATES: {
-        GET_BASE_URL: "https://job-interview-candidates-820672860724.europe-west1.run.app",
+        GET_BASE_URL: "https://job-interview-candidates-403179946278.europe-west1.run.app",
         PATH_URL: "/api/process-candidates"
     },
     JOB_INTERVIEW_CANDIDATE_EMAIL_LIST: {
