@@ -634,3 +634,41 @@ export const getEmailSyncs = createServerFn({ method: 'GET' })
         return returnData as PaginatedEmailSyncResponse;
 
     })
+
+
+export const editJob = createServerFn({ method: 'POST' })
+    .inputValidator((data: JobPosting) => data)
+    .handler(async ({ data }): Promise<{ "id": string, "message": string }> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.EDIT_JOB.GET_BASE_URL);
+        const url = API_PATH.EDIT_JOB.GET_BASE_URL + API_PATH.EDIT_JOB.PATH_URL;
+
+
+        const postData = {
+            "id": data.id,
+            "jobTitle": data.jobTitle,
+            "jobDescription": data.jobDescription,
+            "jobType": data.jobType,
+            "locations": data.locations,
+            "startDate": data.startDate,
+            "endDate": data.endDate,
+            "jobId": data.jobId,
+            "experience": data.experience
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'PUT',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            return finalData as { "id": string, "message": string }
+        } catch (e) {
+            return { "id": "", "message": "" };
+        }
+
+    })

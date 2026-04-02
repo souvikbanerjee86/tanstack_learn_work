@@ -40,7 +40,7 @@ export const columns: ColumnDef<JobDetail>[] = [
         accessorKey: "end_date",
         header: "End Date",
         cell: ({ row }) => {
-            const formatted = format(row.getValue("start_date"), "PPP")
+            const formatted = format(row.getValue("end_date"), "PPP")
 
             return <div className="font-medium">{formatted}</div>
         },
@@ -72,11 +72,12 @@ export const columns: ColumnDef<JobDetail>[] = [
         id: "actions",
         cell: ({ row }) => {
             const extraData = {
+                id: row.original.id,
                 job_id: row.original.job_id,
                 job_description: row.original.job_description,
                 job_title: row.original.job_title,
-                start_date: format(row.original.start_date, "PPP"),
-                end_date: format(row.original.end_date, "PPP"),
+                start_date: format(row.original.start_date, "yyyy-MM-dd"),
+                end_date: format(row.original.end_date, "yyyy-MM-dd"),
                 location: row.original.location,
                 job_type: row.original.job_type,
                 status: row.original.status,
@@ -101,6 +102,13 @@ export const columns: ColumnDef<JobDetail>[] = [
                                 state: extraData as any,
                             })
                         }>View details</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() =>
+                            navigate({
+                                to: '/dashboard/jobs/$id/edit',
+                                params: { id: row.original.job_id },
+                                state: extraData as any,
+                            })
+                        }>Edit</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

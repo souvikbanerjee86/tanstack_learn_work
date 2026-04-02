@@ -27,6 +27,8 @@ import { Route as DashboardJobsIdRouteImport } from './routes/dashboard/jobs/$id
 import { Route as DashboardInterviewIdRouteImport } from './routes/dashboard/interview/$id'
 import { Route as DashboardCandidatesAddRouteImport } from './routes/dashboard/candidates/add'
 import { Route as DashboardCandidatesIdRouteImport } from './routes/dashboard/candidates/$id'
+import { Route as DashboardJobsIdIndexRouteImport } from './routes/dashboard/jobs/$id.index'
+import { Route as DashboardJobsIdEditRouteImport } from './routes/dashboard/jobs/$id.edit'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
@@ -118,6 +120,16 @@ const DashboardCandidatesIdRoute = DashboardCandidatesIdRouteImport.update({
   path: '/candidates/$id',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardJobsIdIndexRoute = DashboardJobsIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardJobsIdRoute,
+} as any)
+const DashboardJobsIdEditRoute = DashboardJobsIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => DashboardJobsIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -128,7 +140,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/candidates/$id': typeof DashboardCandidatesIdRoute
   '/dashboard/candidates/add': typeof DashboardCandidatesAddRoute
   '/dashboard/interview/$id': typeof DashboardInterviewIdRoute
-  '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
+  '/dashboard/jobs/$id': typeof DashboardJobsIdRouteWithChildren
   '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/login/': typeof AuthLoginIndexRoute
   '/signup/': typeof AuthSignupIndexRoute
@@ -137,6 +149,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/interview/': typeof DashboardInterviewIndexRoute
   '/dashboard/jobs/': typeof DashboardJobsIndexRoute
   '/dashboard/questions/': typeof DashboardQuestionsIndexRoute
+  '/dashboard/jobs/$id/edit': typeof DashboardJobsIdEditRoute
+  '/dashboard/jobs/$id/': typeof DashboardJobsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -146,7 +160,6 @@ export interface FileRoutesByTo {
   '/dashboard/candidates/$id': typeof DashboardCandidatesIdRoute
   '/dashboard/candidates/add': typeof DashboardCandidatesAddRoute
   '/dashboard/interview/$id': typeof DashboardInterviewIdRoute
-  '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
   '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/login': typeof AuthLoginIndexRoute
   '/signup': typeof AuthSignupIndexRoute
@@ -155,6 +168,8 @@ export interface FileRoutesByTo {
   '/dashboard/interview': typeof DashboardInterviewIndexRoute
   '/dashboard/jobs': typeof DashboardJobsIndexRoute
   '/dashboard/questions': typeof DashboardQuestionsIndexRoute
+  '/dashboard/jobs/$id/edit': typeof DashboardJobsIdEditRoute
+  '/dashboard/jobs/$id': typeof DashboardJobsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -167,7 +182,7 @@ export interface FileRoutesById {
   '/dashboard/candidates/$id': typeof DashboardCandidatesIdRoute
   '/dashboard/candidates/add': typeof DashboardCandidatesAddRoute
   '/dashboard/interview/$id': typeof DashboardInterviewIdRoute
-  '/dashboard/jobs/$id': typeof DashboardJobsIdRoute
+  '/dashboard/jobs/$id': typeof DashboardJobsIdRouteWithChildren
   '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
   '/_auth/signup/': typeof AuthSignupIndexRoute
@@ -176,6 +191,8 @@ export interface FileRoutesById {
   '/dashboard/interview/': typeof DashboardInterviewIndexRoute
   '/dashboard/jobs/': typeof DashboardJobsIndexRoute
   '/dashboard/questions/': typeof DashboardQuestionsIndexRoute
+  '/dashboard/jobs/$id/edit': typeof DashboardJobsIdEditRoute
+  '/dashboard/jobs/$id/': typeof DashboardJobsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -197,6 +214,8 @@ export interface FileRouteTypes {
     | '/dashboard/interview/'
     | '/dashboard/jobs/'
     | '/dashboard/questions/'
+    | '/dashboard/jobs/$id/edit'
+    | '/dashboard/jobs/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -206,7 +225,6 @@ export interface FileRouteTypes {
     | '/dashboard/candidates/$id'
     | '/dashboard/candidates/add'
     | '/dashboard/interview/$id'
-    | '/dashboard/jobs/$id'
     | '/dashboard/jobs/add'
     | '/login'
     | '/signup'
@@ -215,6 +233,8 @@ export interface FileRouteTypes {
     | '/dashboard/interview'
     | '/dashboard/jobs'
     | '/dashboard/questions'
+    | '/dashboard/jobs/$id/edit'
+    | '/dashboard/jobs/$id'
   id:
     | '__root__'
     | '/'
@@ -235,6 +255,8 @@ export interface FileRouteTypes {
     | '/dashboard/interview/'
     | '/dashboard/jobs/'
     | '/dashboard/questions/'
+    | '/dashboard/jobs/$id/edit'
+    | '/dashboard/jobs/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -371,6 +393,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCandidatesIdRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/jobs/$id/': {
+      id: '/dashboard/jobs/$id/'
+      path: '/'
+      fullPath: '/dashboard/jobs/$id/'
+      preLoaderRoute: typeof DashboardJobsIdIndexRouteImport
+      parentRoute: typeof DashboardJobsIdRoute
+    }
+    '/dashboard/jobs/$id/edit': {
+      id: '/dashboard/jobs/$id/edit'
+      path: '/edit'
+      fullPath: '/dashboard/jobs/$id/edit'
+      preLoaderRoute: typeof DashboardJobsIdEditRouteImport
+      parentRoute: typeof DashboardJobsIdRoute
+    }
   }
 }
 
@@ -388,6 +424,20 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
+interface DashboardJobsIdRouteChildren {
+  DashboardJobsIdEditRoute: typeof DashboardJobsIdEditRoute
+  DashboardJobsIdIndexRoute: typeof DashboardJobsIdIndexRoute
+}
+
+const DashboardJobsIdRouteChildren: DashboardJobsIdRouteChildren = {
+  DashboardJobsIdEditRoute: DashboardJobsIdEditRoute,
+  DashboardJobsIdIndexRoute: DashboardJobsIdIndexRoute,
+}
+
+const DashboardJobsIdRouteWithChildren = DashboardJobsIdRoute._addFileChildren(
+  DashboardJobsIdRouteChildren,
+)
+
 interface DashboardRouteRouteChildren {
   DashboardDiscoverRoute: typeof DashboardDiscoverRoute
   DashboardImportRoute: typeof DashboardImportRoute
@@ -395,7 +445,7 @@ interface DashboardRouteRouteChildren {
   DashboardCandidatesIdRoute: typeof DashboardCandidatesIdRoute
   DashboardCandidatesAddRoute: typeof DashboardCandidatesAddRoute
   DashboardInterviewIdRoute: typeof DashboardInterviewIdRoute
-  DashboardJobsIdRoute: typeof DashboardJobsIdRoute
+  DashboardJobsIdRoute: typeof DashboardJobsIdRouteWithChildren
   DashboardJobsAddRoute: typeof DashboardJobsAddRoute
   DashboardCandidatesIndexRoute: typeof DashboardCandidatesIndexRoute
   DashboardEmailSyncIndexRoute: typeof DashboardEmailSyncIndexRoute
@@ -411,7 +461,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardCandidatesIdRoute: DashboardCandidatesIdRoute,
   DashboardCandidatesAddRoute: DashboardCandidatesAddRoute,
   DashboardInterviewIdRoute: DashboardInterviewIdRoute,
-  DashboardJobsIdRoute: DashboardJobsIdRoute,
+  DashboardJobsIdRoute: DashboardJobsIdRouteWithChildren,
   DashboardJobsAddRoute: DashboardJobsAddRoute,
   DashboardCandidatesIndexRoute: DashboardCandidatesIndexRoute,
   DashboardEmailSyncIndexRoute: DashboardEmailSyncIndexRoute,
