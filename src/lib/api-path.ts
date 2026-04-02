@@ -92,4 +92,8 @@ export const API_PATH = {
         GET_BASE_URL: "https://email-applied-job-403179946278.europe-west1.run.app",
         PATH_URL: "/api/email-applied-job"
     },
+    EDIT_JOB: {
+        GET_BASE_URL: "https://edit-job-api-403179946278.europe-west1.run.app",
+        PATH_URL: "/jobs"
+    },
 }

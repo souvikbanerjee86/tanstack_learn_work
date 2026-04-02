@@ -1,5 +1,3 @@
-
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,34 +7,38 @@ import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { createJob, getJobDescription } from '@/lib/server-function';
+import { editJob, getJobDescription } from '@/lib/server-function';
 import { indianStates } from '@/lib/types';
 import { jobPostSchema } from '@/schemas/auth';
 import { useForm } from '@tanstack/react-form';
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ChevronDown, Loader2, Sparkles } from 'lucide-react';
+import { createFileRoute, Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { ChevronDown, ChevronLeft, Loader2, Sparkles } from 'lucide-react';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
 
-export const Route = createFileRoute('/dashboard/jobs/add')({
+export const Route = createFileRoute('/dashboard/jobs/$id/edit')({
     component: RouteComponent,
 })
 
 function RouteComponent() {
+    const location = useLocation()
+    const jobInfo = (location.state as any) || {};
+    const locationInfo = jobInfo?.location ? jobInfo.location.split(", ") : []
     const navigate = useNavigate()
+
     const [isPending, startTransition] = useTransition()
     const [isGenerating, startGenerating] = useTransition()
     const experienceYears = Array.from({ length: 31 }, (_, i) => i.toString());
     const form = useForm({
         defaultValues: {
-            jobId: "",
-            jobTitle: "",
-            jobType: "fulltime" as "fulltime" | "parttime",
-            locations: [] as string[],
-            jobDescription: "",
-            startDate: "",
-            endDate: "",
-            experience: 0,
+            jobId: jobInfo?.job_id || "",
+            jobTitle: jobInfo?.job_title || "",
+            jobType: (jobInfo?.job_type as "fulltime" | "parttime") || "fulltime",
+            locations: locationInfo as string[],
+            jobDescription: jobInfo?.job_description || "",
+            startDate: jobInfo?.start_date || "",
+            endDate: jobInfo?.end_date || "",
+            experience: jobInfo?.experience || 0,
         },
         validators: {
             onSubmit: jobPostSchema,
@@ -44,8 +46,8 @@ function RouteComponent() {
         onSubmit: async ({ value }) => {
             startTransition(async () => {
                 try {
-                    await createJob({ data: { jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate, experience: value.experience } });
-                    toast.success("Job created successfully")
+                    await editJob({ data: { id: jobInfo.id, jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate, experience: value.experience } });
+                    toast.success("Job updated successfully")
                     navigate({ to: "/dashboard/jobs" })
                 } catch (error: any) {
                     toast.error(error.message)
@@ -61,25 +63,38 @@ function RouteComponent() {
         const jobTitle = form.getFieldValue("jobTitle")
         const experience = form.getFieldValue("experience")
         if (jobTitle && experience) {
-            startGenerating(async () => {
-                try {
+            try {
+                startGenerating(async () => {
                     const jobDescription = await getJobDescription({ data: { job_title: jobTitle, experience: experience } })
                     form.setFieldValue("jobDescription", jobDescription)
-                } catch (error: any) {
-                    toast.error(error.message)
-                    console.log(error)
-                }
-            })
+                })
+            } catch (e) {
+                toast.error("Something went wrong")
+            }
+
         } else {
             toast.error("Please fill in the job title and experience")
         }
     }
 
     return (
-        <div className="flex justify-center p-4 md:p-10 dark:bg-slate-950 min-h-screen">
+        <div className="w-full max-w-3xl mx-auto space-y-4">
+            <div className="flex items-center justify-start">
+                <Link to='/dashboard/jobs'>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="gap-1 pl-2 text-muted-foreground hover:text-foreground"
+
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                        Back to Jobs
+                    </Button>
+                </Link>
+            </div>
             <Card className="max-w-3xl w-full">
                 <CardHeader>
-                    <CardTitle>Create Job Post</CardTitle>
+                    <CardTitle>Edit Job Post</CardTitle>
                     <CardDescription>Fill in the details to list a new opening.</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -140,7 +155,7 @@ function RouteComponent() {
                                         <Field>
                                             <FieldLabel>Job Type</FieldLabel>
                                             <Select
-                                                value={field.state.value.toString()}
+                                                value={field.state.value?.toString() || ""}
                                                 onValueChange={(value: any) => field.handleChange(value)}
                                             >
                                                 <SelectTrigger>
@@ -287,7 +302,7 @@ function RouteComponent() {
                                             <Field data-invalid={isInvalid}>
                                                 <FieldLabel htmlFor={field.name}>Experience</FieldLabel>
                                                 <Select
-                                                    value={field.state.value.toString()}
+                                                    value={field.state.value?.toString() || "0"}
                                                     onValueChange={(value) => field.handleChange(Number(value))}
                                                 >
                                                     <SelectTrigger className="w-full max-w-48">
@@ -312,11 +327,12 @@ function RouteComponent() {
 
                             </div>
 
-                            <Button disabled={isPending} type="submit" className="w-full">{isPending ? "Creating Job..." : "Post Job"}</Button>
+                            <Button disabled={isPending} type="submit" className="w-full">{isPending ? "Updating Job..." : "Edit Job"}</Button>
                         </FieldGroup>
                     </form>
                 </CardContent>
             </Card>
+
         </div>
     );
 }
