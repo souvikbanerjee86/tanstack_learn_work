@@ -1,493 +1,187 @@
-import * as React from "react"
 
-import {
-  Example,
-  ExampleWrapper,
-} from "@/components/example"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Link } from "@tanstack/react-router"
 import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { PlusIcon, BluetoothIcon, MoreVerticalIcon, FileIcon, FolderIcon, FolderOpenIcon, FileCodeIcon, MoreHorizontalIcon, FolderSearchIcon, SaveIcon, DownloadIcon, EyeIcon, LayoutIcon, PaletteIcon, SunIcon, MoonIcon, MonitorIcon, UserIcon, CreditCardIcon, SettingsIcon, KeyboardIcon, LanguagesIcon, BellIcon, MailIcon, ShieldIcon, HelpCircleIcon, FileTextIcon, LogOutIcon } from "lucide-react"
+  BotIcon,
+  BriefcaseIcon,
+  UserCheck2Icon,
+  MailIcon,
+  LineChartIcon,
+  UserIcon,
+  LogInIcon,
+  CpuIcon,
+  ClockIcon,
+  SparklesIcon,
+  BuildingIcon,
+  ArrowRightIcon
+} from "lucide-react"
 
 export function ComponentExample() {
   return (
-    <ExampleWrapper>
-      <CardExample />
-      <FormExample />
-    </ExampleWrapper>
-  )
-}
+    <div className="w-full min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-indigo-500/30">
 
-function CardExample() {
-  return (
-    <Example title="Card" className="items-center justify-center">
-      <Card className="relative w-full max-w-sm overflow-hidden pt-0">
-        <div className="bg-primary absolute inset-0 z-30 aspect-video opacity-50 mix-blend-color" />
-        <img
-          src="https://images.unsplash.com/photo-1604076850742-4c7221f3101b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Photo by mymind on Unsplash"
-          title="Photo by mymind on Unsplash"
-          className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale"
-        />
-        <CardHeader>
-          <CardTitle>Observability Plus is replacing Monitoring</CardTitle>
-          <CardDescription>
-            Switch to the improved way to explore your data, with natural
-            language. Monitoring will no longer be available on the Pro plan in
-            November, 2025
-          </CardDescription>
-        </CardHeader>
-        <CardFooter>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button>
-                <PlusIcon data-icon="inline-start" />
-                Show Dialog
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent size="sm">
-              <AlertDialogHeader>
-                <AlertDialogMedia>
-                  <BluetoothIcon
-                  />
-                </AlertDialogMedia>
-                <AlertDialogTitle>Allow accessory to connect?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Do you want to allow the USB accessory to connect to this
-                  device?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Don&apos;t allow</AlertDialogCancel>
-                <AlertDialogAction>Allow</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-          <Badge variant="secondary" className="ml-auto">
-            Warning
-          </Badge>
-        </CardFooter>
-      </Card>
-    </Example>
-  )
-}
+      {/* Hero Section */}
+      <section className="max-w-5xl mx-auto text-center space-y-8 mb-20 relative">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100 via-slate-50 to-slate-50 dark:from-indigo-900/20 dark:via-zinc-950 dark:to-zinc-950 blur-3xl rounded-full" />
 
-const frameworks = [
-  "Next.js",
-  "SvelteKit",
-  "Nuxt.js",
-  "Remix",
-  "Astro",
-] as const
+        <Badge variant="outline" className="px-4 py-1.5 text-sm rounded-full border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 shadow-sm gap-2">
+          <SparklesIcon className="w-4 h-4" /> Revolutionizing Hiring
+        </Badge>
 
-function FormExample() {
-  const [notifications, setNotifications] = React.useState({
-    email: true,
-    sms: false,
-    push: true,
-  })
-  const [theme, setTheme] = React.useState("light")
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-slate-900 to-slate-500 dark:from-white dark:to-slate-400 drop-shadow-sm">
+          Welcome to <span className="text-indigo-600 dark:text-indigo-400 relative">
+            EazyAI
+            <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 to-fuchsia-600 rounded-full opacity-50 blur-sm"></span>
+          </span>
+        </h1>
 
-  return (
-    <Example title="Form">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>User Information</CardTitle>
-          <CardDescription>Please fill in your details below</CardDescription>
-          <CardAction>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MoreVerticalIcon
-                  />
-                  <span className="sr-only">More options</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>File</DropdownMenuLabel>
-                  <DropdownMenuItem>
-                    <FileIcon
-                    />
-                    New File
-                    <DropdownMenuShortcut>⌘N</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <FolderIcon
-                    />
-                    New Folder
-                    <DropdownMenuShortcut>⇧⌘N</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <FolderOpenIcon
-                      />
-                      Open Recent
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuGroup>
-                          <DropdownMenuLabel>Recent Projects</DropdownMenuLabel>
-                          <DropdownMenuItem>
-                            <FileCodeIcon
-                            />
-                            Project Alpha
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <FileCodeIcon
-                            />
-                            Project Beta
-                          </DropdownMenuItem>
-                          <DropdownMenuSub>
-                            <DropdownMenuSubTrigger>
-                              <MoreHorizontalIcon
-                              />
-                              More Projects
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuPortal>
-                              <DropdownMenuSubContent>
-                                <DropdownMenuItem>
-                                  <FileCodeIcon
-                                  />
-                                  Project Gamma
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <FileCodeIcon
-                                  />
-                                  Project Delta
-                                </DropdownMenuItem>
-                              </DropdownMenuSubContent>
-                            </DropdownMenuPortal>
-                          </DropdownMenuSub>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem>
-                            <FolderSearchIcon
-                            />
-                            Browse...
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <SaveIcon
-                    />
-                    Save
-                    <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <DownloadIcon
-                    />
-                    Export
-                    <DropdownMenuShortcut>⇧⌘E</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>View</DropdownMenuLabel>
-                  <DropdownMenuCheckboxItem
-                    checked={notifications.email}
-                    onCheckedChange={(checked) =>
-                      setNotifications({
-                        ...notifications,
-                        email: checked === true,
-                      })
-                    }
-                  >
-                    <EyeIcon
-                    />
-                    Show Sidebar
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={notifications.sms}
-                    onCheckedChange={(checked) =>
-                      setNotifications({
-                        ...notifications,
-                        sms: checked === true,
-                      })
-                    }
-                  >
-                    <LayoutIcon
-                    />
-                    Show Status Bar
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <PaletteIcon
-                      />
-                      Theme
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuGroup>
-                          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-                          <DropdownMenuRadioGroup
-                            value={theme}
-                            onValueChange={setTheme}
-                          >
-                            <DropdownMenuRadioItem value="light">
-                              <SunIcon
-                              />
-                              Light
-                            </DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="dark">
-                              <MoonIcon
-                              />
-                              Dark
-                            </DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="system">
-                              <MonitorIcon
-                              />
-                              System
-                            </DropdownMenuRadioItem>
-                          </DropdownMenuRadioGroup>
-                        </DropdownMenuGroup>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>Account</DropdownMenuLabel>
-                  <DropdownMenuItem>
-                    <UserIcon
-                    />
-                    Profile
-                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCardIcon
-                    />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <SettingsIcon
-                      />
-                      Settings
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuGroup>
-                          <DropdownMenuLabel>Preferences</DropdownMenuLabel>
-                          <DropdownMenuItem>
-                            <KeyboardIcon
-                            />
-                            Keyboard Shortcuts
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <LanguagesIcon
-                            />
-                            Language
-                          </DropdownMenuItem>
-                          <DropdownMenuSub>
-                            <DropdownMenuSubTrigger>
-                              <BellIcon
-                              />
-                              Notifications
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuPortal>
-                              <DropdownMenuSubContent>
-                                <DropdownMenuGroup>
-                                  <DropdownMenuLabel>
-                                    Notification Types
-                                  </DropdownMenuLabel>
-                                  <DropdownMenuCheckboxItem
-                                    checked={notifications.push}
-                                    onCheckedChange={(checked) =>
-                                      setNotifications({
-                                        ...notifications,
-                                        push: checked === true,
-                                      })
-                                    }
-                                  >
-                                    <BellIcon
-                                    />
-                                    Push Notifications
-                                  </DropdownMenuCheckboxItem>
-                                  <DropdownMenuCheckboxItem
-                                    checked={notifications.email}
-                                    onCheckedChange={(checked) =>
-                                      setNotifications({
-                                        ...notifications,
-                                        email: checked === true,
-                                      })
-                                    }
-                                  >
-                                    <MailIcon
-                                    />
-                                    Email Notifications
-                                  </DropdownMenuCheckboxItem>
-                                </DropdownMenuGroup>
-                              </DropdownMenuSubContent>
-                            </DropdownMenuPortal>
-                          </DropdownMenuSub>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem>
-                            <ShieldIcon
-                            />
-                            Privacy & Security
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <HelpCircleIcon
-                    />
-                    Help & Support
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <FileTextIcon
-                    />
-                    Documentation
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem variant="destructive">
-                    <LogOutIcon
-                    />
-                    Sign Out
-                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <FieldGroup>
-              <div className="grid grid-cols-2 gap-4">
-                <Field>
-                  <FieldLabel htmlFor="small-form-name">Name</FieldLabel>
-                  <Input
-                    id="small-form-name"
-                    placeholder="Enter your name"
-                    required
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="small-form-role">Role</FieldLabel>
-                  <Select defaultValue="">
-                    <SelectTrigger id="small-form-role">
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="developer">Developer</SelectItem>
-                        <SelectItem value="designer">Designer</SelectItem>
-                        <SelectItem value="manager">Manager</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </Field>
+        <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed font-medium">
+          Empowering organizations, HR teams, and candidates with seamless, AI-driven interview and automated onboarding experiences.
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-4 pt-4">
+          <Link to="/login">
+            <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-8 shadow-lg shadow-indigo-200 dark:shadow-indigo-900/20 transition-all hover:scale-105">
+              Get Started
+              <ArrowRightIcon className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
+
+          <Button size="lg" variant="outline" className="rounded-full px-8 border-slate-200 dark:border-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-900 transition-all">
+            Watch Demo
+          </Button>
+        </div>
+      </section>
+
+      {/* Main Content Grid */}
+      <section className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-12 relative z-10">
+
+        {/* Admin / HR View */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+              <BuildingIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight">For Admin & HR</h2>
+          </div>
+
+          <div className="grid gap-4">
+            <Card className="border-slate-200/60 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 border-l-4 border-l-blue-500">
+              <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                <BriefcaseIcon className="w-6 h-6 text-blue-500 flex-shrink-0" />
+                <CardTitle className="text-lg">Add & Manage Jobs</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-slate-600 dark:text-slate-300 text-base">
+                  Create comprehensive job postings instantly and manage your entire organization's open roles from a centralized command center. Define experience levels, required skills, and location preferences with our intuitive job builder. Set start and end dates to automatically control applicant flow.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-slate-200/60 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 border-l-4 border-l-indigo-500">
+              <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                <UserCheck2Icon className="w-6 h-6 text-indigo-500 flex-shrink-0" />
+                <CardTitle className="text-lg">Semantic Candidate Search</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-slate-600 dark:text-slate-300 text-base">
+                  Add resumes directly to our secure RAG database and instantly search for highly relevant candidates based on advanced skill matching logic. Our semantic engine understands the context behind varying job titles and technologies to surface the absolute best talent without manual resume screening.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Card className="border-slate-200/60 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md transition-all duration-300">
+                <CardHeader className="pb-2">
+                  <MailIcon className="w-5 h-5 text-violet-500 mb-2" />
+                  <CardTitle className="text-md">Send Invitations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-sm">Dispatch AI interview links to short-listed talent with one click. Automated emails ensure candidates receive unique, secure session URLs instantly.</CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card className="border-slate-200/60 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md transition-all duration-300">
+                <CardHeader className="pb-2">
+                  <LineChartIcon className="w-5 h-5 text-emerald-500 mb-2" />
+                  <CardTitle className="text-md">Track Progress</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-sm">Real-time dashboards to monitor candidate performance and interview status. View AI-generated scores, conversational transcripts, and trust-and-safety alerts.</CardDescription>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+
+        {/* Candidate View */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-fuchsia-100 dark:bg-fuchsia-900/30 rounded-xl">
+              <UserIcon className="w-6 h-6 text-fuchsia-600 dark:text-fuchsia-400" />
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight">For Candidates</h2>
+          </div>
+
+          <div className="grid gap-4">
+            <Card className="border-slate-200/60 dark:border-zinc-800 bg-gradient-to-br from-white to-fuchsia-50/30 dark:from-zinc-900 dark:to-fuchsia-900/10 backdrop-blur-md hover:shadow-xl hover:shadow-fuchsia-500/5 transition-all duration-300 border-r-4 border-r-fuchsia-500">
+              <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                <LogInIcon className="w-6 h-6 text-fuchsia-500 flex-shrink-0" />
+                <CardTitle className="text-lg">Seamless Login</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-slate-600 dark:text-slate-300 text-base">
+                  Access your dedicated interview portal with zero friction. Connect via email magic links or one-click authentication. We believe the focus should be on your skills, not struggling to enter a meeting room or remembering passwords.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-slate-200/60 dark:border-zinc-800 bg-gradient-to-br from-white to-purple-50/30 dark:from-zinc-900 dark:to-purple-900/10 backdrop-blur-md hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-300 border-r-4 border-r-purple-500 relative overflow-hidden">
+              <div className="absolute right-0 top-0 opacity-5 w-32 h-32 pointer-events-none">
+                <BotIcon className="w-full h-full" />
               </div>
-              <Field>
-                <FieldLabel htmlFor="small-form-framework">
-                  Framework
-                </FieldLabel>
-                <Combobox items={frameworks}>
-                  <ComboboxInput
-                    id="small-form-framework"
-                    placeholder="Select a framework"
-                    required
-                  />
-                  <ComboboxContent>
-                    <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-                    <ComboboxList>
-                      {(item) => (
-                        <ComboboxItem key={item} value={item}>
-                          {item}
-                        </ComboboxItem>
-                      )}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="small-form-comments">Comments</FieldLabel>
-                <Textarea
-                  id="small-form-comments"
-                  placeholder="Add any additional comments"
-                />
-              </Field>
-              <Field orientation="horizontal">
-                <Button type="submit">Submit</Button>
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
-              </Field>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-    </Example>
+              <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                <CpuIcon className="w-6 h-6 text-purple-500 flex-shrink-0 relative z-10" />
+                <CardTitle className="text-lg relative z-10">State of the Art AI Agent</CardTitle>
+              </CardHeader>
+              <CardContent className="relative z-10">
+                <CardDescription className="text-slate-600 dark:text-slate-300 text-base">
+                  Experience a conversational interview with our cutting-edge AI. It listens, adapts to your answers, and evaluates your skills in real-time without bias. The agent asks intelligent follow-up questions just like a human interviewer to truly understand your depth of knowledge.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-slate-200/60 dark:border-zinc-800 bg-gradient-to-br from-white to-pink-50/30 dark:from-zinc-900 dark:to-pink-900/10 backdrop-blur-md hover:shadow-xl hover:shadow-pink-500/5 transition-all duration-300 border-r-4 border-r-pink-500 relative">
+              <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                <ClockIcon className="w-6 h-6 text-pink-500 flex-shrink-0" />
+                <CardTitle className="text-lg">Interview Anytime, Anywhere</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-slate-600 dark:text-slate-300 text-base">
+                  No more scheduling conflicts. Take your interview exactly when you feel most prepared, 24 hours a day, 7 days a week. EazyAI eliminates the anxiety of time-zones and availability, letting you bring your absolute best self to the table whenever you are ready.
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+      </section>
+
+      {/* Footer Sparkle */}
+      <div className="mt-24 pb-12 flex justify-center opacity-50">
+        <div className="flex items-center gap-2 text-sm font-medium">
+          Powered by next-gen Artificial Intelligence
+          <BotIcon className="w-4 h-4" />
+        </div>
+      </div>
+    </div>
   )
 }
