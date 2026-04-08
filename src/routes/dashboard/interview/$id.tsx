@@ -5,6 +5,7 @@ import { createFileRoute, useLocation } from '@tanstack/react-router'
 
 import { Suspense } from 'react'
 import InterviewFeedbackSkeleton from '@/components/web/interview-feedback-skeleton'
+import { MovementOutCome } from '@/components/web/movement-outcome'
 
 
 
@@ -30,9 +31,16 @@ function RouteComponent() {
         <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 p-4 md:p-8 text-slate-900 dark:text-zinc-100 transition-colors">
             <div className="max-w-5xl mx-auto space-y-6">
 
-                <Suspense>
-                    <AudioOutcome email={email} id={id} />
-                </Suspense>
+                <div className='flex flex-1 flex-row items-center justify-end gap-2'>
+                    <Suspense>
+                        <AudioOutcome email={email} id={id} />
+                    </Suspense>
+
+                    <Suspense>
+                        <MovementOutCome email={email} id={id} />
+                    </Suspense>
+                </div>
+
 
 
                 <Suspense fallback={<InterviewFeedbackSkeleton />}>
