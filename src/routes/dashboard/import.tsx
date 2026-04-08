@@ -18,8 +18,8 @@ import {
 import { toast } from 'sonner';
 import { Suspense, useState } from 'react';
 import { ImportPageCard } from '@/components/web/import-page-card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DashboardSkeleton } from '@/components/web/dashboard-skeleton';
+import { CVDialog } from '@/components/web/cv-dialog';
 
 export const bucketListQueryOptions = queryOptions({
   queryKey: ['buckets'],
@@ -171,26 +171,7 @@ function ImportContent() {
 
 
         </div>
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-
-          <DialogContent className='sm:max-w-[50vw]'>
-            <DialogHeader>
-              <DialogTitle>Candidate Resume</DialogTitle>
-
-            </DialogHeader>
-            <div className="no-scrollbar -mx-4 max-h-[90vh] overflow-y-auto px-4">
-
-              <p key={fileUrl} className="mb-4 leading-normal">
-                <iframe
-                  src={`https://docs.google.com/gview?url=${fileUrl}&embedded=true`}
-                  style={{ width: "100%", height: "600px" }}
-                  frameBorder="0">
-                </iframe>
-              </p>
-
-            </div>
-          </DialogContent>
-        </Dialog>
+        <CVDialog isOpen={isOpen} setIsOpen={setIsOpen} fileUrl={fileUrl} />
 
       </div>
     </div>

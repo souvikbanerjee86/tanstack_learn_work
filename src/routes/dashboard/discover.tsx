@@ -6,7 +6,7 @@ import { CandidateResultCard } from '@/components/web/candidate-result-card';
 import { EmptyState } from '@/components/web/empty-state';
 import { MultiStepLoader } from '@/components/web/multi-step-loader';
 import { SearchProfileForm } from '@/components/web/search-profile-form';
-import { getJobDetails, getProcessedIndexFilesId, getSearchProfileDetails, jobInterviewCandidates } from '@/lib/server-function';
+import { getDownloadURL, getJobDetails, getProcessedIndexFilesId, getSearchProfileDetails, jobInterviewCandidates } from '@/lib/server-function';
 import { PaginatedJobResponse, ProfileSearchCritieria, ProfileSearchResponse, RagProcessRecord } from '@/lib/types';
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
@@ -24,6 +24,9 @@ export const Route = createFileRoute('/dashboard/discover')({
 })
 
 function RouteComponent() {
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [fileUrl, setFileUrl] = useState<string>("");
+    const [downloading, setDownloading] = useState<boolean>(false);
     const { data, jobDetails } = Route.useLoaderData()
     const [results, setResults] = useState<ProfileSearchResponse | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -84,6 +87,23 @@ function RouteComponent() {
         }
     }
 
+    const downlaodUrl = async (url: string) => {
+        try {
+            setDownloading(true)
+            setFileUrl("")
+            setIsOpen(false)
+            const response = await getDownloadURL({ data: { bucket_name: "cv_bucket_project-716b1c69-ee04-40fd-ba6", file_path: url } })
+            if (response.download_url) {
+                setFileUrl(encodeURIComponent(response.download_url))
+                setIsOpen(true)
+            }
+        } catch (e) {
+            toast.error("Download failed")
+        } finally {
+            setDownloading(false)
+        }
+    }
+
     const hasResults = results && results.matches && results.matches.length > 0;
 
     return (
@@ -128,7 +148,7 @@ function RouteComponent() {
                         <form onSubmit={handleSubmit}>
                             <div className="text-right pb-2"><Button className="right-4" type="submit" disabled={selectedItems.length === 0 || isSubmitting}>Send Acceptance Email</Button></div>
                             {results.matches.map((candidate, idx) => (
-                                <CandidateResultCard key={idx} data={candidate} selectedItems={selectedItems} handleCheckedChange={handleCheckedChange} />
+                                <CandidateResultCard key={idx} data={candidate} selectedItems={selectedItems} handleCheckedChange={handleCheckedChange} downlaodUrl={downlaodUrl} isOpen={isOpen} setIsOpen={setIsOpen} isDownloading={downloading} fileUrl={fileUrl} />
                             ))}
                         </form>
 
