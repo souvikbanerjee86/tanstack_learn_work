@@ -96,4 +96,8 @@ export const API_PATH = {
         GET_BASE_URL: "https://edit-job-api-403179946278.europe-west1.run.app",
         PATH_URL: "/jobs"
     },
+    MOVEMENT_OUTCOME: {
+        GET_BASE_URL: "https://interview-movement-list-api-403179946278.europe-west1.run.app",
+        PATH_URL: "/api/movement-detection"
+    }
 }

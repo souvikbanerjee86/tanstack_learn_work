@@ -1,28 +1,20 @@
 import { Info, ShieldAlert, AlertTriangle, MousePointerClick, Clock, Hash, Mail, Calendar, ScanFace } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Button } from "../ui/button";
+import { getMovementDetectionDetails } from "@/lib/server-function";
 
-const mockMovementData = {
-    created_at: "2026-04-08T09:12:35.766963+00:00",
-    events: [
-        { reason: "Clicked outside the browser window", time: "14:41:39" },
-        { reason: "Face moved outside the circle or not detected!", time: "14:41:50" },
-        { reason: "Face moved outside the circle or not detected!", time: "14:41:50" },
-        { reason: "Clicked outside the browser window", time: "14:41:55" },
-        { reason: "Face moved outside the circle or not detected!", time: "14:42:07" },
-        { reason: "Face moved outside the circle or not detected!", time: "14:42:07" },
-    ],
-    total_events: 6,
-    user_email: "souvik.mlinda@gmail.com",
-    user_id: "2utqBTz9MkejCA5pdIYlvQItdHG2",
-    user_session: "2utqBTz9MkejCA5pdIYlvQItdHG2#souvik.mlindia@gmail.com#2c6f818e-6cc1-48c1-a908-97351509b5d6"
-};
 
-export function MovementOutCome(_props: { email: string, id: string }) {
-    
-    // Derived UI states based on data
-    const sortedEvents = [...mockMovementData.events].sort((a, b) => a.time.localeCompare(b.time));
-    
+
+export const movementDetectionDetailsQueryOptions = (email: string, job_id: string) => queryOptions({
+    queryKey: ['movements', email, job_id],
+    queryFn: () => getMovementDetectionDetails({ data: { user_email: email, job_id: job_id } })
+})
+export function MovementOutCome({ email, id }: { email: string, id: string }) {
+    const { data: mockMovementData } = useSuspenseQuery(movementDetectionDetailsQueryOptions(email, id))
+
+    const sortedEvents = [...mockMovementData.data[0].events].sort((a, b) => a.time.localeCompare(b.time));
+
     return (
         <div className='flex flex-row justify-end'>
             <div>
@@ -44,7 +36,7 @@ export function MovementOutCome(_props: { email: string, id: string }) {
                                 Tracking anomalies and focus shifts during the interview session.
                             </SheetDescription>
                         </SheetHeader>
-                        
+
                         <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
 
                             {/* Session Summary Card */}
@@ -53,19 +45,19 @@ export function MovementOutCome(_props: { email: string, id: string }) {
                                     <Hash className="w-4 h-4" /> Session Overview
                                 </h4>
                                 <div className="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-sm space-y-4">
-                                    
+
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Total Infractions</p>
                                             <div className="flex items-baseline gap-1">
                                                 <span className="text-3xl font-black text-rose-500 dark:text-rose-400">
-                                                    {mockMovementData.total_events}
+                                                    {mockMovementData.data[0].total_events}
                                                 </span>
                                                 <span className="text-xs font-semibold text-rose-500/70 dark:text-rose-400/70 uppercase">flags</span>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                           <div className="w-12 h-12 rounded-full border-4 border-rose-100 dark:border-rose-900/40 flex items-center justify-center bg-rose-50 dark:bg-rose-900/20">
+                                            <div className="w-12 h-12 rounded-full border-4 border-rose-100 dark:border-rose-900/40 flex items-center justify-center bg-rose-50 dark:bg-rose-900/20">
                                                 <ShieldAlert className="w-5 h-5 text-rose-500" />
                                             </div>
                                         </div>
@@ -76,12 +68,12 @@ export function MovementOutCome(_props: { email: string, id: string }) {
                                     <div className="space-y-3">
                                         <div className="flex items-center gap-3 text-sm">
                                             <Mail className="w-4 h-4 text-zinc-400" />
-                                            <span className="font-medium text-zinc-700 dark:text-zinc-300 truncate">{mockMovementData.user_email}</span>
+                                            <span className="font-medium text-zinc-700 dark:text-zinc-300 truncate">{mockMovementData.data[0].user_email}</span>
                                         </div>
                                         <div className="flex items-center gap-3 text-sm">
                                             <Calendar className="w-4 h-4 text-zinc-400" />
                                             <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                                                {new Date(mockMovementData.created_at).toLocaleString(undefined, {
+                                                {new Date(mockMovementData.data[0].created_at).toLocaleString(undefined, {
                                                     dateStyle: 'medium',
                                                     timeStyle: 'short'
                                                 })}
@@ -99,15 +91,15 @@ export function MovementOutCome(_props: { email: string, id: string }) {
                                         <Clock className="w-4 h-4" /> Incident Timeline
                                     </h4>
                                     <span className="text-xs font-semibold px-2 py-1 bg-zinc-200 dark:bg-zinc-800 rounded-md text-zinc-600 dark:text-zinc-400">
-                                        {mockMovementData.events.length} Events
+                                        {mockMovementData.data[0].events.length} Events
                                     </span>
                                 </div>
-                                
+
                                 <div className="relative border-l-2 border-slate-200 dark:border-zinc-800 ml-3 space-y-6 pb-4">
                                     {sortedEvents.map((event, index) => {
                                         const isFaceDetection = event.reason.toLowerCase().includes("face");
                                         const isBrowserFocus = event.reason.toLowerCase().includes("browser");
-                                        
+
                                         return (
                                             <div key={index} className="relative pl-6 sm:pl-8 group">
                                                 {/* Timeline Line Dot */}
@@ -116,7 +108,7 @@ export function MovementOutCome(_props: { email: string, id: string }) {
                                                     shadow-sm ring-2 ring-transparent group-hover:ring-rose-200 dark:group-hover:ring-rose-900 transition-all`}
                                                 >
                                                 </div>
-                                                
+
                                                 {/* Event Card */}
                                                 <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group-hover:border-slate-300 dark:group-hover:border-zinc-700">
                                                     <div className="flex items-center gap-2 mb-2">
@@ -125,14 +117,14 @@ export function MovementOutCome(_props: { email: string, id: string }) {
                                                             {event.time}
                                                         </span>
                                                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md
-                                                            ${isFaceDetection ? 'text-amber-700 bg-amber-50 dark:text-amber-400 dark:bg-amber-500/10' : 
-                                                              isBrowserFocus ? 'text-blue-700 bg-blue-50 dark:text-blue-400 dark:bg-blue-500/10' : 
-                                                              'text-zinc-700 bg-zinc-100 dark:text-zinc-400 dark:bg-zinc-800'}
+                                                            ${isFaceDetection ? 'text-amber-700 bg-amber-50 dark:text-amber-400 dark:bg-amber-500/10' :
+                                                                isBrowserFocus ? 'text-blue-700 bg-blue-50 dark:text-blue-400 dark:bg-blue-500/10' :
+                                                                    'text-zinc-700 bg-zinc-100 dark:text-zinc-400 dark:bg-zinc-800'}
                                                         `}>
                                                             {isFaceDetection ? 'Face Tracking' : isBrowserFocus ? 'Focus Lost' : 'Other Violation'}
                                                         </span>
                                                     </div>
-                                                    
+
                                                     <div className="flex gap-3">
                                                         <div className="mt-0.5">
                                                             {isFaceDetection ? (
