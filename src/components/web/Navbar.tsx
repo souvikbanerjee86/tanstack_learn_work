@@ -6,6 +6,7 @@ import { auth } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { logoutFn } from "@/lib/auth";
+import { Logo } from "./Logo";
 
 export function Navbar() {
     const [user, setUser] = useState<User | null>(null)
@@ -33,14 +34,7 @@ export function Navbar() {
     return (
         <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
             <div className="mx-auto flex h-16 items-center justify-between px-4">
-                <div className="flex items-center gap-2 group cursor-pointer hover:opacity-90 transition-opacity">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-white font-bold text-shadow-sm shadow-md shadow-indigo-600/20">
-                        E
-                    </span>
-                    <p className="text-xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-800 to-indigo-600 dark:from-white dark:via-indigo-300 dark:to-indigo-500">
-                        Eazy<span className="text-indigo-600 dark:text-indigo-400 font-black">AI</span>
-                    </p>
-                </div>
+                <Logo />
                 <div className="flex items-center gap-3">
                     <ThemeToggle />
                     {loading ? null : user ? (

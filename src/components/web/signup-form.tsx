@@ -26,6 +26,8 @@ import { useState, useTransition } from "react"
 import { getUserRole } from "@/lib/server-function"
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
 import { AlertTriangleIcon } from "lucide-react"
+import { Logo } from "./Logo"
+
 export function SignupForm() {
     const navigate = useNavigate()
     const [error, setError] = useState<string | null>(null)
@@ -97,144 +99,147 @@ export function SignupForm() {
     }
 
     return (
-        <Card className="max-w-md w-full">
-            <CardHeader>
-                <CardTitle>Create an account</CardTitle>
-                <CardDescription>
-                    Enter your information below to create your account
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={(e) => {
-                    e.preventDefault()
-                    form.handleSubmit()
-                }}>
-                    <FieldGroup>
-                        <form.Field
-                            name="fullName"
-                            children={(field) => {
-                                const isInvalid =
-                                    field.state.meta.isTouched && !field.state.meta.isValid
-                                return (
-                                    <Field data-invalid={isInvalid}>
-                                        <FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
-                                        <Input
-                                            id={field.name}
-                                            name={field.name}
-                                            value={field.state.value}
-                                            onBlur={field.handleBlur}
-                                            onChange={(e) => field.handleChange(e.target.value)}
-                                            aria-invalid={isInvalid}
-                                            placeholder="John Doe"
-                                            autoComplete="off"
-                                        />
-                                        {isInvalid && (
-                                            <FieldError errors={field.state.meta.errors} />
-                                        )}
-                                    </Field>
-                                )
-                            }}
-                        />
-
-                        <form.Field
-                            name="email"
-                            children={(field) => {
-                                const isInvalid =
-                                    field.state.meta.isTouched && !field.state.meta.isValid
-                                return (
-                                    <Field data-invalid={isInvalid}>
-                                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                                        <Input
-                                            id={field.name}
-                                            name={field.name}
-                                            value={field.state.value}
-                                            onBlur={field.handleBlur}
-                                            onChange={(e) => field.handleChange(e.target.value)}
-                                            aria-invalid={isInvalid}
-                                            placeholder="john.doe@example.com"
-                                            type="email"
-                                            autoComplete="off"
-                                        />
-                                        {isInvalid && (
-                                            <FieldError errors={field.state.meta.errors} />
-                                        )}
-                                    </Field>
-                                )
-                            }}
-                        />
-                        <form.Field
-                            name="password"
-                            children={(field) => {
-                                const isInvalid =
-                                    field.state.meta.isTouched && !field.state.meta.isValid
-                                return (
-                                    <Field data-invalid={isInvalid}>
-                                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                                        <Input
-                                            id={field.name}
-                                            name={field.name}
-                                            value={field.state.value}
-                                            onBlur={field.handleBlur}
-                                            onChange={(e) => field.handleChange(e.target.value)}
-                                            aria-invalid={isInvalid}
-                                            placeholder="*****"
-                                            type="password"
-                                            autoComplete="off"
-                                        />
-                                        {isInvalid && (
-                                            <FieldError errors={field.state.meta.errors} />
-                                        )}
-                                    </Field>
-                                )
-                            }}
-                        />
-                        <form.Field
-                            name="confirmPassword"
-                            children={(field) => {
-                                const isInvalid =
-                                    field.state.meta.isTouched && !field.state.meta.isValid
-                                return (
-                                    <Field data-invalid={isInvalid}>
-                                        <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
-                                        <Input
-                                            id={field.name}
-                                            name={field.name}
-                                            value={field.state.value}
-                                            onBlur={field.handleBlur}
-                                            onChange={(e) => field.handleChange(e.target.value)}
-                                            aria-invalid={isInvalid}
-                                            placeholder="****"
-                                            type="password"
-                                            autoComplete="off"
-                                        />
-                                        {isInvalid && (
-                                            <FieldError errors={field.state.meta.errors} />
-                                        )}
-                                    </Field>
-                                )
-                            }}
-                        />
+        <div className="flex flex-col items-center gap-8 w-full max-w-md mx-auto px-4">
+            <Logo size="lg" className="mb-2" />
+            <Card className="w-full shadow-lg border-muted/50">
+                <CardHeader>
+                    <CardTitle>Create an account</CardTitle>
+                    <CardDescription>
+                        Enter your information below to create your account
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={(e) => {
+                        e.preventDefault()
+                        form.handleSubmit()
+                    }}>
                         <FieldGroup>
-                            <Field>
-                                <Button type="submit" disabled={isPending}>{isPending ? "Creating account..." : "Create Account"}</Button>
-                                <Button variant="outline" type="button" onClick={handleGoogleSignUp} disabled={isPending}>
-                                    {isPending ? "Creating account..." : "Sign up with Google"}
-                                </Button>
-                                <FieldDescription className="px-6 text-center">
-                                    Already have an account? <Link to="/login">Sign in</Link>
-                                </FieldDescription>
-                            </Field>
+                            <form.Field
+                                name="fullName"
+                                children={(field) => {
+                                    const isInvalid =
+                                        field.state.meta.isTouched && !field.state.meta.isValid
+                                    return (
+                                        <Field data-invalid={isInvalid}>
+                                            <FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
+                                            <Input
+                                                id={field.name}
+                                                name={field.name}
+                                                value={field.state.value}
+                                                onBlur={field.handleBlur}
+                                                onChange={(e) => field.handleChange(e.target.value)}
+                                                aria-invalid={isInvalid}
+                                                placeholder="John Doe"
+                                                autoComplete="off"
+                                            />
+                                            {isInvalid && (
+                                                <FieldError errors={field.state.meta.errors} />
+                                            )}
+                                        </Field>
+                                    )
+                                }}
+                            />
+
+                            <form.Field
+                                name="email"
+                                children={(field) => {
+                                    const isInvalid =
+                                        field.state.meta.isTouched && !field.state.meta.isValid
+                                    return (
+                                        <Field data-invalid={isInvalid}>
+                                            <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                                            <Input
+                                                id={field.name}
+                                                name={field.name}
+                                                value={field.state.value}
+                                                onBlur={field.handleBlur}
+                                                onChange={(e) => field.handleChange(e.target.value)}
+                                                aria-invalid={isInvalid}
+                                                placeholder="john.doe@example.com"
+                                                type="email"
+                                                autoComplete="off"
+                                            />
+                                            {isInvalid && (
+                                                <FieldError errors={field.state.meta.errors} />
+                                            )}
+                                        </Field>
+                                    )
+                                }}
+                            />
+                            <form.Field
+                                name="password"
+                                children={(field) => {
+                                    const isInvalid =
+                                        field.state.meta.isTouched && !field.state.meta.isValid
+                                    return (
+                                        <Field data-invalid={isInvalid}>
+                                            <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                                            <Input
+                                                id={field.name}
+                                                name={field.name}
+                                                value={field.state.value}
+                                                onBlur={field.handleBlur}
+                                                onChange={(e) => field.handleChange(e.target.value)}
+                                                aria-invalid={isInvalid}
+                                                placeholder="*****"
+                                                type="password"
+                                                autoComplete="off"
+                                            />
+                                            {isInvalid && (
+                                                <FieldError errors={field.state.meta.errors} />
+                                            )}
+                                        </Field>
+                                    )
+                                }}
+                            />
+                            <form.Field
+                                name="confirmPassword"
+                                children={(field) => {
+                                    const isInvalid =
+                                        field.state.meta.isTouched && !field.state.meta.isValid
+                                    return (
+                                        <Field data-invalid={isInvalid}>
+                                            <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
+                                            <Input
+                                                id={field.name}
+                                                name={field.name}
+                                                value={field.state.value}
+                                                onBlur={field.handleBlur}
+                                                onChange={(e) => field.handleChange(e.target.value)}
+                                                aria-invalid={isInvalid}
+                                                placeholder="****"
+                                                type="password"
+                                                autoComplete="off"
+                                            />
+                                            {isInvalid && (
+                                                <FieldError errors={field.state.meta.errors} />
+                                            )}
+                                        </Field>
+                                    )
+                                }}
+                            />
+                            <FieldGroup>
+                                <Field>
+                                    <Button type="submit" disabled={isPending}>{isPending ? "Creating account..." : "Create Account"}</Button>
+                                    <Button variant="outline" type="button" onClick={handleGoogleSignUp} disabled={isPending}>
+                                        {isPending ? "Creating account..." : "Sign up with Google"}
+                                    </Button>
+                                    <FieldDescription className="px-6 text-center">
+                                        Already have an account? <Link to="/login">Sign in</Link>
+                                    </FieldDescription>
+                                </Field>
+                            </FieldGroup>
+                            {error && <Alert className="max-w-md border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
+                                <AlertTriangleIcon />
+                                <AlertTitle>Thank you for Registering!</AlertTitle>
+                                <AlertDescription>
+                                    {error}
+                                </AlertDescription>
+                            </Alert>}
                         </FieldGroup>
-                        {error && <Alert className="max-w-md border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
-                            <AlertTriangleIcon />
-                            <AlertTitle>Thank you for Registering!</AlertTitle>
-                            <AlertDescription>
-                                {error}
-                            </AlertDescription>
-                        </Alert>}
-                    </FieldGroup>
-                </form>
-            </CardContent>
-        </Card>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
     )
 }
