@@ -252,3 +252,27 @@ export const indianStates = [
     "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
     "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
 ];
+
+
+
+export interface UserEvent {
+    time: string;
+    reason: string;
+}
+
+export interface UserMovementData {
+    user_id: string;
+    user_session: string;
+    job_id: string;
+    created_at: string; // ISO 8601 Date string
+    events: UserEvent[];
+    user_email: string;
+    total_events: number;
+    id: string;
+}
+
+export interface MovementOutcomeResponse {
+    success: boolean;
+    count: number;
+    data: UserMovementData[];
+}

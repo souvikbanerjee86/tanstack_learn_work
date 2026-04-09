@@ -30,16 +30,16 @@ export function ComponentExample() {
 
       {/* Hero Section */}
       <section className="max-w-5xl mx-auto text-center space-y-8 mb-20 relative">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100 via-slate-50 to-slate-50 dark:from-indigo-900/20 dark:via-zinc-950 dark:to-zinc-950 blur-3xl rounded-full" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-indigo-100 via-slate-50 to-slate-50 dark:from-indigo-900/20 dark:via-zinc-950 dark:to-zinc-950 blur-3xl rounded-full" />
 
         <Badge variant="outline" className="px-4 py-1.5 text-sm rounded-full border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 shadow-sm gap-2">
           <SparklesIcon className="w-4 h-4" /> Revolutionizing Hiring
         </Badge>
 
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-slate-900 to-slate-500 dark:from-white dark:to-slate-400 drop-shadow-sm">
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-linear-to-br from-slate-900 to-slate-500 dark:from-white dark:to-slate-400 drop-shadow-sm">
           Welcome to <span className="text-indigo-600 dark:text-indigo-400 relative">
             EazyAI
-            <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 to-fuchsia-600 rounded-full opacity-50 blur-sm"></span>
+            <span className="absolute -bottom-2 left-0 right-0 h-1 bg-linear-to-r from-indigo-600 to-fuchsia-600 rounded-full opacity-50 blur-sm"></span>
           </span>
         </h1>
 
@@ -76,7 +76,7 @@ export function ComponentExample() {
           <div className="grid gap-4">
             <Card className="border-slate-200/60 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 border-l-4 border-l-blue-500">
               <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                <BriefcaseIcon className="w-6 h-6 text-blue-500 flex-shrink-0" />
+                <BriefcaseIcon className="w-6 h-6 text-blue-500 shrink-0" />
                 <CardTitle className="text-lg">Add & Manage Jobs</CardTitle>
               </CardHeader>
               <CardContent>
@@ -88,7 +88,7 @@ export function ComponentExample() {
 
             <Card className="border-slate-200/60 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 border-l-4 border-l-indigo-500">
               <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                <UserCheck2Icon className="w-6 h-6 text-indigo-500 flex-shrink-0" />
+                <UserCheck2Icon className="w-6 h-6 text-indigo-500 shrink-0" />
                 <CardTitle className="text-lg">Semantic Candidate Search</CardTitle>
               </CardHeader>
               <CardContent>
@@ -132,9 +132,9 @@ export function ComponentExample() {
           </div>
 
           <div className="grid gap-4">
-            <Card className="border-slate-200/60 dark:border-zinc-800 bg-gradient-to-br from-white to-fuchsia-50/30 dark:from-zinc-900 dark:to-fuchsia-900/10 backdrop-blur-md hover:shadow-xl hover:shadow-fuchsia-500/5 transition-all duration-300 border-r-4 border-r-fuchsia-500">
+            <Card className="border-slate-200/60 dark:border-zinc-800 bg-linear-to-br from-white to-fuchsia-50/30 dark:from-zinc-900 dark:to-fuchsia-900/10 backdrop-blur-md hover:shadow-xl hover:shadow-fuchsia-500/5 transition-all duration-300 border-r-4 border-r-fuchsia-500">
               <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                <LogInIcon className="w-6 h-6 text-fuchsia-500 flex-shrink-0" />
+                <LogInIcon className="w-6 h-6 text-fuchsia-500 shrink-0" />
                 <CardTitle className="text-lg">Seamless Login</CardTitle>
               </CardHeader>
               <CardContent>
@@ -144,12 +144,12 @@ export function ComponentExample() {
               </CardContent>
             </Card>
 
-            <Card className="border-slate-200/60 dark:border-zinc-800 bg-gradient-to-br from-white to-purple-50/30 dark:from-zinc-900 dark:to-purple-900/10 backdrop-blur-md hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-300 border-r-4 border-r-purple-500 relative overflow-hidden">
+            <Card className="border-slate-200/60 dark:border-zinc-800 bg-linear-to-br from-white to-purple-50/30 dark:from-zinc-900 dark:to-purple-900/10 backdrop-blur-md hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-300 border-r-4 border-r-purple-500 relative overflow-hidden">
               <div className="absolute right-0 top-0 opacity-5 w-32 h-32 pointer-events-none">
                 <BotIcon className="w-full h-full" />
               </div>
               <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                <CpuIcon className="w-6 h-6 text-purple-500 flex-shrink-0 relative z-10" />
+                <CpuIcon className="w-6 h-6 text-purple-500 shrink-0 relative z-10" />
                 <CardTitle className="text-lg relative z-10">State of the Art AI Agent</CardTitle>
               </CardHeader>
               <CardContent className="relative z-10">
@@ -159,9 +159,9 @@ export function ComponentExample() {
               </CardContent>
             </Card>
 
-            <Card className="border-slate-200/60 dark:border-zinc-800 bg-gradient-to-br from-white to-pink-50/30 dark:from-zinc-900 dark:to-pink-900/10 backdrop-blur-md hover:shadow-xl hover:shadow-pink-500/5 transition-all duration-300 border-r-4 border-r-pink-500 relative">
+            <Card className="border-slate-200/60 dark:border-zinc-800 bg-linear-to-br from-white to-pink-50/30 dark:from-zinc-900 dark:to-pink-900/10 backdrop-blur-md hover:shadow-xl hover:shadow-pink-500/5 transition-all duration-300 border-r-4 border-r-pink-500 relative">
               <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                <ClockIcon className="w-6 h-6 text-pink-500 flex-shrink-0" />
+                <ClockIcon className="w-6 h-6 text-pink-500 shrink-0" />
                 <CardTitle className="text-lg">Interview Anytime, Anywhere</CardTitle>
               </CardHeader>
               <CardContent>

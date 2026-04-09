@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 import { OpenRouter } from "@openrouter/sdk";
@@ -670,5 +670,37 @@ export const editJob = createServerFn({ method: 'POST' })
         } catch (e) {
             return { "id": "", "message": "" };
         }
+
+    })
+
+export const getMovementDetectionDetails = createServerFn({ method: 'GET' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: { user_email: string, job_id: string }) => data)
+    .handler(async ({ data }): Promise<MovementOutcomeResponse> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.MOVEMENT_OUTCOME.GET_BASE_URL);
+        const url = API_PATH.MOVEMENT_OUTCOME.GET_BASE_URL + API_PATH.MOVEMENT_OUTCOME.PATH_URL;
+
+
+        const postData = {
+            "user_email": data.user_email,
+            "job_id": data.job_id
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'POST',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            return finalData as MovementOutcomeResponse;
+        } catch (e) {
+            return { "success": false, "count": 0, "data": [] }
+        }
+
 
     })
