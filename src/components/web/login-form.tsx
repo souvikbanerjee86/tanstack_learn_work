@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -27,6 +26,7 @@ import { useState, useTransition } from "react"
 import { getUserRole } from "@/lib/server-function"
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
 import { AlertTriangleIcon } from "lucide-react"
+import { Logo } from "./Logo"
 
 
 export function LoginForm() {
@@ -98,94 +98,94 @@ export function LoginForm() {
 
 
     return (
-
-        <Card className="max-w-md w-full">
-            <CardHeader>
-                <CardTitle>Login to your account</CardTitle>
-                <CardDescription>
-                    Enter your email below to login to your account
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={(e) => {
-                    e.preventDefault()
-                    form.handleSubmit()
-                }}>
-                    <FieldGroup>
-                        <form.Field
-                            name="email"
-                            children={(field) => {
-                                const isInvalid =
-                                    field.state.meta.isTouched && !field.state.meta.isValid
-                                return (
-                                    <Field data-invalid={isInvalid}>
-                                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                                        <Input
-                                            id={field.name}
-                                            name={field.name}
-                                            value={field.state.value}
-                                            onBlur={field.handleBlur}
-                                            onChange={(e) => field.handleChange(e.target.value)}
-                                            aria-invalid={isInvalid}
-                                            placeholder="john.doe@example.com"
-                                            type="email"
-                                            autoComplete="off"
-                                        />
-                                        {isInvalid && (
-                                            <FieldError errors={field.state.meta.errors} />
-                                        )}
-                                    </Field>
-                                )
-                            }}
-                        />
-                        <form.Field
-                            name="password"
-                            children={(field) => {
-                                const isInvalid =
-                                    field.state.meta.isTouched && !field.state.meta.isValid
-                                return (
-                                    <Field data-invalid={isInvalid}>
-                                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                                        <Input
-                                            id={field.name}
-                                            name={field.name}
-                                            value={field.state.value}
-                                            onBlur={field.handleBlur}
-                                            onChange={(e) => field.handleChange(e.target.value)}
-                                            aria-invalid={isInvalid}
-                                            placeholder="*****"
-                                            type="password"
-                                            autoComplete="off"
-                                        />
-                                        {isInvalid && (
-                                            <FieldError errors={field.state.meta.errors} />
-                                        )}
-                                    </Field>
-                                )
-                            }}
-                        />
-                        <Field>
-                            <Button disabled={isPending} type="submit">{isPending ? "Logging in..." : "Login"}</Button>
-                            <Button variant="outline" type="button" onClick={handleGoogleLogin} disabled={isPending}>
-                                {isPending ? "Logging in..." : "Login with Google"}
-                            </Button>
-                            <FieldDescription className="text-center">
-                                Don&apos;t have an account? <Link to="/signup">Sign up</Link>
-                            </FieldDescription>
-                        </Field>
-                        {error && <Alert className="max-w-md border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
-                            <AlertTriangleIcon />
-                            <AlertTitle>{error}</AlertTitle>
-                            <AlertDescription>
-                                Please check with Admin and and fix the login issue.
-                                You can reach to admin using mail address : admin@easyai.com
-                            </AlertDescription>
-                        </Alert>}
-                    </FieldGroup>
-                </form>
-            </CardContent>
-        </Card>
+        <div className="flex flex-col items-center gap-8 w-full max-w-md mx-auto px-4">
+            <Logo size="lg" className="mb-2" />
+            <Card className="w-full shadow-lg border-muted/50">
+                <CardHeader>
+                    <CardTitle>Login to your account</CardTitle>
+                    <CardDescription>
+                        Enter your email below to login to your account
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={(e) => {
+                        e.preventDefault()
+                        form.handleSubmit()
+                    }}>
+                        <FieldGroup>
+                            <form.Field
+                                name="email"
+                                children={(field) => {
+                                    const isInvalid =
+                                        field.state.meta.isTouched && !field.state.meta.isValid
+                                    return (
+                                        <Field data-invalid={isInvalid}>
+                                            <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                                            <Input
+                                                id={field.name}
+                                                name={field.name}
+                                                value={field.state.value}
+                                                onBlur={field.handleBlur}
+                                                onChange={(e) => field.handleChange(e.target.value)}
+                                                aria-invalid={isInvalid}
+                                                placeholder="john.doe@example.com"
+                                                type="email"
+                                                autoComplete="off"
+                                            />
+                                            {isInvalid && (
+                                                <FieldError errors={field.state.meta.errors} />
+                                            )}
+                                        </Field>
+                                    )
+                                }}
+                            />
+                            <form.Field
+                                name="password"
+                                children={(field) => {
+                                    const isInvalid =
+                                        field.state.meta.isTouched && !field.state.meta.isValid
+                                    return (
+                                        <Field data-invalid={isInvalid}>
+                                            <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                                            <Input
+                                                id={field.name}
+                                                name={field.name}
+                                                value={field.state.value}
+                                                onBlur={field.handleBlur}
+                                                onChange={(e) => field.handleChange(e.target.value)}
+                                                aria-invalid={isInvalid}
+                                                placeholder="*****"
+                                                type="password"
+                                                autoComplete="off"
+                                            />
+                                            {isInvalid && (
+                                                <FieldError errors={field.state.meta.errors} />
+                                            )}
+                                        </Field>
+                                    )
+                                }}
+                            />
+                            <Field>
+                                <Button disabled={isPending} type="submit">{isPending ? "Logging in..." : "Login"}</Button>
+                                <Button variant="outline" type="button" onClick={handleGoogleLogin} disabled={isPending}>
+                                    {isPending ? "Logging in..." : "Login with Google"}
+                                </Button>
+                                <FieldDescription className="text-center">
+                                    Don&apos;t have an account? <Link to="/signup">Sign up</Link>
+                                </FieldDescription>
+                            </Field>
+                            {error && <Alert className="max-w-md border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
+                                <AlertTriangleIcon />
+                                <AlertTitle>{error}</AlertTitle>
+                                <AlertDescription>
+                                    Please check with Admin and and fix the login issue.
+                                    You can reach to admin using mail address : admin@easyai.com
+                                </AlertDescription>
+                            </Alert>}
+                        </FieldGroup>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
     )
 }
-
-
