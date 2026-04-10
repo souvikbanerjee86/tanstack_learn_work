@@ -2,6 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useQueryClient } from '@tanstack/react-query'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -23,6 +24,7 @@ export const Route = createFileRoute('/dashboard/jobs/add')({
 })
 
 function RouteComponent() {
+    const queryClient = useQueryClient()
     const navigate = useNavigate()
     const [isPending, startTransition] = useTransition()
     const [isGenerating, startGenerating] = useTransition()
@@ -46,6 +48,7 @@ function RouteComponent() {
                 try {
                     await createJob({ data: { jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate, experience: value.experience } });
                     toast.success("Job created successfully")
+                    queryClient.invalidateQueries({ queryKey: ['jobs'] })
                     navigate({ to: "/dashboard/jobs" })
                 } catch (error: any) {
                     toast.error(error.message)
