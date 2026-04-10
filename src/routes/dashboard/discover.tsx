@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -11,15 +10,16 @@ import { PaginatedJobResponse, ProfileSearchCritieria, ProfileSearchResponse, Ra
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Compass, Database, Mail, Sparkles, Filter, CheckCircle2, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 export const Route = createFileRoute('/dashboard/discover')({
     component: RouteComponent,
     loader: async () => {
         const data: RagProcessRecord[] = await getProcessedIndexFilesId();
         const jobDetails: PaginatedJobResponse = await getJobDetails({ data: { limit: null, status: null, last_doc_id: null } })
-
         return { data, jobDetails };
-
     }
 })
 
@@ -32,7 +32,6 @@ function RouteComponent() {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [documentId, setDocumentId] = useState<string>('')
     const [selectedJobId, setSelectedJobId] = useState<string>('')
-
     const [selectedItems, setSelectedItems] = useState<string[]>([])
 
     const handleCheckedChange = (id: string, checked: boolean) => {
@@ -48,7 +47,6 @@ function RouteComponent() {
                 const filteredData = data.filter((item) => item.id === documentId)
                 const ragPaths = filteredData[0].rag_file_ids
                 fileIds = ragPaths.map(path => path.split('/').pop() ?? null).filter(item => item !== null);
-
             }
             setIsSubmitting(true)
             setSelectedJobId(formData.jobId)
@@ -56,19 +54,19 @@ function RouteComponent() {
             const preferedDomain = formData.preferedDomain;
             const skills = formData.skills;
             const experience = formData.experience;
-            const results: ProfileSearchResponse = await getSearchProfileDetails({ data: { jobDescription, preferedDomain, skills, experience, fileIds } })
-            console.log
-            setResults(results)
+            const searchResults: ProfileSearchResponse = await getSearchProfileDetails({ data: { jobDescription, preferedDomain, skills, experience, fileIds } })
+            setResults(searchResults)
             setIsSubmitting(false)
         } catch (e) {
             console.log(e)
             setIsSubmitting(false)
         }
-
     }
+
     const bucketChangeHandler = (id: string) => {
         setDocumentId(id)
     }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
@@ -107,54 +105,127 @@ function RouteComponent() {
     const hasResults = results && results.matches && results.matches.length > 0;
 
     return (
-        <>
+        <div className="flex flex-col gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent">
+            {/* --- Hero Header Section --- */}
+            <div className="relative overflow-hidden rounded-[2.5rem] bg-muted/40 border border-muted-foreground/10 p-8 sm:p-12 text-foreground shadow-sm group">
+                {/* Background Decorative Blur - Muted */}
+                <div className="absolute top-0 right-0 -m-20 h-64 w-64 rounded-full bg-primary/5 blur-[100px] group-hover:bg-primary/10 transition-colors duration-700" />
+                
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div className="max-w-xl">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-sm">
+                                <Compass className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-[9px] font-black uppercase tracking-[0.2em] text-primary/70">
+                                AI Powered Discovery
+                            </div>
+                        </div>
+                        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3 text-foreground">
+                            Discover Elite Talent
+                        </h1>
+                        <p className="text-base text-muted-foreground font-medium leading-relaxed">
+                            Search through your indexed resumes using intelligent semantic matching to find candidates that perfectly align with your job requirements.
+                        </p>
+                    </div>
 
-            <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg border">
-                {/* LEFT SIDE: Random Selection Dropdown */}
-                <div className="flex items-center gap-2">
-                    <Label className="text-sm font-medium">Select CV store Date:</Label>
-                    <Select onValueChange={(value) => bucketChangeHandler(value)}>
-                        <SelectTrigger className="w-[200px]">
-                            <SelectValue placeholder="Select CV store Date" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Select CV store Date</SelectLabel>
-                                {data.map((item, idx) => (
-                                    <SelectItem key={idx} value={item.id}>
-                                        {item.date}
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-background/50 backdrop-blur-xl p-4 rounded-3xl border shadow-sm">
+                        <div className="flex flex-col gap-1 px-2">
+                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 ml-1">
+                                <Database className="h-3 w-3" /> Source Archive
+                            </Label>
+                            <Select onValueChange={(value) => bucketChangeHandler(value)}>
+                                <SelectTrigger className="w-full sm:w-[220px] h-11 bg-background border-muted-foreground/10 rounded-xl focus:ring-primary/20">
+                                    <SelectValue placeholder="Select Data Source" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-2xl border-muted-foreground/10 shadow-2xl">
+                                    <SelectGroup>
+                                        {data.map((item, idx) => (
+                                            <SelectItem key={idx} value={item.id} className="rounded-xl my-1">
+                                                Archive: {item.date}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <Separator orientation="vertical" className="hidden sm:block h-12 bg-muted-foreground/10" />
+                        <SearchProfileForm onProfileSearchSubmit={onProfileSearchSubmit} jobDetails={jobDetails} />
+                    </div>
                 </div>
-
-                {/* RIGHT SIDE: Modal Trigger */}
-                <SearchProfileForm onProfileSearchSubmit={onProfileSearchSubmit} jobDetails={jobDetails} />
             </div>
+
             {isSubmitting && <MultiStepLoader isLoading={isSubmitting} />}
-            <div className="container py-8 mx-auto">
+
+            {/* --- Results Section --- */}
+            <div className="container px-4 sm:px-0">
                 {!hasResults ? (
                     <EmptyState />
                 ) : (
-                    <div className="grid grid-cols-1 gap-6">
-                        <div className="flex items-center justify-between mb-2">
-                            <h2 className="text-2xl font-bold">Matching Candidates</h2>
-                            <span className="text-sm font-medium text-muted-foreground">
-                                {results.matches.length} profiles found
-                            </span>
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between mb-2 px-2">
+                            <div>
+                                <h2 className="text-2xl font-black tracking-tight flex items-center gap-2">
+                                    <Sparkles className="h-5 w-5 text-amber-500" />
+                                    Matching Candidates
+                                </h2>
+                                <p className="text-sm text-muted-foreground font-medium mt-1">
+                                    AI found {results.matches.length} profiles matching your criteria
+                                </p>
+                            </div>
+                            
+                            {/* Floating / Sticky Action Bar for Selection */}
+                            <div className={cn(
+                                "fixed bottom-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 flex items-center gap-4 px-6 py-4 rounded-3xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-2xl shadow-black/20 border border-white/10",
+                                selectedItems.length > 0 ? "translate-y-0 opacity-100 scale-100" : "translate-y-20 opacity-0 scale-95 pointer-events-none"
+                            )}>
+                                <div className="flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-[10px] font-black">
+                                        {selectedItems.length}
+                                    </div>
+                                    <span className="text-sm font-bold tracking-tight">Profiles Selected</span>
+                                </div>
+                                <Separator orientation="vertical" className="h-6 bg-white/20 dark:bg-black/20" />
+                                <div className="flex items-center gap-2">
+                                    <Button 
+                                        onClick={handleSubmit} 
+                                        size="sm"
+                                        className="h-10 px-5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold gap-2"
+                                        disabled={isSubmitting}
+                                    >
+                                        <Mail className="h-3.5 w-3.5" />
+                                        Send Interview Invite
+                                    </Button>
+                                    <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="h-10 w-10 rounded-xl hover:bg-white/10 dark:hover:bg-black/10"
+                                        onClick={() => setSelectedItems([])}
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
-                        <form onSubmit={handleSubmit}>
-                            <div className="text-right pb-2"><Button className="right-4" type="submit" disabled={selectedItems.length === 0 || isSubmitting}>Send Acceptance Email</Button></div>
-                            {results.matches.map((candidate, idx) => (
-                                <CandidateResultCard key={idx} data={candidate} selectedItems={selectedItems} handleCheckedChange={handleCheckedChange} downlaodUrl={downlaodUrl} isOpen={isOpen} setIsOpen={setIsOpen} isDownloading={downloading} fileUrl={fileUrl} />
-                            ))}
-                        </form>
 
+                        <div className="grid grid-cols-1 gap-6">
+                            {results.matches.map((candidate, idx) => (
+                                <CandidateResultCard 
+                                    key={idx} 
+                                    data={candidate} 
+                                    selectedItems={selectedItems} 
+                                    handleCheckedChange={handleCheckedChange} 
+                                    downlaodUrl={downlaodUrl} 
+                                    isOpen={isOpen} 
+                                    setIsOpen={setIsOpen} 
+                                    isDownloading={downloading} 
+                                    fileUrl={fileUrl} 
+                                />
+                            ))}
+                        </div>
                     </div>
                 )}
             </div>
-        </>
+        </div>
     );
 }

@@ -16,7 +16,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsRight, Loader2, Inbox } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -42,16 +42,20 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
+
+    const pageIndex = table.getState().pagination.pageIndex
+    const pageCount = table.getPageCount()
+
     return (
-        <div>
-            <div className="overflow-hidden rounded-md border">
+        <div className="space-y-4">
+            <div className="overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
+                            <TableRow key={headerGroup.id} className="bg-muted/40 hover:bg-muted/40 border-b border-border/60">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead key={header.id} className="h-11">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -70,9 +74,10 @@ export function DataTable<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className="transition-colors hover:bg-muted/30 border-b border-border/40"
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} className="py-3.5">
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
@@ -80,51 +85,71 @@ export function DataTable<TData, TValue>({
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                <TableCell colSpan={columns.length} className="h-40">
+                                    <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                                        <Inbox className="h-10 w-10 opacity-40" />
+                                        <p className="text-sm font-medium">No jobs found</p>
+                                        <p className="text-xs">Create your first job listing to get started.</p>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                {/* If server-side pagination is available and we're on the last client page,
-                    show "Load More" to fetch the next cursor page. Otherwise use normal next. */}
-                {onLoadMore && !table.getCanNextPage() && hasNextPage ? (
+
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between px-1">
+                <p className="text-xs text-muted-foreground">
+                    Page {pageIndex + 1} of {pageCount || 1}
+                </p>
+                <div className="flex items-center gap-2">
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={onLoadMore}
-                        disabled={isFetchingNextPage}
+                        className="h-8 gap-1 text-xs"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
                     >
-                        {isFetchingNextPage ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Loading…
-                            </>
-                        ) : (
-                            "Load More"
-                        )}
+                        <ChevronLeft className="h-3.5 w-3.5" />
+                        Previous
                     </Button>
-                ) : (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        Next
-                    </Button>
-                )}
+
+                    {/* If server-side pagination is available and we're on the last client page,
+                        show "Load More" to fetch the next cursor page. Otherwise use normal next. */}
+                    {onLoadMore && !table.getCanNextPage() && hasNextPage ? (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 gap-1 text-xs"
+                            onClick={onLoadMore}
+                            disabled={isFetchingNextPage}
+                        >
+                            {isFetchingNextPage ? (
+                                <>
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                    Loading…
+                                </>
+                            ) : (
+                                <>
+                                    Load More
+                                    <ChevronsRight className="h-3.5 w-3.5" />
+                                </>
+                            )}
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 gap-1 text-xs"
+                            onClick={() => table.nextPage()}
+                            disabled={!table.getCanNextPage()}
+                        >
+                            Next
+                            <ChevronRight className="h-3.5 w-3.5" />
+                        </Button>
+                    )}
+                </div>
             </div>
         </div>
     )

@@ -9,49 +9,74 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function EmailSyncSkeleton() {
-    // Define how many loading rows to show
-    const skeletonRows = Array.from({ length: 5 });
-
     return (
-        <div className="w-full p-4 space-y-4 rounded-md border bg-background text-foreground">
-            <h2 className="text-2xl font-semibold tracking-tight">Email Sync Details</h2>
+        <div className="flex flex-col gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent">
+            {/* Header skeleton */}
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-12 w-12 rounded-2xl" />
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-[240px]" />
+                    <Skeleton className="h-4 w-[180px] opacity-60" />
+                </div>
+            </div>
 
-            <div className="rounded-md border">
+            {/* Table skeleton */}
+            <div className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-xl shadow-black/5">
                 <Table>
-                    <TableHeader className="bg-muted/50">
-                        <TableRow>
-                            <TableHead className="w-[200px]">Id</TableHead>
-                            <TableHead>Applicant Name</TableHead>
-                            <TableHead>Applicant Email</TableHead>
-                            <TableHead>Job ID</TableHead>
-                            <TableHead>CV Name</TableHead>
-                            <TableHead>Created Date</TableHead>
-                            <TableHead className="text-right">Processed</TableHead>
+                    <TableHeader>
+                        <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/40">
+                            <TableHead className="h-14 px-6 uppercase text-[10px] font-black tracking-widest"><Skeleton className="h-3 w-6" /></TableHead>
+                            <TableHead className="h-14 px-6 uppercase text-[10px] font-black tracking-widest"><Skeleton className="h-3 w-18" /></TableHead>
+                            <TableHead className="h-14 px-6 uppercase text-[10px] font-black tracking-widest"><Skeleton className="h-3 w-10" /></TableHead>
+                            <TableHead className="h-14 px-6 uppercase text-[10px] font-black tracking-widest"><Skeleton className="h-3 w-12" /></TableHead>
+                            <TableHead className="h-14 px-6 uppercase text-[10px] font-black tracking-widest"><Skeleton className="h-3 w-6" /></TableHead>
+                            <TableHead className="h-14 px-6 uppercase text-[10px] font-black tracking-widest"><Skeleton className="h-3 w-14" /></TableHead>
+                            <TableHead className="h-14 px-6 uppercase text-[10px] font-black tracking-widest"><Skeleton className="h-3 w-12" /></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {skeletonRows.map((_, index) => (
-                            <TableRow key={index}>
-                                <TableCell><Skeleton className="h-4 w-[160px]" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-[180px]" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                                <TableCell><Skeleton className="h-4 w-[130px]" /></TableCell>
-                                <TableCell className="flex justify-end">
-                                    {/* Mimics the green "Yes" badge in your image */}
-                                    <Skeleton className="h-6 w-12 rounded-full" />
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <TableRow key={i} className="group hover:bg-muted/20 border-b border-border/40 transition-colors">
+                                <TableCell className="py-6 px-6">
+                                    <Skeleton className="h-8 w-[140px] rounded-xl" />
+                                </TableCell>
+                                <TableCell className="py-6 px-6">
+                                    <div className="flex items-center gap-3">
+                                        <Skeleton className="h-10 w-10 rounded-xl" />
+                                        <Skeleton className="h-5 w-[120px]" />
+                                    </div>
+                                </TableCell>
+                                <TableCell className="py-6 px-6">
+                                    <div className="flex items-center gap-2">
+                                        <Skeleton className="h-4 w-4 rounded-full opacity-40" />
+                                        <Skeleton className="h-5 w-[180px]" />
+                                    </div>
+                                </TableCell>
+                                <TableCell className="py-6 px-6">
+                                    <div className="flex items-center gap-2">
+                                        <Skeleton className="h-4 w-4 rounded-full opacity-40" />
+                                        <Skeleton className="h-5 w-[100px]" />
+                                    </div>
+                                </TableCell>
+                                <TableCell className="py-6 px-6">
+                                    <div className="flex items-center gap-2">
+                                        <Skeleton className="h-4 w-4 rounded-full opacity-40" />
+                                        <Skeleton className="h-5 w-[140px]" />
+                                    </div>
+                                </TableCell>
+                                <TableCell className="py-6 px-6">
+                                    <div className="flex items-center gap-2">
+                                        <Skeleton className="h-4 w-4 rounded-full opacity-40" />
+                                        <Skeleton className="h-5 w-[110px]" />
+                                    </div>
+                                </TableCell>
+                                <TableCell className="py-6 px-6">
+                                    <Skeleton className="h-8 w-24 rounded-2xl" />
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-            </div>
-
-            {/* Pagination Skeleton */}
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <Skeleton className="h-9 w-20" />
-                <Skeleton className="h-9 w-16" />
             </div>
         </div>
     );

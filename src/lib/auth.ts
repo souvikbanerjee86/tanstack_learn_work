@@ -47,3 +47,17 @@ export const getUserFn = createServerFn({ method: 'GET' }).handler(async () => {
     }
 })
 
+export const isLoggedIn = createServerFn({ method: 'GET' }).handler(async () => {
+    const session = getCookie("session");
+
+    if (!session) {
+        return null
+    }
+
+    try {
+        const decodedClaims = await adminAuth.verifySessionCookie(session, true);
+        return decodedClaims;
+    } catch (error) {
+        return null;
+    }
+})
