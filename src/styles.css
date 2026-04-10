@@ -141,3 +141,8 @@ code {
     @apply font-sans;
   }
 }
+
+/* Fix native date input calendar icon visibility in dark mode */
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

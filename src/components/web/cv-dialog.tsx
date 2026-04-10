@@ -1,29 +1,38 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { FileText, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "../ui/dialog";
+import { Button } from "../ui/button";
 
 export function CVDialog({ isOpen, setIsOpen, fileUrl }: {
     isOpen: boolean,
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
     fileUrl: string
 }) {
-    return (<Dialog open={isOpen} onOpenChange={setIsOpen}>
-
-        <DialogContent className='sm:max-w-[50vw]'>
-            <DialogHeader>
-                <DialogTitle>Candidate Resume</DialogTitle>
-
-            </DialogHeader>
-            <div className="no-scrollbar -mx-4 max-h-[90vh] overflow-y-auto px-4">
-
-                <p key={fileUrl} className="mb-4 leading-normal">
-                    <iframe
-                        src={`https://docs.google.com/gview?url=${fileUrl}&embedded=true`}
-                        style={{ width: "100%", height: "600px" }}
-                        frameBorder="0">
-                    </iframe>
-                </p>
-
-            </div>
-        </DialogContent>
-    </Dialog>)
-
-} 
+    return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogContent className='sm:max-w-[70vw] h-[90vh] p-0 overflow-hidden rounded-3xl border-none shadow-2xl'>
+                <div className="flex flex-col h-full bg-background">
+                    <DialogHeader className="p-6 border-b bg-muted/20 flex flex-row items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                                <FileText className="h-5 w-5 text-primary" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-xl font-black tracking-tight">Candidate Resume</DialogTitle>
+                                <p className="text-xs text-muted-foreground font-medium">Viewing original document</p>
+                            </div>
+                        </div>
+                    </DialogHeader>
+                    
+                    <div className="flex-1 w-full bg-zinc-100 dark:bg-zinc-900 relative">
+                        <iframe
+                            key={fileUrl}
+                            src={`https://docs.google.com/gview?url=${fileUrl}&embedded=true`}
+                            className="w-full h-full border-none"
+                            title="Resume Viewer"
+                        />
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
+    )
+}

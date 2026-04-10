@@ -1,6 +1,5 @@
 import {
   BookMarkedIcon,
-  BookmarkIcon,
   CompassIcon,
   FileQuestionIcon,
   Import,
@@ -24,6 +23,7 @@ import { NavPrimary } from "./nav-primary"
 import { NavUser } from "./nav-user"
 import { Link, linkOptions } from "@tanstack/react-router"
 import { NavPrimaryProps, NavUserProps } from "@/lib/types"
+import { Logo } from "./Logo"
 
 const navItems: NavPrimaryProps['items'] = linkOptions([
   {
@@ -78,21 +78,13 @@ const navItems: NavPrimaryProps['items'] = linkOptions([
 
 export function AppSidebar({ user }: { user: NavUserProps }) {
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader>
+    <Sidebar collapsible="icon" variant="inset" className="bg-sidebar/50 backdrop-blur-xl">
+      <SidebarHeader className="py-6 border-b border-border/10">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link to="/" className="flex items-center gap-3">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square items-center size-8 justify-center rounded-lg">
-                  <BookmarkIcon className="size-4" />
-                </div>
-                <div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="font-medium">EasyAI</span>
-                    <span className="text-xs">Your AI Recruiter</span>
-                  </div>
-                </div>
+            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent focus-visible:ring-0">
+              <Link to="/">
+                <Logo noLink size="md" subtitle="Intelligence Hub" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
