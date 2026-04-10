@@ -108,14 +108,15 @@ export const getJobDetails = createServerFn({ method: 'GET' })
         console.log(API_PATH.JOB_DETAILS.GET_BASE_URL)
         const client = await auth.getIdTokenClient(API_PATH.JOB_DETAILS.GET_BASE_URL);
         var url = API_PATH.JOB_DETAILS.GET_BASE_URL + API_PATH.JOB_DETAILS.PATH_URL;
-        if (data.status) {
-            url += `?status=${data.status}`;
-        }
+
         if (data.limit) {
-            url += `&limit=${data.limit}`;
+            url += `?limit=${data.limit}`;
         }
         if (data.last_doc_id) {
             url += `&last_doc_id=${data.last_doc_id}`;
+        }
+        if (data.status) {
+            url += `&status=${data.status}`;
         }
         const response = await client.request({
             url: url,
@@ -560,7 +561,7 @@ export const getJobDescription = createServerFn({ method: 'GET' })
         try {
             const response = await openrouter.chat.send({
                 chatGenerationParams: {
-                    model: "stepfun/step-3.5-flash:free",
+                    model: "nvidia/nemotron-3-super-120b-a12b:free",
                     messages: [
                         {
                             role: "user",
@@ -573,7 +574,7 @@ export const getJobDescription = createServerFn({ method: 'GET' })
             const content = response.choices[0].message.content;
             return content;
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("OpenRouter Error:", error);
             throw new Error("Failed to fetch job description");
         }

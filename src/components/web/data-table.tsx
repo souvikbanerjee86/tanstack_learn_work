@@ -16,15 +16,25 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    /** Whether there is a next page available from the server (cursor-based). */
+    hasNextPage?: boolean
+    /** Whether the next page is currently being fetched. */
+    isFetchingNextPage?: boolean
+    /** Callback to load the next page from the server. */
+    onLoadMore?: () => void
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    hasNextPage,
+    isFetchingNextPage,
+    onLoadMore,
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
@@ -32,7 +42,6 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
     return (
         <div>
             <div className="overflow-hidden rounded-md border">
@@ -88,14 +97,34 @@ export function DataTable<TData, TValue>({
                 >
                     Previous
                 </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
+                {/* If server-side pagination is available and we're on the last client page,
+                    show "Load More" to fetch the next cursor page. Otherwise use normal next. */}
+                {onLoadMore && !table.getCanNextPage() && hasNextPage ? (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={onLoadMore}
+                        disabled={isFetchingNextPage}
+                    >
+                        {isFetchingNextPage ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Loading…
+                            </>
+                        ) : (
+                            "Load More"
+                        )}
+                    </Button>
+                ) : (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                )}
             </div>
         </div>
     )

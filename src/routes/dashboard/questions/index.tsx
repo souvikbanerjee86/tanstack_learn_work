@@ -37,7 +37,7 @@ function RouteComponent() {
     const [jobs, setJobs] = useState(data.data)
     const [questionCount, setQuestionCount] = useState(0)
     const [error, setError] = useState<string | null>(null)
-    const [selectedJobId, setSelectedJobId] = useState<string | null>(data.data[0].job_id)
+    const [selectedJobId, setSelectedJobId] = useState<string | null>(data.data[0]?.job_id ?? null)
     const [newQuestion, setNewQuestion] = useState("")
     const [loading, setLoading] = useState(false)
     const queryClient = useQueryClient()

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { Suspense } from 'react'
+import { infiniteQueryOptions, useSuspenseInfiniteQuery } from '@tanstack/react-query'
+import { Suspense, useMemo } from 'react'
 
 import { columns } from "@/components/web/columns"
 import { DataTable } from "@/components/web/data-table"
@@ -8,9 +8,16 @@ import { getJobDetails } from '@/lib/server-function'
 import { Button } from '@/components/ui/button'
 import { JobTableSkeleton } from '@/components/web/Job-table-skeleton'
 
-export const jobsQueryOptions = queryOptions({
-  queryKey: ['jobs'],
-  queryFn: () => getJobDetails({ data: { limit: null, status: null, last_doc_id: null } }),
+const JOBS_PAGE_SIZE = 10
+
+export const jobsInfiniteQueryOptions = infiniteQueryOptions({
+  queryKey: ['jobs', 'list'],
+  queryFn: ({ pageParam }) =>
+    getJobDetails({
+      data: { limit: JOBS_PAGE_SIZE, status: null, last_doc_id: pageParam },
+    }),
+  initialPageParam: null as string | null,
+  getNextPageParam: (lastPage) => lastPage.next_cursor ?? undefined,
 })
 
 export const Route = createFileRoute('/dashboard/jobs/')({
@@ -18,7 +25,7 @@ export const Route = createFileRoute('/dashboard/jobs/')({
     return { role: context.role.role }
   },
   loader: ({ context }) => {
-    void context.queryClient.prefetchQuery(jobsQueryOptions)
+    void context.queryClient.prefetchInfiniteQuery(jobsInfiniteQueryOptions)
   },
   component: RouteComponent,
 })
@@ -33,7 +40,17 @@ function RouteComponent() {
 
 function JobContent() {
   const { role } = Route.useRouteContext()
-  const { data } = useSuspenseQuery(jobsQueryOptions)
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useSuspenseInfiniteQuery(jobsInfiniteQueryOptions)
+
+  const allJobs = useMemo(
+    () => data?.pages?.flatMap((page) => page.data ?? []) ?? [],
+    [data?.pages],
+  )
 
   return (
     <div className="container max-w-full">
@@ -44,7 +61,13 @@ function JobContent() {
             <Button>Add Job</Button>
           </Link>}
       </div>
-      <DataTable columns={columns} data={data.data} />
+      <DataTable
+        columns={columns}
+        data={allJobs}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        onLoadMore={() => fetchNextPage()}
+      />
     </div>
   )
 }
