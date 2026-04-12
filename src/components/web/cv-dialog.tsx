@@ -1,6 +1,5 @@
 import { FileText, X } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "../ui/dialog";
-import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 export function CVDialog({ isOpen, setIsOpen, fileUrl }: {
     isOpen: boolean,
@@ -22,7 +21,7 @@ export function CVDialog({ isOpen, setIsOpen, fileUrl }: {
                             </div>
                         </div>
                     </DialogHeader>
-                    
+
                     <div className="flex-1 w-full bg-zinc-100 dark:bg-zinc-900 relative">
                         <iframe
                             key={fileUrl}
