@@ -19,7 +19,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'EasyAI Application',
+        title: 'EazyAI Application',
       },
     ],
     links: [

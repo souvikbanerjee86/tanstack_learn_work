@@ -6,7 +6,7 @@ import { DataTable } from '@/components/web/data-table'
 import { candidateColumns } from "@/components/web/candidate-columns"
 import { Button } from '@/components/ui/button'
 import { AppliedCandidatesSkeleton } from '@/components/web/applied-candidates-skeleton'
-import { Plus, Users, Sparkles, Filter } from 'lucide-react'
+import { Plus, Users, Sparkles } from 'lucide-react'
 
 export const candidatesQueryOptions = queryOptions({
     queryKey: ['candidates'],
@@ -42,7 +42,7 @@ function CandidatesContent() {
                 <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-2xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center border border-violet-200 dark:border-violet-800 shadow-sm relative overflow-hidden group">
                         <Users className="h-7 w-7 text-violet-600 dark:text-violet-400 relative z-10" />
-                        <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute inset-0 bg-linear-to-br from-violet-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div>
                         <h1 className="text-3xl font-black tracking-tight">Applied Candidates</h1>

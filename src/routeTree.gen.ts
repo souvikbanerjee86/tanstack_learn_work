@@ -20,6 +20,7 @@ import { Route as DashboardJobsIndexRouteImport } from './routes/dashboard/jobs/
 import { Route as DashboardInterviewIndexRouteImport } from './routes/dashboard/interview/index'
 import { Route as DashboardEmailSyncIndexRouteImport } from './routes/dashboard/email-sync/index'
 import { Route as DashboardCandidatesIndexRouteImport } from './routes/dashboard/candidates/index'
+import { Route as DashboardAdminUserIndexRouteImport } from './routes/dashboard/admin-user/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/_auth/signup/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login/index'
 import { Route as DashboardJobsAddRouteImport } from './routes/dashboard/jobs/add'
@@ -85,6 +86,11 @@ const DashboardCandidatesIndexRoute =
     path: '/candidates/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardAdminUserIndexRoute = DashboardAdminUserIndexRouteImport.update({
+  id: '/admin-user/',
+  path: '/admin-user/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
   id: '/signup/',
   path: '/signup/',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/login/': typeof AuthLoginIndexRoute
   '/signup/': typeof AuthSignupIndexRoute
+  '/dashboard/admin-user/': typeof DashboardAdminUserIndexRoute
   '/dashboard/candidates/': typeof DashboardCandidatesIndexRoute
   '/dashboard/email-sync/': typeof DashboardEmailSyncIndexRoute
   '/dashboard/interview/': typeof DashboardInterviewIndexRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/login': typeof AuthLoginIndexRoute
   '/signup': typeof AuthSignupIndexRoute
+  '/dashboard/admin-user': typeof DashboardAdminUserIndexRoute
   '/dashboard/candidates': typeof DashboardCandidatesIndexRoute
   '/dashboard/email-sync': typeof DashboardEmailSyncIndexRoute
   '/dashboard/interview': typeof DashboardInterviewIndexRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/dashboard/jobs/add': typeof DashboardJobsAddRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
   '/_auth/signup/': typeof AuthSignupIndexRoute
+  '/dashboard/admin-user/': typeof DashboardAdminUserIndexRoute
   '/dashboard/candidates/': typeof DashboardCandidatesIndexRoute
   '/dashboard/email-sync/': typeof DashboardEmailSyncIndexRoute
   '/dashboard/interview/': typeof DashboardInterviewIndexRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/dashboard/jobs/add'
     | '/login/'
     | '/signup/'
+    | '/dashboard/admin-user/'
     | '/dashboard/candidates/'
     | '/dashboard/email-sync/'
     | '/dashboard/interview/'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/dashboard/jobs/add'
     | '/login'
     | '/signup'
+    | '/dashboard/admin-user'
     | '/dashboard/candidates'
     | '/dashboard/email-sync'
     | '/dashboard/interview'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/dashboard/jobs/add'
     | '/_auth/login/'
     | '/_auth/signup/'
+    | '/dashboard/admin-user/'
     | '/dashboard/candidates/'
     | '/dashboard/email-sync/'
     | '/dashboard/interview/'
@@ -342,6 +354,13 @@ declare module '@tanstack/react-router' {
       path: '/candidates'
       fullPath: '/dashboard/candidates/'
       preLoaderRoute: typeof DashboardCandidatesIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/admin-user/': {
+      id: '/dashboard/admin-user/'
+      path: '/admin-user'
+      fullPath: '/dashboard/admin-user/'
+      preLoaderRoute: typeof DashboardAdminUserIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_auth/signup/': {
@@ -447,6 +466,7 @@ interface DashboardRouteRouteChildren {
   DashboardInterviewIdRoute: typeof DashboardInterviewIdRoute
   DashboardJobsIdRoute: typeof DashboardJobsIdRouteWithChildren
   DashboardJobsAddRoute: typeof DashboardJobsAddRoute
+  DashboardAdminUserIndexRoute: typeof DashboardAdminUserIndexRoute
   DashboardCandidatesIndexRoute: typeof DashboardCandidatesIndexRoute
   DashboardEmailSyncIndexRoute: typeof DashboardEmailSyncIndexRoute
   DashboardInterviewIndexRoute: typeof DashboardInterviewIndexRoute
@@ -463,6 +483,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardInterviewIdRoute: DashboardInterviewIdRoute,
   DashboardJobsIdRoute: DashboardJobsIdRouteWithChildren,
   DashboardJobsAddRoute: DashboardJobsAddRoute,
+  DashboardAdminUserIndexRoute: DashboardAdminUserIndexRoute,
   DashboardCandidatesIndexRoute: DashboardCandidatesIndexRoute,
   DashboardEmailSyncIndexRoute: DashboardEmailSyncIndexRoute,
   DashboardInterviewIndexRoute: DashboardInterviewIndexRoute,

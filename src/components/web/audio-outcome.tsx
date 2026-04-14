@@ -1,4 +1,4 @@
-import { BrainCircuit, Database, ExternalLink, FileSearch, Info, ShieldCheck, PlayCircle, Headphones, Loader2 } from "lucide-react";
+import { BrainCircuit, Database, FileSearch, Info, ShieldCheck, PlayCircle, Headphones, Loader2 } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
@@ -164,14 +164,14 @@ export function AudioOutcome({ email, id }: { email: string, id: string }) {
                             Source Audio
                         </DialogTitle>
                     </DialogHeader>
-                    
+
                     <div className="flex flex-col items-center justify-center py-6 bg-zinc-50/50 dark:bg-zinc-900/50 rounded-2xl border border-zinc-100 dark:border-zinc-800/50">
                         {fileUrl ? (
-                            <audio 
-                                controls 
-                                autoPlay 
-                                className="w-full max-w-[280px]" 
-                                src={decodeURIComponent(fileUrl)} 
+                            <audio
+                                controls
+                                autoPlay
+                                className="w-full max-w-[280px]"
+                                src={decodeURIComponent(fileUrl)}
                             >
                                 Your browser does not support the audio element.
                             </audio>
