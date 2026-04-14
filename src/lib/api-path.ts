@@ -103,5 +103,9 @@ export const API_PATH = {
     DOWNLOAD_VOICE_FILE_URL: {
         GET_BASE_URL: "https://voice-file-url-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/voice-file-url"
+    },
+    ADMIN_USER_LIST: {
+        GET_BASE_URL: "https://admin-users-list-api-403179946278.europe-west1.run.app",
+        PATH_URL: "/api/admin-users-list"
     }
 }

@@ -180,10 +180,10 @@ export function LoginForm() {
                                 </div>
                             </div>
 
-                            <Button 
-                                variant="outline" 
-                                type="button" 
-                                onClick={handleGoogleLogin} 
+                            <Button
+                                variant="outline"
+                                type="button"
+                                onClick={handleGoogleLogin}
                                 disabled={isPending}
                                 className="w-full h-11 rounded-xl font-bold bg-background shadow-sm hover:bg-muted/50 border-muted-foreground/10 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
                             >
@@ -221,7 +221,7 @@ export function LoginForm() {
                                 <AlertTriangleIcon className="h-4 w-4" />
                                 <AlertTitle className="text-xs font-black uppercase tracking-widest mt-0.5">Authentication Error</AlertTitle>
                                 <AlertDescription className="text-[11px] font-medium opacity-90 leading-relaxed">
-                                    {error}. Please check with Admin at admin@easyai.com
+                                    {error}. Please check with Admin at admin@eazyAI.com
                                 </AlertDescription>
                             </Alert>
                         )}

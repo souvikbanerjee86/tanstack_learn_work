@@ -6,7 +6,8 @@ import {
   LayoutDashboardIcon,
   MailIcon,
   MailsIcon,
-  Users
+  Users,
+  Users2Icon
 } from "lucide-react"
 
 import {
@@ -72,6 +73,12 @@ const navItems: NavPrimaryProps['items'] = linkOptions([
     title: "Email-Sync",
     to: "/dashboard/email-sync",
     icon: MailsIcon,
+    activeOptions: { exact: false }
+  },
+  {
+    title: "Admin User",
+    to: "/dashboard/admin-user",
+    icon: Users2Icon,
     activeOptions: { exact: false }
   },
 ])

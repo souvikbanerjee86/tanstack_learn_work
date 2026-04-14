@@ -2,18 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export function QuestionsSkeleton() {
     return (
-        <div className="flex flex-col gap-8 p-4 md:p-10 lg:p-14 pb-20 bg-transparent h-full overflow-hidden">
-            {/* Header / Intro Pulse */}
-            <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-4">
-                    <Skeleton className="h-12 w-12 rounded-2xl" />
-                    <div className="space-y-2">
-                        <Skeleton className="h-8 w-[320px]" />
-                        <Skeleton className="h-4 w-[240px] opacity-60" />
-                    </div>
-                </div>
-            </div>
-
+        <div className="flex flex-col gap-6 w-full h-full overflow-hidden">
             <div className="grid grid-cols-1 gap-6">
                 {Array.from({ length: 4 }).map((_, i) => (
                     <div 

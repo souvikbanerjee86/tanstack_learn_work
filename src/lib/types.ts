@@ -276,3 +276,36 @@ export interface MovementOutcomeResponse {
     count: number;
     data: UserMovementData[];
 }
+
+
+/**
+ * Represents the role-specific details for a user.
+ */
+export interface UserRole {
+    active: boolean;
+    role: string;
+    user_id: string;
+}
+
+/**
+ * Represents an individual user record.
+ */
+export interface UserData {
+    uid: string;
+    email: string;
+    display_name: string;
+    photo_url: string;
+    provider_id: string;
+    created_at: string;
+    last_sign_in: string;
+    disabled: boolean;
+    user_role?: UserRole; // Made optional as requested
+}
+
+/**
+ * Represents the top-level API response.
+ */
+export interface AdminUserResponse {
+    count: number;
+    data: UserData[];
+}

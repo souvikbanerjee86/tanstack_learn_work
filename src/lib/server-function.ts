@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 import { OpenRouter } from "@openrouter/sdk";
@@ -733,4 +733,27 @@ export const getVoiceDownloadURL = createServerFn({ method: 'GET' })
         }
 
 
+    })
+
+
+export const adminUsersList = createServerFn({ method: 'GET' })
+    .handler(async (): Promise<AdminUserResponse> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.ADMIN_USER_LIST.GET_BASE_URL);
+        const url = API_PATH.ADMIN_USER_LIST.GET_BASE_URL + API_PATH.ADMIN_USER_LIST.PATH_URL;
+
+
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            return finalData as AdminUserResponse;
+        } catch (e) {
+            return { "count": 0, "data": [] } as AdminUserResponse
+        }
     })

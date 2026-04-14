@@ -99,10 +99,12 @@ export function DataTable<TData, TValue>({
             </div>
 
             {/* Pagination Controls */}
-            <div className="flex items-center justify-between px-1">
-                <p className="text-xs text-muted-foreground">
-                    Page {pageIndex + 1} of {pageCount || 1}
-                </p>
+            <div className="flex items-center justify-between px-2 pt-2">
+                <div className="flex items-center gap-2">
+                    <p className="text-xs font-black uppercase tracking-widest text-foreground/70">
+                        Page {pageIndex + 1} <span className="text-muted-foreground/40 font-medium">of</span> {pageCount || 1}
+                    </p>
+                </div>
                 <div className="flex items-center gap-2">
                     <Button
                         variant="outline"

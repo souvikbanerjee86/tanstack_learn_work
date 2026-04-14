@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { createFileRoute } from '@tanstack/react-router'
 import { ArrowLeft, HelpCircle, Loader2, Plus, Sparkles, MessageSquare, LayoutGrid, Info } from 'lucide-react'
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { addInterviewQuestion, addQuestionUsingAI, deleteInterviewQuestion, getInterviewQuestions, getJobDetails } from '@/lib/server-function'
 import { QuestionsSkeleton } from '@/components/web/questions-skeleton'
@@ -15,6 +15,8 @@ import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
+import { QuestionsLayoutSkeleton } from '@/components/web/questions-layout-skeleton'
+import { JobContentSkeleton } from '@/components/web/job-content-skeleton'
 
 export const jobsQueryOptions = queryOptions({
     queryKey: ['jobs'],
@@ -34,12 +36,20 @@ export const Route = createFileRoute('/dashboard/questions/')({
 })
 
 function RouteComponent() {
-    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <Suspense fallback={<QuestionsLayoutSkeleton />}>
+            <QuestionsDashboardWrapper />
+        </Suspense>
+    )
+}
+
+function QuestionsDashboardWrapper() {
     const { data } = useSuspenseQuery(jobsQueryOptions)
-    const [jobs, setJobs] = useState(data.data)
+    const jobs = data.data
+    const [selectedJobId, setSelectedJobId] = useState<string | null>(jobs[0]?.job_id ?? null)
+    const [isOpen, setIsOpen] = useState(false);
     const [questionCount, setQuestionCount] = useState(0)
     const [error, setError] = useState<string | null>(null)
-    const [selectedJobId, setSelectedJobId] = useState<string | null>(data.data[0]?.job_id ?? null)
     const [newQuestion, setNewQuestion] = useState("")
     const [loading, setLoading] = useState(false)
     const queryClient = useQueryClient()
@@ -96,9 +106,7 @@ function RouteComponent() {
     return (
         <div className="flex flex-col md:flex-row h-full max-w-full gap-8 p-4 md:p-10 lg:p-14 overflow-hidden bg-transparent">
             {/* --- Sidebar: Job List --- */}
-            <Suspense fallback={<QuestionsSkeleton />}>
-                <JobContent selectedJobId={selectedJobId} jobs={jobs} getQuestions={getQuestions} />
-            </Suspense>
+            <JobContent selectedJobId={selectedJobId} jobs={jobs} getQuestions={getQuestions} />
 
             {/* --- Main Area: Questions --- */}
             <div className={cn(
@@ -209,7 +217,7 @@ function RouteComponent() {
                                     </div>
                                 </div>
                             </CardHeader>
-                            <Suspense fallback={<QuestionsSkeleton />}>
+                            <Suspense fallback={<div className="p-8"><QuestionsSkeleton /></div>}>
                                 <Questions job_id={selectedJobId} deleteQuestion={deleteQuestion} />
                             </Suspense>
                         </Card>
