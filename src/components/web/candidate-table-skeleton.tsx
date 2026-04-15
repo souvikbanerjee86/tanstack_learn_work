@@ -7,21 +7,25 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { Card } from "@/components/ui/card"
 
 export function CandidateTableSkeleton() {
     return (
-        <div className="flex flex-col gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent">
+        <div className="flex flex-col gap-8 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent">
             {/* Header skeleton */}
-            <div className="flex items-center gap-4">
-                <Skeleton className="h-12 w-12 rounded-2xl" />
-                <div className="space-y-2">
-                    <Skeleton className="h-8 w-[240px]" />
-                    <Skeleton className="h-4 w-[180px] opacity-60" />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-muted-foreground/10">
+                <div className="flex items-center gap-4">
+                    <Skeleton className="h-12 w-12 md:h-14 md:w-14 rounded-2xl" />
+                    <div className="space-y-2">
+                        <Skeleton className="h-7 w-[180px] md:h-8 md:w-[240px]" />
+                        <Skeleton className="h-4 w-[140px] md:w-[180px] opacity-60" />
+                    </div>
                 </div>
+                <Skeleton className="h-10 w-full md:w-32 rounded-xl" />
             </div>
 
-            {/* Table skeleton */}
-            <div className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-xl shadow-black/5">
+            {/* Desktop Table skeleton */}
+            <div className="hidden lg:block overflow-hidden rounded-3xl border border-border/60 bg-card shadow-xl shadow-black/5">
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/40">
@@ -81,6 +85,40 @@ export function CandidateTableSkeleton() {
                         ))}
                     </TableBody>
                 </Table>
+            </div>
+
+            {/* Mobile Card skeleton */}
+            <div className="flex flex-col gap-4 lg:hidden">
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i} className="rounded-2xl border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-xl shadow-black/5 p-5 space-y-6">
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-3">
+                                <Skeleton className="h-4 w-20 rounded-full" />
+                                <div className="flex items-center gap-2">
+                                    <Skeleton className="h-4 w-4 rounded-full" />
+                                    <Skeleton className="h-4 w-32" />
+                                </div>
+                            </div>
+                            <Skeleton className="h-8 w-8 rounded-lg" />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/20">
+                            <div className="space-y-2">
+                                <Skeleton className="h-3 w-12 opacity-40 mx-auto sm:mx-0" />
+                                <Skeleton className="h-5 w-20 mx-auto sm:mx-0" />
+                            </div>
+                            <div className="space-y-2">
+                                <Skeleton className="h-3 w-12 opacity-40 mx-auto sm:mx-0" />
+                                <Skeleton className="h-5 w-24 mx-auto sm:mx-0" />
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                            <Skeleton className="h-3 w-20 opacity-30" />
+                            <Skeleton className="h-3 w-20 opacity-30" />
+                        </div>
+                    </Card>
+                ))}
             </div>
         </div>
     )

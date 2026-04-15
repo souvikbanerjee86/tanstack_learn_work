@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { createFileRoute } from '@tanstack/react-router'
 import { ArrowLeft, HelpCircle, Loader2, Plus, Sparkles, MessageSquare, LayoutGrid, Info } from 'lucide-react'
-import { Suspense, useState, useEffect } from 'react'
+import { Suspense, useState } from 'react'
 import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { addInterviewQuestion, addQuestionUsingAI, deleteInterviewQuestion, getInterviewQuestions, getJobDetails } from '@/lib/server-function'
 import { QuestionsSkeleton } from '@/components/web/questions-skeleton'
@@ -16,7 +16,6 @@ import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { QuestionsLayoutSkeleton } from '@/components/web/questions-layout-skeleton'
-import { JobContentSkeleton } from '@/components/web/job-content-skeleton'
 
 export const jobsQueryOptions = queryOptions({
     queryKey: ['jobs'],
@@ -104,55 +103,55 @@ function QuestionsDashboardWrapper() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-full max-w-full gap-8 p-4 md:p-10 lg:p-14 overflow-hidden bg-transparent">
+        <div className="flex flex-col lg:flex-row h-full max-w-full gap-6 lg:gap-14 p-4 md:p-10 lg:p-14 overflow-hidden bg-transparent">
             {/* --- Sidebar: Job List --- */}
             <JobContent selectedJobId={selectedJobId} jobs={jobs} getQuestions={getQuestions} />
 
             {/* --- Main Area: Questions --- */}
             <div className={cn(
-                "flex-1 flex flex-col gap-6 h-full min-h-0",
-                !selectedJobId && "hidden md:flex"
+                "flex-1 flex flex-col gap-6 h-full min-h-0 min-w-0",
+                !selectedJobId && "hidden lg:flex"
             )}>
                 {selectedJobId ? (
                     <>
                         {/* Header Section */}
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-6">
                             <div className="flex items-center gap-4">
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    className="md:hidden shrink-0 rounded-xl"
+                                    className="lg:hidden shrink-0 rounded-xl h-10 w-10 border-muted-foreground/20"
                                     onClick={() => getQuestions(null)}
                                 >
                                     <ArrowLeft className="h-5 w-5" />
                                 </Button>
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <h2 className="text-2xl font-black tracking-tight truncate">
+                                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">
+                                        <h2 className="text-xl md:text-2xl font-black tracking-tight truncate">
                                             {selectedJob?.job_title}
                                         </h2>
-                                        <Badge variant="outline" className="hidden sm:flex bg-primary/5 text-primary border-primary/20 font-mono text-[10px] uppercase">
+                                        <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-mono text-[9px] md:text-[10px] uppercase px-1.5 py-0">
                                             {selectedJob?.job_id}
                                         </Badge>
                                     </div>
-                                    <p className="text-sm text-muted-foreground flex items-center gap-1.5 font-medium">
+                                    <p className="text-[10px] md:text-sm text-muted-foreground flex items-center gap-1.5 font-medium opacity-70">
                                         <Info className="h-3.5 w-3.5" />
-                                        Define and refine the evaluation criteria for this role.
+                                        Define and refine evaluation criteria.
                                     </p>
                                 </div>
                                 <div className="hidden lg:flex items-center gap-2">
                                     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                                         <AlertDialogTrigger asChild>
-                                            <Button variant="outline" className="rounded-xl border-indigo-200 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 gap-2 border shadow-sm">
+                                            <Button variant="outline" className="rounded-xl border-indigo-200 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 gap-2 border shadow-sm h-11 px-5">
                                                 <Sparkles className="h-4 w-4" />
-                                                <span>AI Draft</span>
+                                                <span className="font-bold">AI Draft</span>
                                             </Button>
                                         </AlertDialogTrigger>
-                                        <AlertComponent 
-                                            createAIQuestion={createAIQuestion} 
-                                            setQuestionCount={setQuestionCount} 
-                                            error={error} 
-                                            loading={loading} 
+                                        <AlertComponent
+                                            createAIQuestion={createAIQuestion}
+                                            setQuestionCount={setQuestionCount}
+                                            error={error}
+                                            loading={loading}
                                         />
                                     </AlertDialog>
                                 </div>
@@ -160,8 +159,8 @@ function QuestionsDashboardWrapper() {
 
                             {/* Add Question Input Area */}
                             <div className="relative group">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-primary blur opacity-20 group-focus-within:opacity-40 transition-opacity rounded-3xl" />
-                                <div className="relative flex flex-col sm:flex-row gap-3 p-3 bg-card border rounded-2xl shadow-sm">
+                                <div className="absolute -inset-1 bg-linear-to-r from-indigo-500/20 to-primary/20 blur opacity-40 group-focus-within:opacity-100 transition-opacity rounded-[2rem]" />
+                                <div className="relative flex flex-col gap-3 p-3 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border border-muted/60 rounded-[1.5rem] md:rounded-[2rem] shadow-xl shadow-black/5">
                                     <div className="flex-1">
                                         <Textarea
                                             placeholder="Type a custom interview question..."
@@ -173,23 +172,23 @@ function QuestionsDashboardWrapper() {
                                                     addQuestion();
                                                 }
                                             }}
-                                            className="min-h-[60px] max-h-[120px] resize-none border-none focus-visible:ring-0 bg-transparent text-base placeholder:text-muted-foreground/50 px-3 py-2"
+                                            className="min-h-[50px] md:min-h-[60px] max-h-[120px] resize-none border-none focus-visible:ring-0 bg-transparent text-sm md:text-base placeholder:text-muted-foreground/40 px-3 py-2"
                                         />
                                     </div>
-                                    <div className="flex items-center gap-2 px-1 pb-1 sm:pb-0">
-                                        <Button 
-                                            size="sm" 
-                                            onClick={addQuestion} 
-                                            className="rounded-xl px-5 h-10 gap-2 shadow-md transition-all active:scale-95" 
+                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-2 pt-2 border-t border-muted/40 sm:border-none sm:pt-0">
+                                        <Button
+                                            size="sm"
+                                            onClick={addQuestion}
+                                            className="flex-1 sm:flex-none rounded-xl md:rounded-2xl px-6 h-11 md:h-12 gap-2 shadow-lg shadow-primary/20 transition-all active:scale-95 bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px]"
                                             disabled={loading || !newQuestion.trim()}
                                         >
                                             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4 shrink-0" />}
-                                            <span className="font-bold">Add Question</span>
+                                            Add Question
                                         </Button>
-                                        <div className="sm:hidden flex-1">
-                                             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+                                        <div className="lg:hidden">
+                                            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                                                 <AlertDialogTrigger asChild>
-                                                    <Button variant="outline" size="sm" className="w-full rounded-xl h-10 gap-2 border-indigo-500/30 text-indigo-600 dark:text-indigo-400">
+                                                    <Button variant="outline" size="sm" className="w-full rounded-xl md:rounded-2xl h-11 md:h-12 gap-2 border-indigo-500/30 text-indigo-600 dark:text-indigo-400 font-black uppercase tracking-widest text-[10px]">
                                                         <Sparkles className="h-4 w-4" />
                                                         AI Draft
                                                     </Button>
@@ -203,34 +202,34 @@ function QuestionsDashboardWrapper() {
                         </div>
 
                         {/* Questions List Card */}
-                        <Card className="flex-1 flex flex-col shadow-xl border-muted/60 overflow-hidden rounded-3xl bg-background/40 backdrop-blur-xl">
-                            <CardHeader className="bg-muted/10 border-b px-6 py-4">
+                        <Card className="flex-1 flex flex-col shadow-2xl shadow-black/5 border-muted/40 overflow-hidden rounded-[2rem] md:rounded-[2.5rem] bg-white/40 dark:bg-zinc-950/40 backdrop-blur-2xl">
+                            <CardHeader className="bg-muted/5 border-b border-muted/40 px-6 py-4">
                                 <div className="flex items-center justify-between">
-                                    <CardTitle className="text-sm font-bold flex items-center gap-2 text-primary/80 uppercase tracking-widest">
+                                    <CardTitle className="text-[10px] md:text-xs font-black flex items-center gap-2 text-primary/60 uppercase tracking-[0.2em]">
                                         <HelpCircle className="h-4 w-4" />
                                         Bank of Questions
                                     </CardTitle>
-                                    <div className="flex items-center gap-1.5 opacity-50">
+                                    <div className="flex items-center gap-1.5 opacity-20">
                                         <LayoutGrid className="h-4 w-4" />
-                                        <Separator orientation="vertical" className="h-3" />
+                                        <Separator orientation="vertical" className="h-3 bg-muted-foreground" />
                                         <MessageSquare className="h-4 w-4" />
                                     </div>
                                 </div>
                             </CardHeader>
-                            <Suspense fallback={<div className="p-8"><QuestionsSkeleton /></div>}>
+                            <Suspense fallback={<div className="p-8 md:p-12"><QuestionsSkeleton /></div>}>
                                 <Questions job_id={selectedJobId} deleteQuestion={deleteQuestion} />
                             </Suspense>
                         </Card>
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center p-8 bg-card/20 rounded-3xl border-2 border-dashed border-muted/50">
-                         <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-                            <LayoutGrid className="h-10 w-10 text-primary opacity-40" />
-                         </div>
-                         <h2 className="text-2xl font-black mb-2 tracking-tight">Select a Job Role</h2>
-                         <p className="text-muted-foreground text-center max-w-sm">
+                    <div className="flex-1 flex flex-col items-center justify-center p-8 md:p-12 bg-card/10 rounded-[2.5rem] border-2 border-dashed border-muted/50">
+                        <div className="h-16 w-16 md:h-20 md:w-20 rounded-3xl bg-primary/5 flex items-center justify-center mb-6 rotate-3 transform transition-transform hover:rotate-6">
+                            <LayoutGrid className="h-8 w-8 md:h-10 md:w-10 text-primary opacity-30" />
+                        </div>
+                        <h2 className="text-xl md:text-2xl font-black mb-2 tracking-tight">Select a Job Role</h2>
+                        <p className="text-xs md:text-sm text-muted-foreground text-center max-w-[240px] md:max-w-sm font-medium leading-relaxed opacity-60">
                             Pick a role from the sidebar to view, add, or generate interview questions.
-                         </p>
+                        </p>
                     </div>
                 )}
             </div>
@@ -257,8 +256,8 @@ function AlertComponent({ createAIQuestion, setQuestionCount, error, loading }: 
                         I'll analyze the job description and create professional, tailored interview questions for this role.
                         <br /><br />
                         <span className="font-bold text-foreground">How many questions should I draft?</span>
-                        
-                        <NativeSelect 
+
+                        <NativeSelect
                             className="mt-4 w-full rounded-xl bg-muted/50 border-muted-foreground/10 hover:bg-muted focus-within:ring-primary/20"
                             onChange={(e) => setQuestionCount(parseInt(e.target.value))}
                         >
@@ -281,7 +280,7 @@ function AlertComponent({ createAIQuestion, setQuestionCount, error, loading }: 
                         <Button
                             variant="default"
                             type='submit'
-                            className="rounded-2xl h-12 flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white font-bold gap-2 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
+                            className="rounded-2xl h-12 flex-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold gap-2 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
                             onClick={(e) => createAIQuestion(e)}
                             disabled={loading}
                         >
