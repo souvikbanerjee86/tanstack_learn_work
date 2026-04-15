@@ -17,6 +17,43 @@ import { cn } from "@/lib/utils"
 import { useNavigate } from "@tanstack/react-router"
 
 
+export const InterviewActions = ({ rowData }: { rowData: CandidateRecord }) => {
+    const navigate = useNavigate()
+    const extraData = {
+        interview_status: rowData.interview_status,
+    };
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted/80 data-[state=open]:bg-muted">
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                    className="gap-2 cursor-pointer"
+                    onClick={() =>
+                        navigate({
+                            to: '/dashboard/interview/$id',
+                            params: { id: rowData.job_id },
+                            search: {
+                                email: rowData.candidate_email
+                            },
+                            state: extraData as any,
+                        })
+                    }
+                >
+                    <Eye className="h-4 w-4" />
+                    View details
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
+}
+
 export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
     {
         accessorKey: "job_id",
@@ -150,41 +187,6 @@ export const candidateInterviewEmailColumns: ColumnDef<CandidateRecord>[] = [
     {
         id: "actions",
         header: () => <span className="sr-only">Actions</span>,
-        cell: ({ row }) => {
-            const navigate = useNavigate()
-            const extraData = {
-                interview_status: row.original.interview_status,
-            };
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted/80 data-[state=open]:bg-muted">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-44">
-                        <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                            className="gap-2 cursor-pointer"
-                            onClick={() =>
-                                navigate({
-                                    to: '/dashboard/interview/$id',
-                                    params: { id: row.original.job_id },
-                                    search: {
-                                        email: row.original.candidate_email
-                                    },
-                                    state: extraData as any,
-                                })
-                            }
-                        >
-                            <Eye className="h-4 w-4" />
-                            View details
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        },
+        cell: ({ row }) => <InterviewActions rowData={row.original} />,
     },
 ]

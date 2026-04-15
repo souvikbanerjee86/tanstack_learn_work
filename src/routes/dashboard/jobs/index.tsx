@@ -66,7 +66,7 @@ function JobContent() {
         <div className="flex items-center gap-4">
           <div className="h-14 w-14 md:h-16 md:w-16 rounded-[1.5rem] md:rounded-[2rem] bg-indigo-600/10 flex items-center justify-center border border-indigo-500/20 shadow-xl relative overflow-hidden group">
             <Briefcase className="h-7 w-7 md:h-9 md:w-9 text-indigo-600 dark:text-indigo-400 relative z-10" />
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-linear-to-br from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </div>
           <div>
             <h1 className="text-2xl md:text-4xl font-black tracking-tight">Job Pipeline</h1>
@@ -94,7 +94,7 @@ function JobContent() {
       {/* --- Main Section --- */}
       <div className="relative group">
         <div className="absolute top-0 right-0 -m-20 w-64 h-64 bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none -z-10" />
-        
+
         {/* Desktop View: Table */}
         <div className="hidden lg:block relative group p-8 rounded-[2.5rem] border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-2xl shadow-black/5">
           <DataTable
@@ -108,37 +108,37 @@ function JobContent() {
 
         {/* Mobile View: Protocol Cards */}
         <div className="flex flex-col gap-6 lg:hidden">
-            {allJobs.map((job) => (
-              <JobProtocolCard key={job.job_id} job={job} />
-            ))}
+          {allJobs.map((job) => (
+            <JobProtocolCard key={job.job_id} job={job} />
+          ))}
 
-            {/* Load More Button for Mobile */}
-            {hasNextPage && (
-              <Button
-                variant="outline"
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-                className="w-full h-14 rounded-2xl border-dashed border-border/60 bg-white/30 dark:bg-zinc-950/30 backdrop-blur-xl font-bold uppercase tracking-widest text-[10px] gap-2 hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
-              >
-                {isFetchingNextPage ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Syncing Data...
-                  </>
-                ) : (
-                  <>
-                    <ChevronsRight className="h-4 w-4" />
-                    Load More Positions
-                  </>
-                )}
-              </Button>
-            )}
+          {/* Load More Button for Mobile */}
+          {hasNextPage && (
+            <Button
+              variant="outline"
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="w-full h-14 rounded-2xl border-dashed border-border/60 bg-white/30 dark:bg-zinc-950/30 backdrop-blur-xl font-bold uppercase tracking-widest text-[10px] gap-2 hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
+            >
+              {isFetchingNextPage ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Syncing Data...
+                </>
+              ) : (
+                <>
+                  <ChevronsRight className="h-4 w-4" />
+                  Load More Positions
+                </>
+              )}
+            </Button>
+          )}
 
-            {allJobs.length === 0 && !isFetchingNextPage && (
-              <div className="text-center py-20 bg-white/30 dark:bg-zinc-950/30 rounded-[2rem] border border-dashed border-border/40 text-muted-foreground italic">
-                 No active deployments found.
-              </div>
-            )}
+          {allJobs.length === 0 && !isFetchingNextPage && (
+            <div className="text-center py-20 bg-white/30 dark:bg-zinc-950/30 rounded-[2rem] border border-dashed border-border/40 text-muted-foreground italic">
+              No active deployments found.
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -160,26 +160,26 @@ const JobProtocolCard = ({ job }: { job: JobDetail }) => (
 
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-border/20">
       <div className="flex flex-col gap-1.5">
-         <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Deployment Site</span>
-         <div className="flex items-center gap-2 text-sm font-medium opacity-80">
-            <MapPin className="h-3.5 w-3.5 text-muted-foreground/50" />
-            <span className="truncate">{job.location}</span>
-         </div>
+        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Deployment Site</span>
+        <div className="flex items-center gap-2 text-sm font-medium opacity-80">
+          <MapPin className="h-3.5 w-3.5 text-muted-foreground/50" />
+          <span className="truncate">{job.location}</span>
+        </div>
       </div>
-      
+
       <div className="flex flex-col gap-1.5">
-         <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Timeline Protocol</span>
-         <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-medium opacity-60">
-              <Calendar className="h-3 w-3" />
-              <span>{format(job.start_date, "MMM dd")}</span>
-            </div>
-            <div className="h-1 w-1 rounded-full bg-border/40" />
-            <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-medium opacity-60">
-              <Clock className="h-3 w-3" />
-              <span>{format(job.end_date, "MMM dd")}</span>
-            </div>
-         </div>
+        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Timeline Protocol</span>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-medium opacity-60">
+            <Calendar className="h-3 w-3" />
+            <span>{format(job.start_date, "MMM dd")}</span>
+          </div>
+          <div className="h-1 w-1 rounded-full bg-border/40" />
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-medium opacity-60">
+            <Clock className="h-3 w-3" />
+            <span>{format(job.end_date, "MMM dd")}</span>
+          </div>
+        </div>
       </div>
     </div>
   </Card>
