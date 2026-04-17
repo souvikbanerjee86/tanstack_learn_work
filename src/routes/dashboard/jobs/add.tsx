@@ -38,6 +38,7 @@ function RouteComponent() {
             startDate: "",
             endDate: "",
             experience: 0,
+            status: "Active" as "Active" | "Inactive",
         },
         validators: {
             onSubmit: jobPostSchema,
@@ -45,7 +46,7 @@ function RouteComponent() {
         onSubmit: async ({ value }) => {
             startTransition(async () => {
                 try {
-                    await createJob({ data: { jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate, experience: value.experience } });
+                    await createJob({ data: { jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate, experience: value.experience, status: value.status } });
                     toast.success("Job created successfully")
                     queryClient.invalidateQueries({ queryKey: ['jobs'] })
                     navigate({ to: "/dashboard/jobs" })
@@ -224,6 +225,27 @@ function RouteComponent() {
                                                         <SelectContent className="rounded-2xl border-muted-foreground/10 shadow-2xl">
                                                             <SelectItem value="fulltime" className="rounded-xl">Standard Full-time</SelectItem>
                                                             <SelectItem value="parttime" className="rounded-xl">Flexible Part-time</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </Field>
+                                            )}
+                                        />
+
+                                        <form.Field
+                                            name="status"
+                                            children={(field) => (
+                                                <Field className="space-y-3">
+                                                    <FieldLabel className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">Deployment Status</FieldLabel>
+                                                    <Select
+                                                        value={field.state.value.toString()}
+                                                        onValueChange={(value: any) => field.handleChange(value)}
+                                                    >
+                                                        <SelectTrigger className="!h-14 rounded-2xl bg-card border-muted-foreground/10 focus:ring-primary/20 transition-all shadow-sm">
+                                                            <SelectValue placeholder="System Status..." />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="rounded-2xl border-muted-foreground/10 shadow-2xl">
+                                                            <SelectItem value="Active" className="rounded-xl">Active</SelectItem>
+                                                            <SelectItem value="Inactive" className="rounded-xl">Inactive</SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                 </Field>

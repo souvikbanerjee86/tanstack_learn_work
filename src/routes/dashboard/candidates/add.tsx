@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ChevronLeft, FileUp, ImageIcon, Loader2, Send, Trash2, Zap, Users, Sparkles, FileText } from 'lucide-react'
-import { ChangeEvent, useState, useTransition } from 'react'
+import { ChangeEvent, useState, useTransition, Suspense } from 'react'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { addCandidate, getJobDetails } from '@/lib/server-function'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -12,6 +12,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 import { Separator } from '@/components/ui/separator'
+import { CandidateAddSkeleton } from '@/components/web/candidate-add-skeleton'
 
 export const jobsQueryOptions = queryOptions({
     queryKey: ['jobs'],
@@ -19,10 +20,21 @@ export const jobsQueryOptions = queryOptions({
 })
 
 export const Route = createFileRoute('/dashboard/candidates/add')({
+    loader: ({ context }) => {
+        void context.queryClient.prefetchQuery(jobsQueryOptions)
+    },
     component: RouteComponent,
 })
 
 function RouteComponent() {
+    return (
+        <Suspense fallback={<CandidateAddSkeleton />}>
+            <CandidateAddContent />
+        </Suspense>
+    )
+}
+
+function CandidateAddContent() {
     const { data } = useSuspenseQuery(jobsQueryOptions)
     const navigate = useNavigate()
     const [isPending, startTransition] = useTransition()
@@ -84,7 +96,7 @@ function RouteComponent() {
         <div className="min-h-screen bg-transparent p-4 md:p-10 lg:p-16 transition-colors pb-32 relative overflow-hidden">
             {/* --- Subtle Background Pattern --- */}
             <div className="absolute inset-0 pointer-events-none -z-10">
-                <div className="absolute inset-0 bg-[radial-gradient(#00000008_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff06_1px,transparent_1px)] bg-[size:24px_24px]" />
+                <div className="absolute inset-0 bg-[radial-gradient(#00000008_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff06_1px,transparent_1px)] bg-size-[24px_24px]" />
                 <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-primary/8 dark:bg-primary/5 blur-[120px] rounded-full" />
                 <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-violet-500/5 dark:bg-violet-500/3 blur-[120px] rounded-full" />
             </div>
@@ -104,9 +116,9 @@ function RouteComponent() {
 
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div className="flex items-center gap-5">
-                            <div className="h-16 w-16 rounded-[2rem] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-xl relative overflow-hidden group/icon">
+                            <div className="h-16 w-16 rounded-[2rem] bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-xl relative overflow-hidden group/icon">
                                 <Users className="h-9 w-9 text-primary shrink-0 relative z-10 transition-transform group-hover/icon:scale-110 duration-500" />
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent opacity-0 group-hover/icon:opacity-100 transition-opacity" />
+                                <div className="absolute inset-0 bg-linear-to-br from-primary/30 to-transparent opacity-0 group-hover/icon:opacity-100 transition-opacity" />
                             </div>
                             <div>
                                 <h1 className="text-5xl font-black tracking-tighter">Onboard Talent</h1>
@@ -159,7 +171,7 @@ function RouteComponent() {
                                                                 form.setFieldValue("jobName", jobName)
                                                             }}
                                                         >
-                                                            <SelectTrigger className="!h-14 rounded-2xl bg-card border-muted-foreground/10 focus:ring-primary/20 transition-all shadow-sm">
+                                                            <SelectTrigger className="h-14! rounded-2xl bg-card border-muted-foreground/10 focus:ring-primary/20 transition-all shadow-sm">
                                                                 <SelectValue placeholder="Select Position..." />
                                                             </SelectTrigger>
                                                             <SelectContent className="rounded-2xl border-muted-foreground/10 shadow-2xl">

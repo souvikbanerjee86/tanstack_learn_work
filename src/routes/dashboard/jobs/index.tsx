@@ -8,10 +8,9 @@ import { getJobDetails } from '@/lib/server-function'
 import { Button } from '@/components/ui/button'
 import { JobTableSkeleton } from '@/components/web/Job-table-skeleton'
 import { Briefcase, Plus, Sparkles, MapPin, Calendar, Clock, Loader2, ChevronsRight } from 'lucide-react'
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { format } from "date-fns"
 import { JobDetail } from "@/lib/types"
-import { cn } from '@/lib/utils'
 
 const JOBS_PAGE_SIZE = 10
 

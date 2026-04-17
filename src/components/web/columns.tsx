@@ -34,13 +34,13 @@ export const JobStatusBadge = ({ status }: { status: string }) => (
         <span className={cn(
             "h-1.5 w-1.5 rounded-full mb-0.5",
             status === "Active" && "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]",
-            status === "Inactive" && "bg-gray-400",
+            status === "Inactive" && "bg-rose-500",
             status === "Archived" && "bg-rose-500"
         )} />
         <span className={cn(
             "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter border",
             status === "Active" && "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50",
-            status === "Inactive" && "bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800/50",
+            status === "Inactive" && "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900/50",
             status === "Archived" && "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900/50"
         )}>
             {status}
@@ -104,7 +104,7 @@ export const JobActionsMenu = ({ rowData }: { rowData: JobDetail }) => {
                     }
                 >
                     <Pencil className="h-4 w-4 opacity-70" />
-                    <span className="font-bold text-sm">Edit Role</span>
+                    <span className="font-bold text-sm">Edit Job</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

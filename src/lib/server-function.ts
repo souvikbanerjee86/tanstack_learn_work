@@ -296,7 +296,8 @@ export const createJob = createServerFn({ method: 'POST' })
             "startDate": data.startDate,
             "endDate": data.endDate,
             "jobId": data.jobId,
-            "experience": data.experience
+            "experience": data.experience,
+            "status": data.status === 'Active' ? 1 : 0
         }
         const sendData = JSON.stringify(postData)
         try {
@@ -654,7 +655,8 @@ export const editJob = createServerFn({ method: 'POST' })
             "startDate": data.startDate,
             "endDate": data.endDate,
             "jobId": data.jobId,
-            "experience": data.experience
+            "experience": data.experience,
+            "status": data.status
         }
         const sendData = JSON.stringify(postData)
         try {

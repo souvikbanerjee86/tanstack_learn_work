@@ -15,6 +15,7 @@ import { createFileRoute, Link, useLocation, useNavigate } from '@tanstack/react
 import { Briefcase, Calendar, ChevronDown, ChevronLeft, Files, Loader2, MapPin, Sparkles } from 'lucide-react';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query'
 import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/dashboard/jobs/$id/edit')({
@@ -22,6 +23,7 @@ export const Route = createFileRoute('/dashboard/jobs/$id/edit')({
 })
 
 function RouteComponent() {
+    const queryClient = useQueryClient()
     const location = useLocation()
     const jobInfo = (location.state as any) || {};
     const locationInfo = jobInfo?.location ? jobInfo.location.split(", ") : []
@@ -40,6 +42,7 @@ function RouteComponent() {
             startDate: jobInfo?.start_date || "",
             endDate: jobInfo?.end_date || "",
             experience: jobInfo?.experience || 0,
+            status: (jobInfo?.status as "Active" | "Inactive") || "Active",
         },
         validators: {
             onSubmit: jobPostSchema,
@@ -47,8 +50,9 @@ function RouteComponent() {
         onSubmit: async ({ value }) => {
             startTransition(async () => {
                 try {
-                    await editJob({ data: { id: jobInfo.id, jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate, experience: value.experience } });
+                    await editJob({ data: { id: jobInfo.id, jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate, experience: value.experience, status: value.status } });
                     toast.success("Job updated successfully")
+                    queryClient.invalidateQueries({ queryKey: ['jobs'] })
                     navigate({ to: "/dashboard/jobs" })
                 } catch (error: any) {
                     toast.error(error.message)
@@ -133,9 +137,9 @@ function RouteComponent() {
                                         <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                                             <Briefcase className="h-4 w-4" />
                                         </div>
-                                        <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white uppercase tracking-widest text-[11px] opacity-70">Role Essentials</h3>
+                                        <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white uppercase text-[11px] opacity-70">Role Essentials</h3>
                                     </div>
-                                    
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <form.Field
                                             name="jobId"
@@ -186,7 +190,7 @@ function RouteComponent() {
                                         <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                                             <MapPin className="h-4 w-4" />
                                         </div>
-                                        <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white uppercase tracking-widest text-[11px] opacity-70">Logistics & Experience</h3>
+                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-widest text-[11px] opacity-70">Logistics & Experience</h3>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -205,6 +209,27 @@ function RouteComponent() {
                                                         <SelectContent className="backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 border-slate-200/60 dark:border-slate-800">
                                                             <SelectItem value="fulltime">Full-time</SelectItem>
                                                             <SelectItem value="parttime">Part-time</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </Field>
+                                            )}
+                                        />
+
+                                        <form.Field
+                                            name="status"
+                                            children={(field) => (
+                                                <Field className="space-y-2.5">
+                                                    <FieldLabel className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Deployment Status</FieldLabel>
+                                                    <Select
+                                                        value={field.state.value?.toString() || ""}
+                                                        onValueChange={(value: any) => field.handleChange(value)}
+                                                    >
+                                                        <SelectTrigger className="h-12 bg-white/50 dark:bg-slate-950/50 border-slate-200/60 dark:border-slate-800 rounded-xl">
+                                                            <SelectValue placeholder="Select status" />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 border-slate-200/60 dark:border-slate-800">
+                                                            <SelectItem value="Active">Active</SelectItem>
+                                                            <SelectItem value="Inactive">Inactive</SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                 </Field>
@@ -264,7 +289,7 @@ function RouteComponent() {
                                                                                     className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50"
                                                                                 >
                                                                                     <span className={cn("text-sm font-medium", selectedValues.has(state) && "text-indigo-600 dark:text-indigo-400 font-bold")}>{state}</span>
-                                                                                    {selectedValues.has(state) && <Sparkles className="h-3 h-3 text-indigo-500" />}
+                                                                                    {selectedValues.has(state) && <Sparkles className="h-3 text-indigo-500" />}
                                                                                 </CommandItem>
                                                                             ))}
                                                                         </CommandGroup>
@@ -287,13 +312,13 @@ function RouteComponent() {
                                             <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                                                 <Files className="h-4 w-4" />
                                             </div>
-                                            <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white uppercase tracking-widest text-[11px] opacity-70">Job Description</h3>
+                                            <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white uppercase text-[11px] opacity-70">Job Description</h3>
                                         </div>
-                                        
-                                        <Button 
+
+                                        <Button
                                             variant="secondary"
                                             size="sm"
-                                            onClick={(e) => getAddedJobDescription(e)} 
+                                            onClick={(e) => getAddedJobDescription(e)}
                                             disabled={isGenerating}
                                             className="h-9 px-4 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 shadow-sm transition-all text-xs font-bold gap-2"
                                         >
@@ -331,7 +356,7 @@ function RouteComponent() {
                                         <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                                             <Calendar className="h-4 w-4" />
                                         </div>
-                                        <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white uppercase tracking-widest text-[11px] opacity-70">Timeline & Tenure</h3>
+                                        <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white uppercase text-[11px] opacity-70">Timeline & Tenure</h3>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -388,9 +413,9 @@ function RouteComponent() {
                             </FieldGroup>
 
                             <div className="pt-8 border-t border-slate-100 dark:border-slate-800/50">
-                                <Button 
-                                    disabled={isPending} 
-                                    type="submit" 
+                                <Button
+                                    disabled={isPending}
+                                    type="submit"
                                     className="w-full h-14 text-base font-bold rounded-2xl bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-600/20 text-white transition-all active:scale-[0.98]"
                                 >
                                     {isPending ? (
