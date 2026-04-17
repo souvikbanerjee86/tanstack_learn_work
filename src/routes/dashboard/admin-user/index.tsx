@@ -1,7 +1,7 @@
 import { adminUsersList } from '@/lib/server-function'
 import { createFileRoute } from '@tanstack/react-router'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 import { DataTable } from '@/components/web/data-table'
 import { AdminUserSkeleton } from '@/components/web/admin-user-skeleton'
 import { Users, Shield, Lock, Activity, Command, Mail, Calendar } from 'lucide-react'
@@ -39,10 +39,14 @@ function CandidatesContent() {
   const { role } = Route.useRouteContext()
   const { data } = useSuspenseQuery(adminsQueryOptions)
 
-  // Calculate statistics
-  const totalAdmins = data.data.length
-  const activeAdmins = data.data.filter(u => u.user_role?.active).length
-  const restrictedAdmins = data.data.filter(u => u.disabled).length
+  // Calculate statistics (Memoized to prevent recalculation on every render)
+  const { totalAdmins, activeAdmins, restrictedAdmins } = useMemo(() => {
+    return {
+      totalAdmins: data.data.length,
+      activeAdmins: data.data.filter(u => u.user_role?.active).length,
+      restrictedAdmins: data.data.filter(u => u.disabled).length
+    }
+  }, [data.data])
 
   return (
     <div className="relative min-h-screen flex flex-col gap-6 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent overflow-hidden">
