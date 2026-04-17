@@ -39,6 +39,9 @@ import {
 import { format } from "date-fns"
 import { useState } from "react"
 import { FieldError } from "@/components/ui/field"
+import { adminActivity } from "@/lib/server-function"
+import { useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 interface ManagePermissionsDialogProps {
     open: boolean
@@ -51,17 +54,19 @@ const permissionsSchema = z.object({
 })
 
 const PERMISSIONS = [
+    { key: "add_jobs", label: "Add / Manage Jobs", icon: Briefcase, admin: true, hr: false },
+    { key: "add_candidates", label: "Add Candidates", icon: Users, admin: true, hr: false },
     { key: "view_dashboard", label: "View Dashboard", icon: BarChart3, admin: true, hr: true },
     { key: "view_candidates", label: "View Candidates", icon: Users, admin: true, hr: true },
     { key: "view_interviews", label: "View Interviews", icon: MessageSquare, admin: true, hr: true },
     { key: "view_questions", label: "Manage Questions", icon: FileText, admin: true, hr: true },
     { key: "search_profiles", label: "Search Profiles", icon: Search, admin: true, hr: true },
     { key: "view_email_sync", label: "Email Synchronization", icon: Mail, admin: true, hr: true },
-    { key: "add_jobs", label: "Add / Manage Jobs", icon: Briefcase, admin: true, hr: false },
-    { key: "add_candidates", label: "Add Candidates", icon: Users, admin: true, hr: false },
+
 ]
 
 export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePermissionsDialogProps) {
+    const queryClient = useQueryClient()
     const currentRole = user.user_role?.role || ""
     const [saving, setSaving] = useState(false)
 
@@ -74,15 +79,13 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
         },
         onSubmit: async ({ value }) => {
             setSaving(true)
-            console.log("PERMISSION_UPDATE_INITIATED:", {
-                role: value.role,
-                userId: user.uid,
-                updateTimestamp: new Date().toISOString()
-            })
-            
-            // Simulation of server latency
-            await new Promise(resolve => setTimeout(resolve, 1500))
-            
+            const response = await adminActivity({ data: { user_id: user.uid, role: value.role, active: true, update_timestamp: new Date().toISOString() } })
+            if (response.status == "success") {
+                toast.success(response.message)
+            } else {
+                toast.error(response.message)
+            }
+            queryClient.invalidateQueries({ queryKey: ['admins'] })
             setSaving(false)
             onOpenChange(false)
         },
@@ -95,7 +98,7 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
                 <div className="relative px-6 sm:px-10 pt-8 sm:pt-10 pb-6 sm:pb-8 shrink-0">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/10 blur-[100px] rounded-full pointer-events-none -z-10" />
                     <div className="absolute top-0 left-0 w-32 h-32 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none -z-10" />
-                    
+
                     <DialogHeader className="relative z-10 text-left">
                         <DialogTitle className="text-2xl sm:text-3xl font-black tracking-tight uppercase">
                             Secure Permissions
@@ -110,7 +113,7 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
                     {/* --- Entity Profile Card --- */}
                     <div className="group relative overflow-hidden rounded-[2rem] bg-white/40 dark:bg-zinc-900/40 p-5 sm:p-6 border border-border/40 shadow-xl shadow-black/5 hover:shadow-2xl hover:border-violet-500/20 transition-all duration-500">
                         <div className="absolute inset-0 bg-linear-to-br from-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        
+
                         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-5">
                             <Avatar className="h-16 w-16 sm:h-18 sm:w-18 rounded-2xl border-2 border-violet-200 dark:border-violet-800 shadow-xl group-hover:scale-105 transition-transform duration-500 shrink-0 mx-auto sm:mx-0">
                                 <AvatarImage src={user.photo_url} alt={user.display_name} />
@@ -134,11 +137,11 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
                                 </div>
                             </div>
                             <div className="shrink-0 flex justify-center mt-2 sm:mt-0">
-                                <Badge 
+                                <Badge
                                     className={cn(
                                         "rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] border shadow-sm",
-                                        currentRole === "admin" 
-                                            ? "bg-violet-600 text-white border-violet-500 shadow-violet-500/20" 
+                                        currentRole === "admin"
+                                            ? "bg-violet-600 text-white border-violet-500 shadow-violet-500/20"
                                             : currentRole === "hr"
                                                 ? "bg-blue-600 text-white border-blue-500 shadow-blue-500/20"
                                                 : "bg-muted text-muted-foreground border-muted-foreground/20"
@@ -159,13 +162,13 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
                                 System Governance Protocol
                             </label>
                         </div>
-                        
+
                         <form.Field
                             name="role"
                             children={(field) => (
                                 <div className="space-y-2">
-                                    <Select 
-                                        value={field.state.value} 
+                                    <Select
+                                        value={field.state.value}
                                         onValueChange={(val) => field.handleChange(val)}
                                     >
                                         <SelectTrigger className={cn(
@@ -200,9 +203,9 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
-                                    <FieldError 
-                                        errors={field.state.meta.errors} 
-                                        className="text-[10px] font-black uppercase tracking-widest px-1 mt-1" 
+                                    <FieldError
+                                        errors={field.state.meta.errors}
+                                        className="text-[10px] font-black uppercase tracking-widest px-1 mt-1"
                                     />
                                 </div>
                             )}
@@ -240,7 +243,7 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
                                             const Icon = perm.icon
                                             const isExclusive = perm.admin && !perm.hr
                                             const isActive = (perm.admin && selectedRole === "admin") || (perm.hr && selectedRole === "hr")
-                                            
+
                                             return (
                                                 <div
                                                     key={perm.key}
@@ -266,7 +269,7 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
                                                                 {perm.label}
                                                             </span>
                                                             {isExclusive && (
-                                                                <span className="text-[9px] font-black uppercase tracking-[0.1em] text-amber-600 dark:text-amber-500/80">
+                                                                <span className="text-[9px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-500/80">
                                                                     Restricted Access
                                                                 </span>
                                                             )}

@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge"
 import { UserData } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { ManagePermissionsDialog } from "@/components/web/manage-permissions-dialog"
+import { RestrictAccountDialog } from "@/components/web/restrict-account-dialog"
 
 export const RoleBadge = ({ role }: { role: string }) => (
     <Badge
@@ -58,6 +59,7 @@ export const StatusBadge = ({ active, disabled }: { active: boolean, disabled: b
 export const AdminActions = ({ currentUserRole, rowData }: { currentUserRole: string, rowData: UserData }) => {
     const isAdmin = currentUserRole === 'admin'
     const [permissionsOpen, setPermissionsOpen] = useState(false)
+    const [restrictOpen, setRestrictOpen] = useState(false)
 
     return (
         <>
@@ -86,11 +88,19 @@ export const AdminActions = ({ currentUserRole, rowData }: { currentUserRole: st
                                     <span className="text-[10px] opacity-60 font-medium">Elevate or revoke access</span>
                                 </div>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2.5 px-4 py-2.5 cursor-pointer focus:bg-rose-500/5 focus:text-rose-600 transition-colors">
+                            <DropdownMenuItem 
+                                className="gap-2.5 px-4 py-2.5 cursor-pointer focus:bg-rose-500/5 focus:text-rose-600 transition-colors"
+                                onClick={() => setRestrictOpen(true)}
+                                disabled={rowData.disabled || !rowData.user_role}
+                            >
                                 <Lock className="h-4 w-4 opacity-70" />
                                 <div className="flex flex-col gap-0.5">
-                                    <span className="text-sm font-bold">Restrict Account</span>
-                                    <span className="text-[10px] opacity-60 font-medium">Disable system access</span>
+                                    <span className="text-sm font-bold">
+                                        {rowData.user_role?.active ? "Restrict Account" : "Unrestrict Account"}
+                                    </span>
+                                    <span className="text-[10px] opacity-60 font-medium">
+                                        {rowData.user_role?.active ? "Disable system access" : "Restore system access"}
+                                    </span>
                                 </div>
                             </DropdownMenuItem>
                         </>
@@ -106,6 +116,12 @@ export const AdminActions = ({ currentUserRole, rowData }: { currentUserRole: st
                 </DropdownMenuContent>
             </DropdownMenu>
 
+            <RestrictAccountDialog
+                open={restrictOpen}
+                onOpenChange={setRestrictOpen}
+                user={rowData}
+            />
+
             <ManagePermissionsDialog
                 open={permissionsOpen}
                 onOpenChange={setPermissionsOpen}
@@ -114,6 +130,8 @@ export const AdminActions = ({ currentUserRole, rowData }: { currentUserRole: st
         </>
     )
 }
+
+
 
 
 export const getAdminColumns = (currentUserRole: string): ColumnDef<UserData>[] => [

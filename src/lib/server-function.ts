@@ -757,3 +757,37 @@ export const adminUsersList = createServerFn({ method: 'GET' })
             return { "count": 0, "data": [] } as AdminUserResponse
         }
     })
+
+
+export const adminActivity = createServerFn({ method: 'POST' })
+    .inputValidator((data: { user_id: string, role: string, active: boolean, update_timestamp: string }) => data)
+    .handler(async ({ data }): Promise<{ status: string | null, message: string | null, user_id: string | null }> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.ADMIN_USER_ACTIVITY.GET_BASE_URL);
+        const url = API_PATH.ADMIN_USER_ACTIVITY.GET_BASE_URL + API_PATH.ADMIN_USER_ACTIVITY.PATH_URL;
+
+
+        const postData = {
+            "user_id": data.user_id,
+            "role": data.role,
+            "active": data.active,
+            "update_timestamp": data.update_timestamp
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'POST',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            return finalData as { status: string | null, message: string | null, user_id: string | null };
+        } catch (e) {
+            return { "status": null, "message": null, "user_id": null }
+        }
+
+
+    })

@@ -107,5 +107,9 @@ export const API_PATH = {
     ADMIN_USER_LIST: {
         GET_BASE_URL: "https://admin-users-list-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/admin-users-list"
+    },
+    ADMIN_USER_ACTIVITY: {
+        GET_BASE_URL: "https://admin-users-activity-api-403179946278.europe-west1.run.app",
+        PATH_URL: "/api/user-roles/"
     }
 }
