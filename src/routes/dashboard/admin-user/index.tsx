@@ -44,7 +44,7 @@ function CandidatesContent() {
     return {
       totalAdmins: data.data.length,
       activeAdmins: data.data.filter(u => u.user_role?.active).length,
-      restrictedAdmins: data.data.filter(u => u.disabled).length
+      restrictedAdmins: data.data.filter(u => !u.user_role?.active).length
     }
   }, [data.data])
 

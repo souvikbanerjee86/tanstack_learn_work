@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent } from "@/components/ui/card";
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { Briefcase, Activity, LayoutDashboard, Sparkles, Zap } from 'lucide-react';
+import { Briefcase, LayoutDashboard, Sparkles, Zap } from 'lucide-react';
 import { getDashbaordSummary } from '@/lib/server-function';
 import { DashboardStatsSkeleton } from '@/components/web/dashboard-stat-skeleton';
 import React, { Suspense, lazy } from 'react';
-import { cn } from '@/lib/utils';
+
 
 // Lazy load the heavy charting library bundle
 const DashboardChartsGrid = lazy(() => import('@/components/web/dashboard-charts'))
@@ -58,13 +58,13 @@ function RouteComponent() {
         {/* --- Charts Grid --- */}
         <Suspense fallback={
           <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
-             <div className="h-[432px] w-full bg-card/40 backdrop-blur-sm rounded-[3rem] border border-border/50 animate-pulse" />
-             <div className="h-[432px] w-full bg-card/40 backdrop-blur-sm rounded-[3rem] border border-border/50 animate-pulse delay-75" />
-             <div className="h-[432px] w-full bg-card/40 backdrop-blur-sm rounded-[3rem] border border-border/50 animate-pulse delay-150" />
-             <div className="h-[432px] w-full bg-card/40 backdrop-blur-sm rounded-[3rem] border border-border/50 animate-pulse delay-200" />
+            <div className="h-[432px] w-full bg-card/40 backdrop-blur-sm rounded-[3rem] border border-border/50 animate-pulse" />
+            <div className="h-[432px] w-full bg-card/40 backdrop-blur-sm rounded-[3rem] border border-border/50 animate-pulse delay-75" />
+            <div className="h-[432px] w-full bg-card/40 backdrop-blur-sm rounded-[3rem] border border-border/50 animate-pulse delay-150" />
+            <div className="h-[432px] w-full bg-card/40 backdrop-blur-sm rounded-[3rem] border border-border/50 animate-pulse delay-200" />
           </div>
         }>
-            <DashboardChartsGrid />
+          <DashboardChartsGrid />
         </Suspense>
       </div>
     </div>
