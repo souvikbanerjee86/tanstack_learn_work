@@ -10,7 +10,7 @@ import { candidate } from '@/lib/types'
 import { Suspense } from 'react'
 import { CandidateDetailSkeleton } from '@/components/web/candidate-detail-skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { cn } from '@/lib/utils'
+
 
 export const candidatesCVQueryOptions = (url: string) => queryOptions({
     queryKey: ['candidates', url],

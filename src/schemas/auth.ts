@@ -21,4 +21,5 @@ export const jobPostSchema = z.object({
     endDate: z.string(),
     locations: z.array(z.string()).min(1),
     experience: z.number().min(0).max(100),
+    status: z.enum(['Active', 'Inactive']),
 })

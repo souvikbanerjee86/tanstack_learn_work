@@ -20,8 +20,8 @@ export const Route = createFileRoute('/dashboard/candidates/')({
     beforeLoad: ({ context }) => {
         return { role: context.role.role }
     },
-    loader: ({ context }) => {
-        void context.queryClient.prefetchQuery(candidatesQueryOptions)
+    loader: async ({ context }) => {
+        await context.queryClient.ensureQueryData(candidatesQueryOptions)
     },
     component: RouteComponent,
 })
@@ -126,7 +126,7 @@ const CandidateMobileCard = ({ candidate }: { candidate: candidate }) => (
                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Applied Date</span>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium opacity-60">
                     <Calendar className="h-3.5 w-3.5 text-muted-foreground/50" />
-                    <span className="tabular-nums">{format(candidate.uploaded_at, "MMM dd, yyyy")}</span>
+                    <span className="tabular-nums">{format(new Date(candidate.uploaded_at), "MMM dd, yyyy")}</span>
                 </div>
             </div>
         </div>

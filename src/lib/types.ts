@@ -190,6 +190,7 @@ export interface JobPosting {
     endDate: string;
     locations: string[];
     experience: number;
+    status: 'Active' | 'Inactive';
 }
 
 export interface UserRoleResponse {

@@ -23,7 +23,7 @@ export const CandidateActions = ({ rowData }: { rowData: candidate }) => {
         email: rowData.email,
         name: rowData.name,
         job_name: rowData.job_name,
-        uploaded_at: format(rowData.uploaded_at, "PPP"),
+        uploaded_at: format(new Date(rowData.uploaded_at), "PPP"),
         resume_url: rowData.resume_url,
         job_id: rowData.job_id,
         candidate_image: rowData.candidate_image
@@ -106,7 +106,7 @@ export const candidateColumns: ColumnDef<candidate>[] = [
         accessorKey: "uploaded_at",
         header: () => <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Ingestion Date</span>,
         cell: ({ row }) => {
-            const formatted = format(row.getValue("uploaded_at"), "MMM dd, yyyy")
+            const formatted = format(new Date(row.getValue("uploaded_at")), "MMM dd, yyyy")
             return (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium opacity-60">
                     <Calendar className="h-3.5 w-3.5" />
