@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Mail, Shield, Calendar, Clock, Lock, CheckCircle2, XCircle } from "lucide-react"
 import { format } from "date-fns"
@@ -14,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { UserData } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { ManagePermissionsDialog } from "@/components/web/manage-permissions-dialog"
 
 export const RoleBadge = ({ role }: { role: string }) => (
     <Badge
@@ -55,50 +57,64 @@ export const StatusBadge = ({ active, disabled }: { active: boolean, disabled: b
 
 export const AdminActions = ({ currentUserRole, rowData }: { currentUserRole: string, rowData: UserData }) => {
     const isAdmin = currentUserRole === 'admin'
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted/80 data-[state=open]:bg-muted">
-                    <span className="sr-only">Open menu</span>
-                    <MoreHorizontal className="h-4 w-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-xl border-muted-foreground/10">
-                <DropdownMenuLabel className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 px-4 py-2">
-                    {isAdmin ? "Account Control" : "Options"}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+    const [permissionsOpen, setPermissionsOpen] = useState(false)
 
-                {isAdmin ? (
-                    <>
-                        <DropdownMenuItem className="gap-2.5 px-4 py-2.5 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors">
-                            <Shield className="h-4 w-4 opacity-70" />
-                            <div className="flex flex-col gap-0.5">
-                                <span className="text-sm font-bold">Manage Permissions</span>
-                                <span className="text-[10px] opacity-60 font-medium">Elevate or revoke access</span>
-                            </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2.5 px-4 py-2.5 cursor-pointer focus:bg-rose-500/5 focus:text-rose-600 transition-colors">
+    return (
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted/80 data-[state=open]:bg-muted">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-xl border-muted-foreground/10">
+                    <DropdownMenuLabel className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 px-4 py-2">
+                        {isAdmin ? "Account Control" : "Options"}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+
+                    {isAdmin ? (
+                        <>
+                            <DropdownMenuItem
+                                className="gap-2.5 px-4 py-2.5 cursor-pointer focus:bg-primary/5 focus:text-primary transition-colors"
+                                onClick={() => setPermissionsOpen(true)}
+                            >
+                                <Shield className="h-4 w-4 opacity-70" />
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="text-sm font-bold">Manage Permissions</span>
+                                    <span className="text-[10px] opacity-60 font-medium">Elevate or revoke access</span>
+                                </div>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2.5 px-4 py-2.5 cursor-pointer focus:bg-rose-500/5 focus:text-rose-600 transition-colors">
+                                <Lock className="h-4 w-4 opacity-70" />
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="text-sm font-bold">Restrict Account</span>
+                                    <span className="text-[10px] opacity-60 font-medium">Disable system access</span>
+                                </div>
+                            </DropdownMenuItem>
+                        </>
+                    ) : (
+                        <DropdownMenuItem className="gap-2.5 px-4 py-2.5 cursor-pointer focus:bg-muted focus:text-muted-foreground transition-colors disabled:opacity-50" disabled>
                             <Lock className="h-4 w-4 opacity-70" />
                             <div className="flex flex-col gap-0.5">
-                                <span className="text-sm font-bold">Restrict Account</span>
-                                <span className="text-[10px] opacity-60 font-medium">Disable system access</span>
+                                <span className="text-sm font-bold opacity-60">Higher Permissions Required</span>
+                                <span className="text-[10px] opacity-40 font-medium italic">Contact system administrator</span>
                             </div>
                         </DropdownMenuItem>
-                    </>
-                ) : (
-                    <DropdownMenuItem className="gap-2.5 px-4 py-2.5 cursor-pointer focus:bg-muted focus:text-muted-foreground transition-colors disabled:opacity-50" disabled>
-                        <Lock className="h-4 w-4 opacity-70" />
-                        <div className="flex flex-col gap-0.5">
-                            <span className="text-sm font-bold opacity-60">Higher Permissions Required</span>
-                            <span className="text-[10px] opacity-40 font-medium italic">Contact system administrator</span>
-                        </div>
-                    </DropdownMenuItem>
-                )}
-            </DropdownMenuContent>
-        </DropdownMenu>
+                    )}
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <ManagePermissionsDialog
+                open={permissionsOpen}
+                onOpenChange={setPermissionsOpen}
+                user={rowData}
+            />
+        </>
     )
 }
+
 
 export const getAdminColumns = (currentUserRole: string): ColumnDef<UserData>[] => [
     {
