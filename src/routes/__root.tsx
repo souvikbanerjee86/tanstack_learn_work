@@ -7,6 +7,7 @@ import { QueryClientProvider, type QueryClient } from '@tanstack/react-query'
 import appCss from '../styles.css?url'
 import { ThemeProvider } from '@/lib/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
+import { GlobalProgressBar } from '@/components/web/global-progress-bar'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -51,6 +52,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <GlobalProgressBar />
         <ThemeProvider>
           {children}
           <Toaster closeButton position='top-center' />
