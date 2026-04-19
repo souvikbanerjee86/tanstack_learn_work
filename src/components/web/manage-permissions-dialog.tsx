@@ -35,6 +35,7 @@ import {
     Loader2,
     Crown,
     UserCog,
+    Settings2,
 } from "lucide-react"
 import { format } from "date-fns"
 import { useState } from "react"
@@ -62,6 +63,7 @@ const PERMISSIONS = [
     { key: "view_questions", label: "Manage Questions", icon: FileText, admin: true, hr: true },
     { key: "search_profiles", label: "Search Profiles", icon: Search, admin: true, hr: true },
     { key: "view_email_sync", label: "Email Synchronization", icon: Mail, admin: true, hr: true },
+    { key: "view_config", label: "Configuration", icon: Settings2, admin: true, hr: true },
 
 ]
 

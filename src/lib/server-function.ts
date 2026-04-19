@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse, InterviewConfig, ConfigApiResponse } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 import { OpenRouter } from "@openrouter/sdk";
@@ -739,6 +739,7 @@ export const getVoiceDownloadURL = createServerFn({ method: 'GET' })
 
 
 export const adminUsersList = createServerFn({ method: 'GET' })
+    .middleware([isLoginMiddleware])
     .handler(async (): Promise<AdminUserResponse> => {
 
         const client = await auth.getIdTokenClient(API_PATH.ADMIN_USER_LIST.GET_BASE_URL);
@@ -762,6 +763,7 @@ export const adminUsersList = createServerFn({ method: 'GET' })
 
 
 export const adminActivity = createServerFn({ method: 'POST' })
+    .middleware([isLoginMiddleware])
     .inputValidator((data: { user_id: string, role: string, active: boolean, update_timestamp: string }) => data)
     .handler(async ({ data }): Promise<{ status: string | null, message: string | null, user_id: string | null }> => {
 
@@ -790,6 +792,57 @@ export const adminActivity = createServerFn({ method: 'POST' })
         } catch (e) {
             return { "status": null, "message": null, "user_id": null }
         }
+    })
 
+export const saveSiteConfig = createServerFn({ method: 'POST' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: { interviewTime: string, linkValidity: string, questionsCount: string }) => data)
+    .handler(async ({ data }): Promise<InterviewConfig> => {
 
+        const client = await auth.getIdTokenClient(API_PATH.INTERVIEW_CONFIG_SET.GET_BASE_URL);
+        const url = API_PATH.INTERVIEW_CONFIG_SET.GET_BASE_URL + API_PATH.INTERVIEW_CONFIG_SET.PATH_URL;
+
+        const postData = {
+            "interviewTime": data.interviewTime,
+            "linkValidity": data.linkValidity,
+            "questionsCount": data.questionsCount
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'POST',
+                data: sendData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data as ConfigApiResponse;
+            return finalData.data as InterviewConfig;
+        } catch (e) {
+            console.error(e)
+            return { interviewTime: "", linkValidity: "", questionsCount: "" } as InterviewConfig
+        }
+    })
+
+export const getSiteConfig = createServerFn({ method: 'GET' })
+    .middleware([isLoginMiddleware])
+    .handler(async (): Promise<ConfigApiResponse> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.INTERVIEW_CONFIG_GET.GET_BASE_URL);
+        const url = API_PATH.INTERVIEW_CONFIG_GET.GET_BASE_URL + API_PATH.INTERVIEW_CONFIG_GET.PATH_URL;
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data as ConfigApiResponse;
+            return finalData;
+        } catch (e) {
+            console.error(e)
+            return { data: { interviewTime: "", linkValidity: "", questionsCount: "" } } as ConfigApiResponse
+        }
     })
