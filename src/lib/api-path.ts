@@ -111,5 +111,13 @@ export const API_PATH = {
     ADMIN_USER_ACTIVITY: {
         GET_BASE_URL: "https://admin-users-activity-api-403179946278.europe-west1.run.app",
         PATH_URL: "/api/user-roles/"
+    },
+    INTERVIEW_CONFIG_SET: {
+        GET_BASE_URL: "https://house-keeping-api-403179946278.europe-west1.run.app",
+        PATH_URL: "/api/config"
+    },
+    INTERVIEW_CONFIG_GET: {
+        GET_BASE_URL: "https://house-keeping-api-403179946278.europe-west1.run.app",
+        PATH_URL: "/api/config"
     }
 }

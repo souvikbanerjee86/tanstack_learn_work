@@ -3,3 +3,9 @@ export const evaluationSchema = z.object({
     verdict: z.enum(["ACCEPT", "REJECT"]).refine((value) => value !== null, "Verdict is required"),
     feedback: z.string().min(50, "Feedback is required, and must be 50 Charecter long"),
 })
+
+export const configSchema = z.object({
+    interviewTime: z.string().min(1, 'Required'),
+    linkValidity: z.string().min(1, 'Required'),
+    questionsCount: z.string().min(1, 'Required'),
+})

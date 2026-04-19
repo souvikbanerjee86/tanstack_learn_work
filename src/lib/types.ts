@@ -310,3 +310,15 @@ export interface AdminUserResponse {
     count: number;
     data: UserData[];
 }
+
+export interface InterviewConfig {
+    interviewTime: string;
+    linkValidity: string;
+    questionsCount: string;
+    lastModified?: string
+}
+
+export interface ConfigApiResponse {
+    message: string;
+    data: InterviewConfig;
+}

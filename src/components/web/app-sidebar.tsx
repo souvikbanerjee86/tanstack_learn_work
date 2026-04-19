@@ -6,6 +6,7 @@ import {
   LayoutDashboardIcon,
   MailIcon,
   MailsIcon,
+  Settings2Icon,
   Users,
   Users2Icon
 } from "lucide-react"
@@ -79,6 +80,12 @@ const navItems: NavPrimaryProps['items'] = linkOptions([
     title: "Admin User",
     to: "/dashboard/admin-user",
     icon: Users2Icon,
+    activeOptions: { exact: false }
+  },
+  {
+    title: "Configurations",
+    to: "/dashboard/config",
+    icon: Settings2Icon,
     activeOptions: { exact: false }
   },
 ])
