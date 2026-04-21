@@ -13,11 +13,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { signupSchema } from "@/schemas/auth"
-import { createUserWithEmailAndPassword, signOut } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { toast } from "sonner"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { loginFn } from "@/lib/auth"
+import { loginFn, logoutFn } from "@/lib/auth"
 import { useState, useTransition } from "react"
 import { getUserRole } from "@/lib/server-function"
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
@@ -42,12 +42,17 @@ export function SignupForm() {
                 try {
                     const userCredential = await createUserWithEmailAndPassword(auth, value.email, value.password);
                     const user = userCredential.user;
-                    toast.success("Account created successfully")
+                    if (user) {
+                        await updateProfile(user, { displayName: value.fullName });
+                    }
+                    const idToken = await user.getIdToken();
+                    await loginFn({ data: idToken });
                     const roleResponse = await getUserRole({ data: { user_id: user.uid } });
                     if (roleResponse.role != null) {
                         toast.success("Login successful")
                         navigate({ to: "/" })
                     } else {
+                        await logoutFn();
                         await signOut(auth).then(async () => {
                         }).catch((error) => {
                             console.log(error);
@@ -78,6 +83,7 @@ export function SignupForm() {
                 toast.success("Login successful")
                 navigate({ to: "/" })
             } else {
+                await logoutFn();
                 await signOut(auth).then(async () => {
                 }).catch((error) => {
                     console.log(error);
@@ -161,7 +167,7 @@ export function SignupForm() {
                                     )
                                 }}
                             />
-                            
+
                             <div className="grid grid-cols-2 gap-4">
                                 <form.Field
                                     name="password"
@@ -235,10 +241,10 @@ export function SignupForm() {
                                 </div>
                             </div>
 
-                            <Button 
-                                variant="outline" 
-                                type="button" 
-                                onClick={handleGoogleSignUp} 
+                            <Button
+                                variant="outline"
+                                type="button"
+                                onClick={handleGoogleSignUp}
                                 disabled={isPending}
                                 className="w-full h-11 rounded-xl font-bold bg-background shadow-sm hover:bg-muted/50 border-muted-foreground/10 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
                             >

@@ -139,18 +139,20 @@ export const getAdminColumns = (currentUserRole: string): ColumnDef<UserData>[] 
         accessorKey: "display_name",
         header: () => <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Administrator</span>,
         cell: ({ row }) => {
-            const name = row.getValue("display_name") as string
-            const photoUrl = row.original.photo_url
+            const name = row.getValue("display_name") as string | null | undefined
+            const photoUrl = row.original.photo_url || undefined
+            const displayName = name || row.original.email || "Unknown User"
+            
             return (
                 <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9 rounded-xl border border-muted-foreground/10 shadow-inner">
-                        <AvatarImage src={photoUrl} alt={name} />
+                        <AvatarImage src={photoUrl} alt={displayName} />
                         <AvatarFallback className="bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400 font-bold uppercase">
-                            {name.substring(0, 2)}
+                            {displayName.substring(0, 2)}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                        <span className="font-bold text-sm tracking-tight">{name}</span>
+                        <span className="font-bold text-sm tracking-tight">{displayName}</span>
                         <span className="text-[10px] text-muted-foreground font-mono opacity-60 leading-none mt-0.5">{row.original.uid}</span>
                     </div>
                 </div>

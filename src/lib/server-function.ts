@@ -91,7 +91,6 @@ export const triggerIndexes = createServerFn({ method: 'GET' })
                 },
             });
             const returnData = await response.data;
-            console.log(returnData)
             return { "success": true, "message": "Indexing triggered successfully" }
         } catch (e) {
             console.log(e)
@@ -310,7 +309,6 @@ export const createJob = createServerFn({ method: 'POST' })
                 },
             });
             const finalData = await response.data;
-            console.log(finalData)
             return finalData as { "id": string, "message": string }
         } catch (e) {
             return { "id": "", "message": "" };

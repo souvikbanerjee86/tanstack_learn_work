@@ -294,11 +294,11 @@ export interface UserRole {
 export interface UserData {
     uid: string;
     email: string;
-    display_name: string;
-    photo_url: string;
-    provider_id: string;
-    created_at: string;
-    last_sign_in: string;
+    display_name?: string | null;
+    photo_url?: string | null;
+    provider_id?: string | null;
+    created_at?: string;
+    last_sign_in?: string;
     disabled: boolean;
     user_role?: UserRole; // Made optional as requested
 }

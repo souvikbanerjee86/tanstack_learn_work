@@ -26,6 +26,7 @@ export function RestrictAccountDialog({ open, onOpenChange, user }: RestrictAcco
     const queryClient = useQueryClient()
     const [isRestricting, setIsRestricting] = useState(false)
     const isActive = user.user_role?.active ?? false
+    const displayName = user.display_name || user.email || "Unknown User"
 
     const handleRestrict = async () => {
         setIsRestricting(true)
@@ -82,11 +83,11 @@ export function RestrictAccountDialog({ open, onOpenChange, user }: RestrictAcco
                             <AlertDialogDescription className="text-sm text-muted-foreground/80 font-medium leading-relaxed">
                                 {isActive ? (
                                     <>
-                                        This will immediately revoke all administrative protocols for <span className="text-foreground font-bold">@{user.display_name}</span>. The entity will be unable to access system cores until manually reinstated.
+                                        This will immediately revoke all administrative protocols for <span className="text-foreground font-bold">@{displayName}</span>. The entity will be unable to access system cores until manually reinstated.
                                     </>
                                 ) : (
                                     <>
-                                        This will re-initialize system protocols for <span className="text-foreground font-bold">@{user.display_name}</span>. The entity will regain complete access to their assigned administrative modules.
+                                        This will re-initialize system protocols for <span className="text-foreground font-bold">@{displayName}</span>. The entity will regain complete access to their assigned administrative modules.
                                     </>
                                 )}
                             </AlertDialogDescription>
