@@ -71,6 +71,8 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
     const queryClient = useQueryClient()
     const currentRole = user.user_role?.role || ""
     const [saving, setSaving] = useState(false)
+    const displayName = user.display_name || user.email || "Unknown User"
+    const photoUrl = user.photo_url || undefined
 
     const form = useForm({
         defaultValues: {
@@ -118,13 +120,13 @@ export function ManagePermissionsDialog({ open, onOpenChange, user }: ManagePerm
 
                         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-5">
                             <Avatar className="h-16 w-16 sm:h-18 sm:w-18 rounded-2xl border-2 border-violet-200 dark:border-violet-800 shadow-xl group-hover:scale-105 transition-transform duration-500 shrink-0 mx-auto sm:mx-0">
-                                <AvatarImage src={user.photo_url} alt={user.display_name} />
+                                <AvatarImage src={photoUrl} alt={displayName} />
                                 <AvatarFallback className="bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400 font-black text-xl uppercase">
-                                    {user.display_name.substring(0, 2)}
+                                    {displayName.substring(0, 2)}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0 text-center sm:text-left">
-                                <h3 className="text-xl font-black tracking-tight truncate mb-1">{user.display_name}</h3>
+                                <h3 className="text-xl font-black tracking-tight truncate mb-1">{displayName}</h3>
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-muted-foreground">
                                     <div className="flex items-center justify-center sm:justify-start gap-1.5 min-w-0">
                                         <Mail className="h-3.5 w-3.5 shrink-0 opacity-50" />

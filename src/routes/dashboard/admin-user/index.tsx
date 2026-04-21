@@ -119,49 +119,54 @@ function CandidatesContent() {
   )
 }
 
-const UserProtocolCard = ({ user, currentUserRole }: { user: UserData, currentUserRole: string }) => (
-  <Card className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-xl shadow-black/5 p-6 space-y-6">
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <Avatar className="h-12 w-12 rounded-2xl border border-muted-foreground/10 shadow-inner">
-          <AvatarImage src={user.photo_url} alt={user.display_name} />
-          <AvatarFallback className="bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400 font-bold uppercase">
-            {user.display_name.substring(0, 2)}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col">
-          <span className="font-bold text-base tracking-tight">{user.display_name}</span>
-          <span className="text-[10px] text-muted-foreground font-mono opacity-60 mt-0.5">{user.uid}</span>
-        </div>
-      </div>
-      <AdminActions currentUserRole={currentUserRole} rowData={user} />
-    </div>
+const UserProtocolCard = ({ user, currentUserRole }: { user: UserData, currentUserRole: string }) => {
+  const displayName = user.display_name || user.email || "Unknown User"
+  const photoUrl = user.photo_url || undefined
 
-    <div className="flex flex-wrap items-center gap-3">
-      <RoleBadge role={user.user_role?.role || "user"} />
-      <StatusBadge active={user.user_role?.active ?? false} disabled={user.disabled} />
-    </div>
+  return (
+    <Card className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-xl shadow-black/5 p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Avatar className="h-12 w-12 rounded-2xl border border-muted-foreground/10 shadow-inner">
+            <AvatarImage src={photoUrl} alt={displayName} />
+            <AvatarFallback className="bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400 font-bold uppercase">
+              {displayName.substring(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <span className="font-bold text-base tracking-tight">{displayName}</span>
+            <span className="text-[10px] text-muted-foreground font-mono opacity-60 mt-0.5">{user.uid}</span>
+          </div>
+        </div>
+        <AdminActions currentUserRole={currentUserRole} rowData={user} />
+      </div>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border/20">
-      <div className="flex flex-col gap-1.5">
-        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Interface</span>
-        <div className="flex items-center gap-2 text-sm font-medium opacity-80">
-          <Mail className="h-3.5 w-3.5 text-muted-foreground/50" />
-          <span className="truncate">{user.email}</span>
+      <div className="flex flex-wrap items-center gap-3">
+        <RoleBadge role={user.user_role?.role || "user"} />
+        <StatusBadge active={user.user_role?.active ?? false} disabled={user.disabled} />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border/20">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Interface</span>
+          <div className="flex items-center gap-2 text-sm font-medium opacity-80">
+            <Mail className="h-3.5 w-3.5 text-muted-foreground/50" />
+            <span className="truncate">{user.email}</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Timestamp</span>
+          <div className="flex items-center gap-2 text-sm font-medium opacity-60">
+            <Calendar className="h-3.5 w-3.5" />
+            <span className="tabular-nums">
+              {user.created_at ? format(new Date(parseInt(user.created_at)), "MMM dd, yyyy") : "N/A"}
+            </span>
+          </div>
         </div>
       </div>
-      <div className="flex flex-col gap-1.5">
-        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Timestamp</span>
-        <div className="flex items-center gap-2 text-sm font-medium opacity-60">
-          <Calendar className="h-3.5 w-3.5" />
-          <span className="tabular-nums">
-            {user.created_at ? format(new Date(parseInt(user.created_at)), "MMM dd, yyyy") : "N/A"}
-          </span>
-        </div>
-      </div>
-    </div>
-  </Card>
-)
+    </Card>
+  )
+}
 
 const StatCard = ({ title, value, icon, gradient }: { title: string, value: string, icon: React.ReactNode, gradient: string }) => (
   <Card className="relative overflow-hidden group border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-[2rem] md:rounded-[2.5rem] bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl">

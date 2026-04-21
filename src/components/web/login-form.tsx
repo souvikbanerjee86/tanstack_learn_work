@@ -53,7 +53,7 @@ export function LoginForm() {
                             console.log(error);
                         });
 
-                        setError("You are not authorized to login")
+                        setError("Your account is created.You will be notified by admin when role will be assigned")
                     }
 
                 } catch (error: any) {
@@ -82,7 +82,7 @@ export function LoginForm() {
                     }).catch((error) => {
                         console.log(error);
                     });
-                    setError("You are not authorized to login")
+                    setError("Your account is created.You will be notified by admin when role will be assigned")
                 }
             } catch (error: any) {
                 const errorMessage = error.message;
