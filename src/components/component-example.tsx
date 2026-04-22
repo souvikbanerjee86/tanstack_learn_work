@@ -37,7 +37,7 @@ export function ComponentExample() {
   }, []);
   return (
     <div className="w-full min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-50 py-16 px-4 sm:px-6 lg:px-8 font-sans selection:bg-indigo-500/30 relative overflow-hidden">
-      
+
       {/* Ambient Background Effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
@@ -55,7 +55,7 @@ export function ComponentExample() {
 
         <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9]">
           The Future of<br />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 animate-gradient-x">
+          <span className="bg-clip-text text-transparent bg-linear-to-r from-indigo-600 via-violet-600 to-fuchsia-600 animate-gradient-x">
             Intelligent Hiring
           </span>
         </h1>
