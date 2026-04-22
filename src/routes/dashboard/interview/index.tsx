@@ -36,7 +36,13 @@ function InterviewContent() {
     const { data } = useSuspenseQuery(interviewQueryOptions)
 
     return (
-        <div className="flex flex-col gap-8 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent">
+        <div className="relative min-h-screen flex flex-col gap-8 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            {/* --- Ambient Background Elements --- */}
+            <div className="absolute inset-0 pointer-events-none -z-10">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary-rgb),0.05),transparent_50%)]" />
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-amber-500/10 blur-[100px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-amber-500/10 blur-[80px] rounded-full animate-pulse delay-700" />
+            </div>
             {/* --- Executive Header --- */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-muted-foreground/10">
                 <div className="flex items-center gap-4">
@@ -59,10 +65,8 @@ function InterviewContent() {
 
             {/* --- Main Section --- */}
             <div className="relative group">
-                <div className="absolute top-0 right-0 -m-20 w-64 h-64 bg-amber-500/5 blur-[120px] rounded-full pointer-events-none -z-10" />
-
                 {/* Desktop View: Table */}
-                <div className="hidden lg:block relative">
+                <div className="hidden lg:block relative group p-8 rounded-[2.5rem] border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-2xl shadow-black/5">
                     <DataTable columns={candidateInterviewEmailColumns} data={data.data} />
                 </div>
 

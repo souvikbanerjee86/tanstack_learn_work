@@ -101,7 +101,13 @@ function EmailSyncContent() {
     const records = data.data as EmailSyncRecord[]
 
     return (
-        <div className="flex flex-col gap-6 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent overflow-x-hidden">
+        <div className="relative min-h-screen flex flex-col gap-6 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            {/* --- Ambient Background Elements --- */}
+            <div className="absolute inset-0 pointer-events-none -z-10">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary-rgb),0.05),transparent_50%)]" />
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-teal-500/10 blur-[100px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-teal-500/10 blur-[80px] rounded-full animate-pulse delay-700" />
+            </div>
             {/* --- Executive Header --- */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-muted-foreground/10">
                 <div className="flex items-center gap-3 md:gap-4">
@@ -132,9 +138,6 @@ function EmailSyncContent() {
 
             {/* --- Content Section --- */}
             <div className="relative group">
-                {/* Decorative background blur */}
-                <div className="absolute top-0 right-0 -m-20 w-64 h-64 bg-teal-500/5 blur-[120px] rounded-full pointer-events-none -z-10" />
-
                 {/* Mobile/Tablet View: Cards */}
                 <div className="grid grid-cols-1 lg:hidden gap-4">
                     {records.map((record) => (
@@ -150,7 +153,7 @@ function EmailSyncContent() {
                 </div>
 
                 {/* Desktop/Tablet View: Table */}
-                <div className="hidden lg:block">
+                <div className="hidden lg:block relative group p-8 rounded-[2.5rem] border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-2xl shadow-black/5">
                     <DataTable columns={emailSyncColumns} data={records} />
                 </div>
             </div>

@@ -6,7 +6,13 @@ import { Separator } from "@/components/ui/separator"
 
 export function QuestionsLayoutSkeleton() {
     return (
-        <div className="flex flex-col md:flex-row h-full max-w-full gap-8 p-4 md:p-10 lg:p-14 overflow-hidden bg-transparent">
+        <div className="relative min-h-screen flex flex-col md:flex-row h-full max-w-full gap-8 p-4 md:p-10 lg:p-14 overflow-hidden bg-transparent">
+            {/* --- Ambient Background Elements --- */}
+            <div className="absolute inset-0 pointer-events-none -z-10">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary-rgb),0.05),transparent_50%)]" />
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary/10 blur-[100px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-indigo-500/10 blur-[80px] rounded-full animate-pulse delay-700" />
+            </div>
             {/* Sidebar Skeleton */}
             <JobContentSkeleton />
 

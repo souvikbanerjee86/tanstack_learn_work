@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ChevronLeft, FileUp, ImageIcon, Loader2, Send, Trash2, Zap, Users, Sparkles, FileText } from 'lucide-react'
 import { ChangeEvent, useState, useTransition, Suspense } from 'react'
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
+import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { addCandidate, getJobDetails } from '@/lib/server-function'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useForm } from '@tanstack/react-form'
@@ -35,6 +35,7 @@ function RouteComponent() {
 }
 
 function CandidateAddContent() {
+    const queryClient = useQueryClient()
     const { data } = useSuspenseQuery(jobsQueryOptions)
     const navigate = useNavigate()
     const [isPending, startTransition] = useTransition()
@@ -70,6 +71,7 @@ function CandidateAddContent() {
                 try {
                     await addCandidate({ data: formData })
                     toast.success("Candidate Added Successfully")
+                    queryClient.invalidateQueries({ queryKey: ['candidates'] })
                     navigate({ to: '/dashboard/candidates' })
                 } catch (e) {
                     console.log(e)

@@ -10,7 +10,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function EmailSyncSkeleton() {
     return (
-        <div className="flex flex-col gap-6 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent">
+        <div className="relative min-h-screen flex flex-col gap-6 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent overflow-hidden">
+            {/* --- Ambient Background Elements --- */}
+            <div className="absolute inset-0 pointer-events-none -z-10">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary-rgb),0.05),transparent_50%)]" />
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-teal-500/10 blur-[100px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-teal-500/10 blur-[80px] rounded-full animate-pulse delay-700" />
+            </div>
             {/* Header skeleton */}
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 md:gap-4">
@@ -48,7 +54,7 @@ export function EmailSyncSkeleton() {
                 </div>
 
                 {/* Desktop Skeleton View */}
-                <div className="hidden lg:block overflow-hidden rounded-[2.5rem] border border-border/40 bg-card/40 backdrop-blur-xl shadow-xl shadow-black/5">
+                <div className="hidden lg:block overflow-hidden p-8 rounded-[2.5rem] border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-2xl shadow-black/5">
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-muted/20 hover:bg-muted/20 border-b border-border/40">
