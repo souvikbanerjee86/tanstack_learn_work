@@ -23,8 +23,8 @@ function RouteComponent() {
     return (
         <SidebarProvider>
             <AppSidebar user={user} />
-            <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 sticky top-0 z-40 bg-background/60 backdrop-blur-xl border-b border-border/5 px-6 transition-all">
+            <SidebarInset className="bg-transparent">
+                <header className="glass-header flex h-16 shrink-0 items-center gap-2 px-6 transition-all">
                     <div className="flex items-center gap-4">
                         <SidebarTrigger className="-ml-1 h-9 w-9 rounded-xl hover:bg-muted/50 transition-all border border-transparent hover:border-border/10 shadow-sm" />
                         <Separator

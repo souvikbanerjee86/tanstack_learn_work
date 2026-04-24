@@ -36,14 +36,7 @@ export function ComponentExample() {
     return () => unsubscribe();
   }, []);
   return (
-    <div className="w-full min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-50 py-16 px-4 sm:px-6 lg:px-8 font-sans selection:bg-indigo-500/30 relative overflow-hidden">
-
-      {/* Ambient Background Effects */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-fuchsia-500/10 dark:bg-fuchsia-500/5 blur-[120px] rounded-full animate-pulse [animation-delay:2s]" />
-        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-blue-500/5 dark:bg-blue-500/5 blur-[100px] rounded-full" />
-      </div>
+    <div className="w-full min-h-screen text-slate-900 dark:text-slate-50 py-16 px-4 sm:px-6 lg:px-8 font-sans selection:bg-indigo-500/30 relative">
 
       {/* Hero Section */}
       <section className="max-w-5xl mx-auto text-center space-y-10 mb-24 relative">
@@ -103,7 +96,7 @@ export function ComponentExample() {
           </div>
 
           <div className="grid gap-6">
-            <Card className="group border-slate-200/60 dark:border-white/5 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl hover:bg-white/60 dark:hover:bg-zinc-900/60 transition-all duration-500 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1">
+            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1">
               <CardHeader className="flex flex-row items-center gap-5 pb-3">
                 <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 rounded-xl text-blue-600 dark:text-blue-400">
                   <BriefcaseIcon className="w-5 h-5" />
@@ -117,7 +110,7 @@ export function ComponentExample() {
               </CardContent>
             </Card>
 
-            <Card className="group border-slate-200/60 dark:border-white/5 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl hover:bg-white/60 dark:hover:bg-zinc-900/60 transition-all duration-500 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1">
+            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1">
               <CardHeader className="flex flex-row items-center gap-5 pb-3">
                 <div className="p-2.5 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-xl text-indigo-600 dark:text-indigo-400">
                   <UserCheck2Icon className="w-5 h-5" />
@@ -168,7 +161,7 @@ export function ComponentExample() {
           </div>
 
           <div className="grid gap-6">
-            <Card className="group border-slate-200/60 dark:border-white/5 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl hover:bg-white/60 dark:hover:bg-zinc-900/60 transition-all duration-500 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-fuchsia-500/10 hover:-translate-y-1 lg:translate-y-4">
+            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1 lg:translate-y-4">
               <CardHeader className="flex flex-row items-center gap-5 pb-3">
                 <div className="p-2.5 bg-fuchsia-500/10 dark:bg-fuchsia-500/20 rounded-xl text-fuchsia-600 dark:text-fuchsia-400">
                   <LogInIcon className="w-5 h-5" />
@@ -182,7 +175,7 @@ export function ComponentExample() {
               </CardContent>
             </Card>
 
-            <Card className="group border-slate-200/60 dark:border-white/5 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl hover:bg-white/60 dark:hover:bg-zinc-900/60 transition-all duration-500 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-1 relative">
+            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1 relative">
               <div className="absolute right-[-20px] top-[-20px] opacity-10 w-40 h-40 pointer-events-none group-hover:rotate-12 transition-transform duration-700">
                 <BotIcon className="w-full h-full text-purple-600" />
               </div>
@@ -199,7 +192,7 @@ export function ComponentExample() {
               </CardContent>
             </Card>
 
-            <Card className="group border-slate-200/60 dark:border-white/5 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl hover:bg-white/60 dark:hover:bg-zinc-900/60 transition-all duration-500 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-pink-500/10 hover:-translate-y-1 lg:-translate-y-4">
+            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1 lg:-translate-y-4">
               <CardHeader className="flex flex-row items-center gap-5 pb-3">
                 <div className="p-2.5 bg-pink-500/10 dark:bg-pink-500/20 rounded-xl text-pink-600 dark:text-pink-400">
                   <ClockIcon className="w-5 h-5" />
