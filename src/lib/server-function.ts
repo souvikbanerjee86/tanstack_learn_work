@@ -390,7 +390,7 @@ export const getCandidatesList = createServerFn({ method: 'GET' })
         var url = API_PATH.CANDIDATE_LIST.GET_BASE_URL + API_PATH.CANDIDATE_LIST.PATH_URL;
 
         if (data.limit) {
-            url += `&limit=${data.limit}`;
+            url += `?limit=${data.limit}`;
         }
         if (data.last_doc_id) {
             url += `&last_doc_id=${data.last_doc_id}`;
