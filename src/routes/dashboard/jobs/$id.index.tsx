@@ -4,15 +4,12 @@ import {
     Calendar,
     MapPin,
     Briefcase,
-    ArrowLeft,
     Share2,
     Download,
     TimerIcon,
     Edit,
     ChevronLeft,
-    Globe,
     Clock,
-    UserCircle,
     FileText
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
