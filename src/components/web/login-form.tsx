@@ -99,7 +99,7 @@ export function LoginForm() {
                 <p className="text-muted-foreground font-medium text-lg">Please enter your details to sign in.</p>
             </div>
 
-            <Card className="rounded-3xl border-muted-foreground/10 bg-background/50 backdrop-blur-xl shadow-2xl shadow-primary/5 overflow-hidden">
+            <Card className="glass-morphism rounded-3xl overflow-hidden shadow-2xl shadow-primary/5">
                 <CardContent className="p-8 lg:p-10">
                     <form onSubmit={(e) => {
                         e.preventDefault()

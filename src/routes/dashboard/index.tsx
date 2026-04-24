@@ -25,13 +25,6 @@ export const Route = createFileRoute('/dashboard/')({
 function RouteComponent() {
   return (
     <div className="relative min-h-screen bg-transparent overflow-hidden p-4 md:p-10 lg:p-14">
-      {/* --- Decorative Background Elements --- */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-violet-500/5 blur-[160px] rounded-full" />
-      </div>
-
       <div className="flex flex-col gap-10 pb-20 max-w-full relative z-10 w-full">
         {/* --- Page Header / Hero --- */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-border/50">
@@ -74,7 +67,7 @@ function RouteComponent() {
 // --- Helper Components ---
 
 const StatCard = ({ title, value, icon }: { title: string, value: string, icon: React.ReactNode }) => (
-  <Card className="relative overflow-hidden group border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 rounded-[2.5rem] bg-card hover:bg-muted/5">
+  <Card className="glass-card relative overflow-hidden group rounded-[2.5rem]">
     <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-700">
       <Sparkles className="h-24 w-24" />
     </div>

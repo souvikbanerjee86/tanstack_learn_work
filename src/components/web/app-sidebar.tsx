@@ -92,8 +92,8 @@ const navItems: NavPrimaryProps['items'] = linkOptions([
 
 export function AppSidebar({ user }: { user: NavUserProps }) {
   return (
-    <Sidebar collapsible="icon" variant="inset" className="bg-sidebar/50 backdrop-blur-xl">
-      <SidebarHeader className="py-6 border-b border-border/10">
+    <Sidebar collapsible="icon" variant="sidebar" className="glass-sidebar">
+      <SidebarHeader className="py-6 border-b border-sidebar-border/5">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="hover:bg-transparent focus-visible:ring-0">
