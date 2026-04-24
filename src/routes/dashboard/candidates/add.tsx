@@ -71,7 +71,7 @@ function CandidateAddContent() {
                 try {
                     await addCandidate({ data: formData })
                     toast.success("Candidate Added Successfully")
-                    queryClient.invalidateQueries({ queryKey: ['candidates'] })
+                    await queryClient.invalidateQueries({ queryKey: ['candidates'] })
                     navigate({ to: '/dashboard/candidates' })
                 } catch (e) {
                     console.log(e)

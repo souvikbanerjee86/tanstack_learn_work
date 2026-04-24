@@ -189,7 +189,83 @@ code {
   }
 
   .glass-card {
-    @apply bg-card/30 backdrop-blur-lg border border-border/10 shadow-lg hover:shadow-primary/5 hover:bg-card/40 transition-all duration-500;
+    @apply bg-card/30 backdrop-blur-lg border border-border/10 shadow-lg transition-all duration-500;
+  }
+
+  /* Premium Glow Card Wrapper */
+  .glow-card {
+    position: relative;
+    border-radius: 1.5rem;
+    isolation: isolate;
+  }
+
+  .glow-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: radial-gradient(
+      600px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      rgba(99, 102, 241, 0.15),
+      rgba(139, 92, 246, 0.08),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .dark .glow-card::before {
+    background: radial-gradient(
+      600px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      rgba(99, 102, 241, 0.25),
+      rgba(168, 85, 247, 0.12),
+      transparent 60%
+    );
+  }
+
+  .glow-card:hover::before,
+  .glow-card:active::before {
+    opacity: 1;
+  }
+
+  .glow-card:hover .glass-card,
+  .glow-card:active .glass-card {
+    transform: translateY(-6px) scale(1.01);
+    border-color: rgba(99, 102, 241, 0.2);
+    box-shadow:
+      0 20px 40px -12px rgba(99, 102, 241, 0.15),
+      0 0 0 1px rgba(99, 102, 241, 0.05),
+      0 0 60px -15px rgba(139, 92, 246, 0.1);
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .dark .glow-card:hover .glass-card,
+  .dark .glow-card:active .glass-card {
+    border-color: rgba(129, 140, 248, 0.25);
+    box-shadow:
+      0 20px 40px -12px rgba(99, 102, 241, 0.25),
+      0 0 0 1px rgba(129, 140, 248, 0.1),
+      0 0 80px -15px rgba(168, 85, 247, 0.2);
+    background: rgba(30, 30, 50, 0.6);
+  }
+
+  /* Smaller cards glow variant */
+  .glow-card-sm::before {
+    background: radial-gradient(
+      400px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      rgba(139, 92, 246, 0.12),
+      transparent 60%
+    );
+  }
+
+  .dark .glow-card-sm::before {
+    background: radial-gradient(
+      400px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      rgba(139, 92, 246, 0.2),
+      transparent 60%
+    );
   }
 
   .glass-sidebar {

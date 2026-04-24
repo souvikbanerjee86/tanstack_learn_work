@@ -48,7 +48,7 @@ function RouteComponent() {
                 try {
                     await createJob({ data: { jobId: value.jobId, jobTitle: value.jobTitle, jobType: value.jobType, locations: value.locations, jobDescription: value.jobDescription, startDate: value.startDate, endDate: value.endDate, experience: value.experience, status: value.status } });
                     toast.success("Job created successfully")
-                    queryClient.invalidateQueries({ queryKey: ['jobs'] })
+                    await queryClient.invalidateQueries({ queryKey: ['jobs'] })
                     navigate({ to: "/dashboard/jobs" })
                 } catch (error: any) {
                     toast.error(error.message)

@@ -1,19 +1,24 @@
 import { getCandidatesList } from '@/lib/server-function'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { Suspense } from 'react'
+import { infiniteQueryOptions, useSuspenseInfiniteQuery } from '@tanstack/react-query'
+import { Suspense, useMemo } from 'react'
 import { DataTable } from '@/components/web/data-table'
 import { candidateColumns, CandidateActions } from "@/components/web/candidate-columns"
 import { Button } from '@/components/ui/button'
 import { AppliedCandidatesSkeleton } from '@/components/web/applied-candidates-skeleton'
-import { Plus, Users, Sparkles, Mail, Briefcase, Calendar, User } from 'lucide-react'
+import { Plus, Users, Sparkles, Mail, Briefcase, Calendar, User, Loader2, ChevronsRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { candidate } from '@/lib/types'
 import { format } from 'date-fns'
 
-export const candidatesQueryOptions = queryOptions({
-    queryKey: ['candidates'],
-    queryFn: () => getCandidatesList({ data: { limit: null, last_doc_id: null } }),
+const CANDIDATES_PAGE_SIZE = 10
+
+export const candidatesQueryOptions = infiniteQueryOptions({
+    queryKey: ['candidates', 'list'],
+    queryFn: ({ pageParam }) =>
+        getCandidatesList({ data: { limit: CANDIDATES_PAGE_SIZE, last_doc_id: pageParam } }),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.next_cursor ?? undefined,
 })
 
 export const Route = createFileRoute('/dashboard/candidates/')({
@@ -21,7 +26,7 @@ export const Route = createFileRoute('/dashboard/candidates/')({
         return { role: context.role.role }
     },
     loader: async ({ context }) => {
-        await context.queryClient.ensureQueryData(candidatesQueryOptions)
+        await context.queryClient.prefetchInfiniteQuery(candidatesQueryOptions)
     },
     component: RouteComponent,
 })
@@ -36,7 +41,19 @@ function RouteComponent() {
 
 function CandidatesContent() {
     const { role } = Route.useRouteContext()
-    const { data } = useSuspenseQuery(candidatesQueryOptions)
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useSuspenseInfiniteQuery(candidatesQueryOptions)
+
+    const allCandidates = useMemo(
+        () => data?.pages?.flatMap((page) => page.data ?? []) ?? [],
+        [data?.pages],
+    )
+
+    const totalCount = data?.pages?.[0]?.count ?? 0
 
     return (
         <div className="relative min-h-screen flex flex-col gap-8 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -57,8 +74,8 @@ function CandidatesContent() {
                         <h1 className="text-2xl md:text-3xl font-black tracking-tight">Applied Candidates</h1>
                         <p className="text-xs md:text-sm text-muted-foreground font-medium flex items-center gap-1.5 mt-0.5">
                             <Sparkles className="h-3.5 w-3.5 text-violet-500" />
-                            {data.data.length > 0
-                                ? `Managing ${data.data.length} candidate${data.data.length !== 1 ? 's' : ''} in the pipeline.`
+                            {allCandidates.length > 0
+                                ? `Managing ${totalCount} candidate${totalCount !== 1 ? 's' : ''} in the pipeline.`
                                 : 'Awaiting candidates in the pipeline.'}
                         </p>
                     </div>
@@ -80,15 +97,44 @@ function CandidatesContent() {
             <div className="relative group">
                 {/* Desktop View: Table */}
                 <div className="hidden lg:block relative group p-8 rounded-[2.5rem] border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-2xl shadow-black/5">
-                    <DataTable columns={candidateColumns} data={data.data} />
+                    <DataTable
+                        columns={candidateColumns}
+                        data={allCandidates}
+                        hasNextPage={hasNextPage}
+                        isFetchingNextPage={isFetchingNextPage}
+                        onLoadMore={() => fetchNextPage()}
+                    />
                 </div>
 
                 {/* Mobile/Tablet View: Cards */}
                 <div className="flex flex-col gap-4 lg:hidden">
-                    {data.data.map((candidate: candidate) => (
+                    {allCandidates.map((candidate: candidate) => (
                         <CandidateMobileCard key={candidate.id} candidate={candidate} />
                     ))}
-                    {data.data.length === 0 && (
+
+                    {/* Load More Button for Mobile */}
+                    {hasNextPage && (
+                        <Button
+                            variant="outline"
+                            onClick={() => fetchNextPage()}
+                            disabled={isFetchingNextPage}
+                            className="w-full h-14 rounded-2xl border-dashed border-border/60 bg-white/30 dark:bg-zinc-950/30 backdrop-blur-xl font-bold uppercase tracking-widest text-[10px] gap-2 hover:bg-primary/5 hover:text-primary transition-all active:scale-95"
+                        >
+                            {isFetchingNextPage ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    Syncing Data...
+                                </>
+                            ) : (
+                                <>
+                                    <ChevronsRight className="h-4 w-4" />
+                                    Load More Candidates
+                                </>
+                            )}
+                        </Button>
+                    )}
+
+                    {allCandidates.length === 0 && !isFetchingNextPage && (
                         <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border/40 text-muted-foreground italic">
                             No candidates found.
                         </div>

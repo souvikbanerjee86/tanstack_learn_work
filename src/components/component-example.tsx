@@ -25,7 +25,40 @@ import {
   BuildingIcon,
   ArrowRightIcon
 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+
+// Reusable GlowCard wrapper — tracks mouse position and applies CSS custom properties
+function GlowCard({
+  children,
+  className = "",
+  variant = "default"
+}: {
+  children: React.ReactNode
+  className?: string
+  variant?: "default" | "sm"
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = ref.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    el.style.setProperty("--glow-x", `${x}%`)
+    el.style.setProperty("--glow-y", `${y}%`)
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      className={`glow-card ${variant === "sm" ? "glow-card-sm" : ""} ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
 
 export function ComponentExample() {
   const [user, setUser] = useState<User | null>(null)
@@ -96,54 +129,62 @@ export function ComponentExample() {
           </div>
 
           <div className="grid gap-6">
-            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1">
-              <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 rounded-xl text-blue-600 dark:text-blue-400">
-                  <BriefcaseIcon className="w-5 h-5" />
-                </div>
-                <CardTitle className="text-xl font-bold tracking-tight">Add & Manage Jobs</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
-                  Create comprehensive job postings instantly. Define experience levels, required skills, and location preferences with our intuitive job builder.
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <GlowCard>
+              <Card className="glass-card group rounded-3xl overflow-hidden">
+                <CardHeader className="flex flex-row items-center gap-5 pb-3">
+                  <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 rounded-xl text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-500">
+                    <BriefcaseIcon className="w-5 h-5" />
+                  </div>
+                  <CardTitle className="text-xl font-bold tracking-tight">Add & Manage Jobs</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
+                    Create comprehensive job postings instantly. Define experience levels, required skills, and location preferences with our intuitive job builder.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </GlowCard>
 
-            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1">
-              <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                <div className="p-2.5 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-xl text-indigo-600 dark:text-indigo-400">
-                  <UserCheck2Icon className="w-5 h-5" />
-                </div>
-                <CardTitle className="text-xl font-bold tracking-tight">Semantic Search</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
-                  Surface highly relevant candidates based on advanced matching logic. Our semantic engine understands the context behind varying job titles.
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <GlowCard>
+              <Card className="glass-card group rounded-3xl overflow-hidden">
+                <CardHeader className="flex flex-row items-center gap-5 pb-3">
+                  <div className="p-2.5 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-xl text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-500">
+                    <UserCheck2Icon className="w-5 h-5" />
+                  </div>
+                  <CardTitle className="text-xl font-bold tracking-tight">Semantic Search</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
+                    Surface highly relevant candidates based on advanced matching logic. Our semantic engine understands the context behind varying job titles.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </GlowCard>
 
             <div className="grid sm:grid-cols-2 gap-6">
-              <Card className="border-slate-200/50 dark:border-white/5 bg-white/30 dark:bg-zinc-900/30 backdrop-blur-lg rounded-2xl overflow-hidden shadow-none hover:shadow-lg transition-all duration-500">
-                <CardHeader className="pb-3">
-                  <MailIcon className="w-5 h-5 text-violet-500 mb-2" />
-                  <CardTitle className="text-lg font-bold">Smart Invitations</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-[13px]">Dispatch AI interview links to short-listed talent with one click. Automated and secure.</CardDescription>
-                </CardContent>
-              </Card>
+              <GlowCard variant="sm">
+                <Card className="glass-card group rounded-2xl overflow-hidden">
+                  <CardHeader className="pb-3">
+                    <MailIcon className="w-5 h-5 text-violet-500 mb-2 group-hover:scale-110 transition-transform duration-500" />
+                    <CardTitle className="text-lg font-bold">Smart Invitations</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-[13px]">Dispatch AI interview links to short-listed talent with one click. Automated and secure.</CardDescription>
+                  </CardContent>
+                </Card>
+              </GlowCard>
 
-              <Card className="border-slate-200/50 dark:border-white/5 bg-white/30 dark:bg-zinc-900/30 backdrop-blur-lg rounded-2xl overflow-hidden shadow-none hover:shadow-lg transition-all duration-500">
-                <CardHeader className="pb-3">
-                  <LineChartIcon className="w-5 h-5 text-emerald-500 mb-2" />
-                  <CardTitle className="text-lg font-bold">Live Progress</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-[13px]">Real-time dashboards to monitor candidate performance and AI-generated scores.</CardDescription>
-                </CardContent>
-              </Card>
+              <GlowCard variant="sm">
+                <Card className="glass-card group rounded-2xl overflow-hidden">
+                  <CardHeader className="pb-3">
+                    <LineChartIcon className="w-5 h-5 text-emerald-500 mb-2 group-hover:scale-110 transition-transform duration-500" />
+                    <CardTitle className="text-lg font-bold">Live Progress</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-[13px]">Real-time dashboards to monitor candidate performance and AI-generated scores.</CardDescription>
+                  </CardContent>
+                </Card>
+              </GlowCard>
             </div>
           </div>
         </div>
@@ -161,50 +202,56 @@ export function ComponentExample() {
           </div>
 
           <div className="grid gap-6">
-            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1 lg:translate-y-4">
-              <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                <div className="p-2.5 bg-fuchsia-500/10 dark:bg-fuchsia-500/20 rounded-xl text-fuchsia-600 dark:text-fuchsia-400">
-                  <LogInIcon className="w-5 h-5" />
-                </div>
-                <CardTitle className="text-xl font-bold tracking-tight">Seamless Login</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
-                  Access your dedicated interview portal with zero friction. Connect via email magic links or one-click authentication.
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <GlowCard className="lg:translate-y-4">
+              <Card className="glass-card group rounded-3xl overflow-hidden">
+                <CardHeader className="flex flex-row items-center gap-5 pb-3">
+                  <div className="p-2.5 bg-fuchsia-500/10 dark:bg-fuchsia-500/20 rounded-xl text-fuchsia-600 dark:text-fuchsia-400 group-hover:scale-110 transition-transform duration-500">
+                    <LogInIcon className="w-5 h-5" />
+                  </div>
+                  <CardTitle className="text-xl font-bold tracking-tight">Seamless Login</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
+                    Access your dedicated interview portal with zero friction. Connect via email magic links or one-click authentication.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </GlowCard>
 
-            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1 relative">
-              <div className="absolute right-[-20px] top-[-20px] opacity-10 w-40 h-40 pointer-events-none group-hover:rotate-12 transition-transform duration-700">
-                <BotIcon className="w-full h-full text-purple-600" />
-              </div>
-              <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                <div className="p-2.5 bg-purple-500/10 dark:bg-purple-500/20 rounded-xl text-purple-600 dark:text-purple-400 relative z-10">
-                  <CpuIcon className="w-5 h-5" />
+            <GlowCard>
+              <Card className="glass-card group rounded-3xl overflow-hidden relative">
+                <div className="absolute right-[-20px] top-[-20px] opacity-10 w-40 h-40 pointer-events-none group-hover:rotate-12 group-hover:opacity-20 transition-all duration-700">
+                  <BotIcon className="w-full h-full text-purple-600" />
                 </div>
-                <CardTitle className="text-xl font-bold tracking-tight relative z-10">Next-Gen AI Agent</CardTitle>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed font-medium">
-                  Experience a conversational interview with our cutting-edge AI. It listens, adapts, and evaluates your skills in real-time.
-                </CardDescription>
-              </CardContent>
-            </Card>
+                <CardHeader className="flex flex-row items-center gap-5 pb-3">
+                  <div className="p-2.5 bg-purple-500/10 dark:bg-purple-500/20 rounded-xl text-purple-600 dark:text-purple-400 relative z-10 group-hover:scale-110 transition-transform duration-500">
+                    <CpuIcon className="w-5 h-5" />
+                  </div>
+                  <CardTitle className="text-xl font-bold tracking-tight relative z-10">Next-Gen AI Agent</CardTitle>
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed font-medium">
+                    Experience a conversational interview with our cutting-edge AI. It listens, adapts, and evaluates your skills in real-time.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </GlowCard>
 
-            <Card className="glass-card group rounded-3xl overflow-hidden hover:-translate-y-1 lg:-translate-y-4">
-              <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                <div className="p-2.5 bg-pink-500/10 dark:bg-pink-500/20 rounded-xl text-pink-600 dark:text-pink-400">
-                  <ClockIcon className="w-5 h-5" />
-                </div>
-                <CardTitle className="text-xl font-bold tracking-tight">Interview 24/7</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
-                  Take your interview exactly when you feel most prepared. No more scheduling conflicts or time-zone anxiety.
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <GlowCard className="lg:-translate-y-4">
+              <Card className="glass-card group rounded-3xl overflow-hidden">
+                <CardHeader className="flex flex-row items-center gap-5 pb-3">
+                  <div className="p-2.5 bg-pink-500/10 dark:bg-pink-500/20 rounded-xl text-pink-600 dark:text-pink-400 group-hover:scale-110 transition-transform duration-500">
+                    <ClockIcon className="w-5 h-5" />
+                  </div>
+                  <CardTitle className="text-xl font-bold tracking-tight">Interview 24/7</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
+                    Take your interview exactly when you feel most prepared. No more scheduling conflicts or time-zone anxiety.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </GlowCard>
           </div>
         </div>
 
