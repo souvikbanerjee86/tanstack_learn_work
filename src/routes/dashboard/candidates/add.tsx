@@ -20,8 +20,14 @@ export const jobsQueryOptions = queryOptions({
 })
 
 export const Route = createFileRoute('/dashboard/candidates/add')({
-    loader: ({ context }) => {
-        void context.queryClient.prefetchQuery(jobsQueryOptions)
+    validateSearch: (search: Record<string, unknown>) => {
+        return {
+            jobId: search.jobId as string | undefined,
+            jobName: search.jobName as string | undefined,
+        }
+    },
+    loader: async ({ context }) => {
+        await context.queryClient.ensureQueryData(jobsQueryOptions)
     },
     component: RouteComponent,
 })
@@ -38,6 +44,7 @@ function CandidateAddContent() {
     const queryClient = useQueryClient()
     const { data } = useSuspenseQuery(jobsQueryOptions)
     const navigate = useNavigate()
+    const search = Route.useSearch()
     const [isPending, startTransition] = useTransition()
     const jobDetails = data
     const [imgBase64, setImgBase64] = useState<string | null>(null)
@@ -45,8 +52,8 @@ function CandidateAddContent() {
 
     const form = useForm({
         defaultValues: {
-            jobId: "",
-            jobName: "",
+            jobId: search.jobId || "",
+            jobName: search.jobName || "",
             candidateName: "",
             candidateEmail: "",
             candidateCv: null as File | null
