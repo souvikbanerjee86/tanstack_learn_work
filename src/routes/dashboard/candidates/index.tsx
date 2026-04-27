@@ -84,9 +84,9 @@ function CandidatesContent() {
                 <div className="flex items-center gap-3">
                     {role === "admin" && (
                         <Link to='/dashboard/candidates/add' className="w-full md:w-auto">
-                            <Button className="w-full h-11 md:h-10 rounded-xl gap-2 shadow-lg shadow-primary/10 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                            <Button className="w-full h-11 md:h-12 rounded-[1rem] md:rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white">
                                 <Plus className="h-4 w-4" />
-                                <span className="text-[11px] font-black uppercase tracking-widest">Add Candidate</span>
+                                <span className="text-[11px] md:text-xs font-black uppercase tracking-widest px-2">Add Candidate</span>
                             </Button>
                         </Link>
                     )}
