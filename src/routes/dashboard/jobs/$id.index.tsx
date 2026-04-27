@@ -16,7 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute('/dashboard/jobs/$id/')({
     component: RouteComponent,
@@ -103,13 +102,13 @@ function RouteComponent() {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Clock className="h-4 w-4 text-indigo-500" />
-                                        Posted {format(job.created_at || new Date(), "MMM d, yyyy")}
+                                        Posted {format(job.created_at ? new Date(job.created_at) : new Date(), "MMM d, yyyy")}
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex flex-row md:flex-col gap-3 min-w-[200px]">
-                                <Link to="/dashboard/candidates/add">
+                                <Link to="/dashboard/candidates/add" search={{ jobId: job.job_id, jobName: job.job_title }}>
                                     <Button className="w-full h-12 gap-2 text-sm font-bold rounded-2xl bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-600/20 text-white group transition-all active:scale-[0.98]">
                                         Apply for Position
                                         <Share2 className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -134,7 +133,7 @@ function RouteComponent() {
                                     <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                                         <FileText className="h-5 w-5" />
                                     </div>
-                                    <CardTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white uppercase tracking-widest text-[13px] opacity-70">Job Description</CardTitle>
+                                    <CardTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white uppercase text-[13px] opacity-70">Job Description</CardTitle>
                                 </div>
                             </CardHeader>
                             <CardContent className="p-8 pt-6">
@@ -171,8 +170,8 @@ function RouteComponent() {
                                     <MetricItem
                                         icon={Calendar}
                                         label="Listing Timeline"
-                                        value={`Available until ${format(job.end_date, "PPP")}`}
-                                        subValue={`Started on ${format(job.start_date, "PPP")}`}
+                                        value={`Available until ${job.end_date ? format(new Date(job.end_date), "PPP") : "TBD"}`}
+                                        subValue={job.start_date ? `Started on ${format(new Date(job.start_date), "PPP")}` : undefined}
                                     />
                                 </div>
 
