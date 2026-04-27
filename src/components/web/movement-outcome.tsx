@@ -13,6 +13,10 @@ export const movementDetectionDetailsQueryOptions = (email: string, job_id: stri
 export function MovementOutCome({ email, id }: { email: string, id: string }) {
     const { data: mockMovementData } = useSuspenseQuery(movementDetectionDetailsQueryOptions(email, id))
 
+    if (!mockMovementData?.data?.[0]?.events || mockMovementData.data[0].events.length === 0) {
+        return null;
+    }
+
     const sortedEvents = [...mockMovementData.data[0].events].sort((a, b) => a.time.localeCompare(b.time));
 
     return (

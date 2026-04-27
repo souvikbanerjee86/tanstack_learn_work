@@ -16,6 +16,10 @@ export const interviewVoiceAnswerQueryOptions = (email: string, job_id: string) 
 
 export function AudioOutcome({ email, id }: { email: string, id: string }) {
     const { data: voiceAnswers } = useSuspenseQuery(interviewVoiceAnswerQueryOptions(email, id))
+
+    if (!voiceAnswers?.data || voiceAnswers.data.length === 0) {
+        return null;
+    }
     const [downloading, setDownloading] = useState<boolean>(false);
     const [fileUrl, setFileUrl] = useState<string>("");
     const [isOpen, setIsOpen] = useState<boolean>(false);
