@@ -14,19 +14,19 @@ env:
       - RUNTIME
   # 1. Public variables (safe to commit)
   - variable: VITE_FIREBASE_API_KEY
-    value: "AIzaSyAEdtZnBAzOEQ5_nXcrjOcjHR81tfS5WNU"
+    value: "AIzaSyBmsSuXNYdUWIafuokHXVjY9fL6SyVGe_Q"
   - variable: VITE_FIREBASE_AUTH_DOMAIN
-    value: "project-e7c52c57-c7d4-407d-b4b.firebaseapp.com"
+    value: "project-a1d8640b-7060-47f8-929.firebaseapp.com"
   - variable: VITE_FIREBASE_PROJECT_ID
-    value: "project-e7c52c57-c7d4-407d-b4b"
+    value: "project-a1d8640b-7060-47f8-929"
   - variable: VITE_FIREBASE_STORAGE_BUCKET
-    value: "project-e7c52c57-c7d4-407d-b4b.firebasestorage.app"
+    value: "project-a1d8640b-7060-47f8-929.firebasestorage.app"
   - variable: VITE_FIREBASE_MESSAGING_SENDER_ID
-    value: "403179946278"
+    value: "1081651239029"
   - variable: VITE_FIREBASE_APP_ID
-    value: "1:403179946278:web:b77c3ecf151826320681e7"
+    value: "1:1081651239029:web:4a5c0887419af53276403c"
   - variable: VITE_FIREBASE_MEASUREMENT_ID
-    value: "G-ZTNKD5EYFQ"
+    value: "G-55SGBBM0ZN"
   - variable: APP_FIREBASE_SERVICE_ACCOUNT_JSON
     secret: FIREBASE_SERVICE_ACCOUNT_JSON
   - variable: APP_OPENROUTER_KEY
