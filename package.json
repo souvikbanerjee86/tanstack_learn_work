@@ -2,6 +2,18 @@
   "name": "tanstack-learn-work",
   "private": true,
   "type": "module",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@firebase/util",
+      "@openrouter/sdk",
+      "@prisma/engines",
+      "esbuild",
+      "msw",
+      "prisma",
+      "protobufjs",
+      "unrs-resolver"
+    ]
+  },
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
