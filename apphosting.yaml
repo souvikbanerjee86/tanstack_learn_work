@@ -7,6 +7,14 @@ runConfig:
 
 # Environment variables and Secrets mapping
 env:
+  - variable: PNPM_CONFIG_STRICT_DEP_BUILDS
+    value: "false"
+    availability:
+      - BUILD
+  - variable: PNPM_CONFIG_DANGEROUSLY_ALLOW_ALL_BUILDS
+    value: "true"
+    availability:
+      - BUILD
   - variable: NODE_OPTIONS
     value: "--max-old-space-size=4096"
     availability:
