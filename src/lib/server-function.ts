@@ -240,6 +240,7 @@ export const getInterviewAnswersList = createServerFn({ method: 'GET' })
             const finalData = await response.data;
             return finalData as EvaluationResponse;
         } catch (e) {
+            console.log(e)
             return { "success": false, "count": 0, "data": [] }
         }
 
