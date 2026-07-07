@@ -240,6 +240,7 @@ export const getInterviewAnswersList = createServerFn({ method: 'GET' })
             const finalData = await response.data;
             return finalData as EvaluationResponse;
         } catch (e) {
+            console.log(e)
             return { "success": false, "count": 0, "data": [] }
         }
 
@@ -253,7 +254,7 @@ export const getInterviewVoiceAnswersList = createServerFn({ method: 'GET' })
 
         const client = await auth.getIdTokenClient(API_PATH.CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST.GET_BASE_URL);
         const url = API_PATH.CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST.GET_BASE_URL + API_PATH.CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST.PATH_URL;
-
+        console.log(url)
 
         const postData = {
             "candidate": data.candidate,
@@ -272,6 +273,7 @@ export const getInterviewVoiceAnswersList = createServerFn({ method: 'GET' })
             const finalData = await response.data;
             return finalData as InterviewVoiceOutcomeResponse;
         } catch (e) {
+            console.log(e)
             return { "success": false, "count": 0, "data": [] }
         }
 

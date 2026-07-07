@@ -23,12 +23,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         title: 'EazyAI Application',
       },
     ],
-    links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
-    ],
   }),
 
 
@@ -49,6 +43,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="stylesheet" href={appCss} precedence="high" />
         <HeadContent />
       </head>
       <body suppressHydrationWarning>
