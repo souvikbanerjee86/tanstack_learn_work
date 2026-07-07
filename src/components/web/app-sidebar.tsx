@@ -96,7 +96,7 @@ export function AppSidebar({ user }: { user: NavUserProps }) {
       <SidebarHeader className="py-6 border-b border-sidebar-border/5">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent focus-visible:ring-0">
+            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent focus-visible:ring-0 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center">
               <Link to="/">
                 <Logo noLink size="md" subtitle="Intelligence Hub" />
               </Link>

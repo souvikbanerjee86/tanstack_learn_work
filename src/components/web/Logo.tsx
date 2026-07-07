@@ -50,7 +50,7 @@ export function Logo({
         EA
       </span>
       {showText && (
-        <div className="flex flex-col">
+        <div className="flex flex-col group-data-[collapsible=icon]:hidden">
           <p className={`${currentSize.text} font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-indigo-800 to-indigo-600 dark:from-white dark:via-indigo-300 dark:to-indigo-500 leading-none`}>
             Eazy<span className="text-indigo-600 dark:text-indigo-400 font-black">AI</span>
           </p>
