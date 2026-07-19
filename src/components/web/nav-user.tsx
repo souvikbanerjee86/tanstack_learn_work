@@ -49,7 +49,8 @@ export function NavUser({ user }: { user: NavUserProps }) {
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="h-16 px-3 bg-muted/30 hover:bg-muted/50 transition-all duration-300 rounded-2xl border border-border/10 shadow-sm group/user mt-4"
+                            className="h-16 px-3 bg-muted/30 hover:bg-muted/50 transition-all duration-300 rounded-2xl border border-border/10 shadow-sm group/user mt-4 group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:mt-2"
+                            tooltip={user?.name}
                         >
                             <div className="relative">
                                 <Avatar className="h-10 w-10 rounded-xl ring-2 ring-primary/5 group-hover/user:ring-primary/20 transition-all">
@@ -57,12 +58,12 @@ export function NavUser({ user }: { user: NavUserProps }) {
                                     <AvatarFallback className="rounded-xl bg-primary/10 text-primary font-bold">{user?.name?.split(' ').map(name => name[0]).join('')}</AvatarFallback>
                                 </Avatar>
                                 <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-emerald-500 border-2 border-background rounded-full" />
-                            </div>
-                            <div className="grid flex-1 text-left text-sm leading-tight ml-1">
+                             </div>
+                            <div className="grid flex-1 text-left text-sm leading-tight ml-1 group-data-[collapsible=icon]:hidden">
                                 <span className="truncate font-black tracking-tight">{user?.name}</span>
                                 <span className="truncate text-[10px] text-muted-foreground uppercase font-bold opacity-60 tracking-wider">Intelligence Access</span>
                             </div>
-                            <ChevronsUpDown className="ml-auto size-4 text-muted-foreground opacity-40 group-hover/user:opacity-100 transition-opacity" />
+                            <ChevronsUpDown className="ml-auto size-4 text-muted-foreground opacity-40 group-hover/user:opacity-100 transition-opacity group-data-[collapsible=icon]:hidden" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent

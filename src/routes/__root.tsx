@@ -5,6 +5,7 @@ import { QueryClientProvider, type QueryClient } from '@tanstack/react-query'
 
 
 import appCss from '../styles.css?url'
+import '../styles.css'
 import { ThemeProvider } from '@/lib/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { GlobalProgressBar } from '@/components/web/global-progress-bar'
