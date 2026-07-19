@@ -3,17 +3,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { getInterviewAnswersList, interviewEvaluate } from "@/lib/server-function";
+import { getInterviewAnswersList, getInterviewSessionInfo, interviewEvaluate } from "@/lib/server-function";
 import { NoEvaluation } from "./no-evaluation";
 import { TotalScoreCard } from "./total-score-card";
 import { EvaluationDialog } from "./evaluation-dialog";
 import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { cn } from "@/lib/utils";
+import { SessionTimeline } from "./session-timeline";
 
 export const interviewAnswerQueryOptions = (email: string, job_id: string) => queryOptions({
     queryKey: ['candidates', email, job_id],
     queryFn: () => getInterviewAnswersList({ data: { candidate: email, job_id: job_id } })
+})
+
+export const interviewSessionInfoQueryOptions = (email: string, session_id: string) => queryOptions({
+    queryKey: ['interviewSession', email, session_id],
+    queryFn: () => getInterviewSessionInfo({ data: { user_id: email, app: "app", session_id: session_id } })
 })
 
 export function AnswerOutcome({ email, id, interview_evaluation }: { email: string, id: string, interview_evaluation: string }) {
@@ -25,7 +31,7 @@ export function AnswerOutcome({ email, id, interview_evaluation }: { email: stri
     if (answers.data.length === 0) {
         return <NoEvaluation />;
     }
-
+    const { data: sessions } = useSuspenseQuery(interviewSessionInfoQueryOptions(email, answers.data[0].session_id))
     const confirmEvaluation = async (data: { verdict: string, feedback: string }) => {
         startTransition(async () => {
             try {
@@ -64,7 +70,8 @@ export function AnswerOutcome({ email, id, interview_evaluation }: { email: stri
                 </div>
                 <EvaluationDialog confirmEvaluation={confirmEvaluation} isPending={isPending} open={open} setOpen={setOpen} evaluation={evaluation} />
             </div>
-
+            {/* Session IFO */}
+            <SessionTimeline session={sessions} />
             <div className="space-y-10">
                 {answers.data.map((data, index) => (
                     <div key={index} className="grid grid-cols-1 lg:grid-cols-4 gap-8">

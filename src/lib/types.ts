@@ -141,7 +141,7 @@ export interface EvaluationData {
     answer_evaluation: boolean;
     voice_evaluation: boolean;
     text_evaluation: boolean;
-
+    session_id: string;
     ai_verdict?: string;
     domain?: string;
     reasoning?: string;
@@ -321,4 +321,110 @@ export interface InterviewConfig {
 export interface ConfigApiResponse {
     message: string;
     data: InterviewConfig;
+}
+
+export interface InterviewSessionInfo {
+    session_id: string;
+    app: string;
+    user_id: string
+}
+
+export interface ADKResponse {
+    id: string;
+    appName: string;
+    userId: string;
+    state: SessionState;
+    events: ADKEvent[];
+    lastUpdateTime: number;
+}
+
+export interface SessionState {
+    total_prompt_tokens: number;
+    total_candidates_tokens: number;
+    total_tokens_consumed: number;
+    user_name?: string;
+    job_id?: string;
+    user_self_info?: string;
+    questions?: string[];
+    current_question_index: number;
+    token_usage_saved_to_firestore?: boolean;
+}
+
+export interface ADKEvent {
+    id: string;
+    timestamp: number;
+    author: 'user' | 'virtual_interviewer' | string;
+    invocationId: string;
+    nodeInfo: NodeInfo;
+    customMetadata: CustomMetadata;
+    content: Content;
+    actions: Actions;
+    usageMetadata?: UsageMetadata; // Optional because user inputs do not contain usage metrics
+}
+
+export interface NodeInfo {
+    path: string;
+}
+
+export interface CustomMetadata {
+    candidate_email?: string;
+    [key: string]: any;
+}
+
+export interface Content {
+    parts: Part[];
+    role: 'user' | 'model' | string;
+}
+
+
+export interface Part {
+    text?: string;
+    thoughtSignature?: string;
+    functionCall?: FunctionCall;
+    functionResponse?: FunctionResponse;
+}
+
+export interface FunctionCall {
+    id: string;
+    name: 'save_name' | 'save_job_id' | 'tellme_about_yupurself' | 'submit_answer' | string;
+    args: {
+        name?: string;
+        job_id?: string;
+        userselfinfo?: string;
+        answer?: string;
+        [key: string]: any;
+    };
+}
+
+export interface FunctionResponse {
+    id: string;
+    name: 'save_name' | 'save_job_id' | 'tellme_about_yupurself' | 'submit_answer' | string;
+    response: {
+        result: string;
+        [key: string]: any;
+    };
+}
+
+export interface Actions {
+    stateDelta: Partial<SessionState> & Record<string, any>;
+    artifactDelta: Record<string, any>;
+    requestedAuthConfigs: Record<string, any>;
+    requestedToolConfirmations: Record<string, any>;
+}
+
+export interface UsageMetadata {
+    candidatesTokenCount: number;
+    candidatesTokensDetails: TokenDetail[];
+    promptTokenCount: number;
+    promptTokensDetails: TokenDetail[];
+    thoughtsTokenCount?: number;
+    totalTokenCount: number;
+    trafficType: 'ON_DEMAND' | string;
+    cacheTokensDetails?: TokenDetail[];
+    cachedContentTokenCount?: number;
+}
+
+export interface TokenDetail {
+    modality: 'TEXT' | 'AUDIO' | string;
+    tokenCount: number;
 }

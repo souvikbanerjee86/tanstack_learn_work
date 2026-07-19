@@ -119,5 +119,9 @@ export const API_PATH = {
     INTERVIEW_CONFIG_GET: {
         GET_BASE_URL: "https://house-keeping-api-1081651239029.us-central1.run.app",
         PATH_URL: "/api/config"
+    },
+    INTERVIEW_SESSION_INFO: {
+        GET_BASE_URL: "https://interview-agent-1081651239029.us-central1.run.app",
+        PATH_URL: "/apps/"
     }
 }

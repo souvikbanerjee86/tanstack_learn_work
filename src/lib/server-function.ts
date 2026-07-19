@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse, InterviewConfig, ConfigApiResponse } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse, InterviewConfig, ConfigApiResponse, InterviewSessionInfo, ADKResponse } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 import { OpenRouter } from "@openrouter/sdk";
@@ -845,4 +845,45 @@ export const getSiteConfig = createServerFn({ method: 'GET' })
             console.error(e)
             return { data: { interviewTime: "", linkValidity: "", questionsCount: "" } } as ConfigApiResponse
         }
+    })
+
+export const getInterviewSessionInfo = createServerFn({ method: 'POST' })
+    .inputValidator((data: InterviewSessionInfo) => data)
+    .handler(async ({ data }): Promise<ADKResponse> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.INTERVIEW_SESSION_INFO.GET_BASE_URL);
+        const url = API_PATH.INTERVIEW_SESSION_INFO.GET_BASE_URL + API_PATH.INTERVIEW_SESSION_INFO.PATH_URL + data.app + "/users/" + data.user_id + "/sessions/" + data.session_id;
+
+
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            return finalData as ADKResponse
+        } catch (e) {
+            return {
+                "id": "",
+                "appName": "",
+                "userId": "",
+                "state": {
+                    "total_prompt_tokens": 0,
+                    "total_candidates_tokens": 0,
+                    "total_tokens_consumed": 0,
+                    "user_name": "",
+                    "job_id": "",
+                    "user_self_info": "",
+                    "questions": [],
+                    "current_question_index": 0,
+                    "token_usage_saved_to_firestore": false
+                },
+                "events": [],
+                "lastUpdateTime": 0
+            }
+        }
+
     })
