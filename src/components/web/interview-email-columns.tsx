@@ -21,6 +21,7 @@ export const InterviewActions = ({ rowData }: { rowData: CandidateRecord }) => {
     const navigate = useNavigate()
     const extraData = {
         interview_status: rowData.interview_status,
+        feedback: rowData.feedback
     };
     return (
         <DropdownMenu>

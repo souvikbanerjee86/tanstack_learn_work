@@ -584,7 +584,7 @@ export const getJobDescription = createServerFn({ method: 'GET' })
 export const interviewEvaluate = createServerFn({ method: 'POST' })
     .middleware([isLoginMiddleware])
     .inputValidator((data: { job_id: string, candidate_email: string, verdict: string, feedback: string }) => data)
-    .handler(async ({ data }): Promise<{ "message": string }> => {
+    .handler(async ({ data }): Promise<{ "message": string, "feedback": string }> => {
 
 
         const client = await auth.getIdTokenClient(API_PATH.INTERVIEW_EVALUTE.GET_BASE_URL);
@@ -608,7 +608,7 @@ export const interviewEvaluate = createServerFn({ method: 'POST' })
             },
         });
         const returnData = await response.data;
-        return returnData as { "message": string };
+        return returnData as { "message": string, "feedback": string };
 
     })
 

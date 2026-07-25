@@ -1,8 +1,8 @@
-import { BrainCircuit, CheckCircle2, Mail, Quote, XCircle, Fingerprint, Activity, Clock, ShieldCheck, AlertCircle } from "lucide-react";
+import { BrainCircuit, CheckCircle2, Mail, Quote, XCircle, Fingerprint, Activity, Clock, ShieldCheck, AlertCircle, UserCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getInterviewAnswersList, getInterviewSessionInfo, interviewEvaluate } from "@/lib/server-function";
 import { NoEvaluation } from "./no-evaluation";
 import { TotalScoreCard } from "./total-score-card";
@@ -11,6 +11,9 @@ import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { cn } from "@/lib/utils";
 import { SessionTimeline } from "./session-timeline";
+import { interviewVoiceAnswerQueryOptions } from "./audio-outcome";
+import { movementDetectionDetailsQueryOptions } from "./movement-outcome";
+import { PDFDownloadButton } from "./pdf-download-button";
 
 export const interviewAnswerQueryOptions = (email: string, job_id: string) => queryOptions({
     queryKey: ['candidates', email, job_id],
@@ -22,7 +25,7 @@ export const interviewSessionInfoQueryOptions = (email: string, session_id: stri
     queryFn: () => getInterviewSessionInfo({ data: { user_id: email, app: "app", session_id: session_id } })
 })
 
-export function AnswerOutcome({ email, id, interview_evaluation }: { email: string, id: string, interview_evaluation: string }) {
+export function AnswerOutcome({ email, id, interview_evaluation, feedback_value }: { email: string, id: string, interview_evaluation: string, feedback_value: string }) {
     const [isPending, startTransition] = useTransition()
     const [open, setOpen] = useState(false)
     const [evaluation, setEvaluation] = useState(interview_evaluation)
@@ -32,6 +35,10 @@ export function AnswerOutcome({ email, id, interview_evaluation }: { email: stri
         return <NoEvaluation />;
     }
     const { data: sessions } = useSuspenseQuery(interviewSessionInfoQueryOptions(email, answers.data[0].session_id))
+
+    // Fetch audio and movement data for the report (non-suspense, optional data)
+    const { data: voiceAnswersData } = useQuery(interviewVoiceAnswerQueryOptions(email, id))
+    const { data: movementDataResult } = useQuery(movementDetectionDetailsQueryOptions(email, id))
     const confirmEvaluation = async (data: { verdict: string, feedback: string }) => {
         startTransition(async () => {
             try {
@@ -39,6 +46,7 @@ export function AnswerOutcome({ email, id, interview_evaluation }: { email: stri
                 toast.success("Evaluation Successful")
                 setOpen(false)
                 setEvaluation("EVALUATED")
+
             } catch (e: any) {
                 toast.error(e.message)
             }
@@ -46,14 +54,13 @@ export function AnswerOutcome({ email, id, interview_evaluation }: { email: stri
     }
 
     const currentScores = answers.data.map((data) => data.score ?? 0);
-
     return (
         <div className="space-y-12">
             <TotalScoreCard scores={currentScores} />
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 flex-wrap">
                         <Fingerprint className="w-3 h-3" />
                         Audit Ref: <span className="text-foreground">{id}</span>
                         <span className="opacity-20 px-1">•</span>
@@ -63,13 +70,50 @@ export function AnswerOutcome({ email, id, interview_evaluation }: { email: stri
                         )}>
                             {evaluation}
                         </span>
+
                     </div>
                     <h1 className="text-3xl font-black tracking-tight flex items-center gap-3">
                         Technical Response Audit
                     </h1>
+
+                    {/* Admin Evaluation Feedback Display */}
+                    {feedback_value && (
+                        <div className="mt-3 p-4 md:p-5 rounded-2xl border border-l-4 shadow-lg backdrop-blur-md transition-all duration-300 animate-in fade-in slide-in-from-top-2 bg-gradient-to-r from-card to-muted/30 border-primary/20 border-l-primary ring-1 ring-black/5 dark:ring-white/10 max-w-2xl">
+                            <div className="flex items-center justify-between gap-3 mb-2 pb-2 border-b border-border/40">
+                                <div className="flex items-center gap-2">
+                                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
+                                        <UserCheck className="w-4 h-4" />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">
+                                        Admin Evaluation Feedback
+                                    </span>
+                                </div>
+
+                            </div>
+                            <div className="relative pl-3 border-l-2 border-primary/30 mt-2">
+                                <p className="text-xs md:text-sm font-medium text-foreground/90 leading-relaxed italic">
+                                    "{feedback_value}"
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
-                <EvaluationDialog confirmEvaluation={confirmEvaluation} isPending={isPending} open={open} setOpen={setOpen} evaluation={evaluation} />
+                <div className="flex items-center gap-3">
+                    <PDFDownloadButton
+                        email={email}
+                        id={id}
+                        evaluation={evaluation}
+                        feedback={feedback_value}
+                        answers={answers.data}
+                        voiceAnswers={voiceAnswersData?.data}
+                        movementData={movementDataResult?.data}
+                    />
+                    <EvaluationDialog confirmEvaluation={confirmEvaluation} isPending={isPending} open={open} setOpen={setOpen} evaluation={evaluation} />
+                </div>
             </div>
+
+            {/* Report Modal */}
+
             {/* Session IFO */}
             <SessionTimeline session={sessions} />
             <div className="space-y-10">

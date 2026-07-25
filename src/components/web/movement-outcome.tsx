@@ -28,7 +28,7 @@ export function MovementOutCome({ email, id }: { email: string, id: string }) {
                             <Info className="w-3 h-3 mr-2" /> Movement Detect
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="right" className="w-full sm:max-w-md bg-slate-50 dark:bg-zinc-950 border-l dark:border-zinc-800 flex flex-col p-0 shadow-2xl">
+                    <SheetContent side="right" className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-l dark:border-zinc-800 flex flex-col p-0 shadow-2xl">
                         <SheetHeader className="p-6 border-b bg-white dark:bg-zinc-900 dark:border-zinc-800">
                             <SheetTitle className="text-xl font-bold flex items-center gap-2">
                                 <span className="p-2 bg-orange-100 dark:bg-orange-500/20 rounded-lg">

@@ -21,8 +21,7 @@ export const Route = createFileRoute('/dashboard/interview/$id')({
 function RouteComponent() {
     const { email, id } = Route.useLoaderData()
     const location = useLocation()
-    const { interview_status } = location.state as any;
-
+    const { interview_status, feedback } = location.state as any;
     return (
         <div className="min-h-screen bg-transparent p-4 md:p-10 lg:p-14 transition-colors">
             <div className="max-w-6xl mx-auto space-y-10">
@@ -66,7 +65,7 @@ function RouteComponent() {
                     <div className="absolute top-0 right-0 -m-20 w-64 h-64 bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
 
                     <Suspense fallback={<InterviewFeedbackSkeleton />}>
-                        <AnswerOutcome email={email} id={id} interview_evaluation={interview_status} />
+                        <AnswerOutcome email={email} id={id} interview_evaluation={interview_status} feedback_value={feedback} />
                     </Suspense>
                 </div>
 

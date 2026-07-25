@@ -50,7 +50,7 @@ export function AudioOutcome({ email, id }: { email: string, id: string }) {
                         <Info className="w-3 h-3 mr-2" /> View Audio Outcome
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-full sm:max-w-md bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-l dark:border-zinc-800 flex flex-col p-0 shadow-2xl">
+                <SheetContent side="right" className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-l dark:border-zinc-800 flex flex-col p-0 shadow-2xl">
                     <SheetHeader className="p-6 border-b dark:border-zinc-800">
                         <SheetTitle className="text-xl font-bold flex items-center gap-2">
                             <ShieldCheck className="w-5 h-5 text-primary" />

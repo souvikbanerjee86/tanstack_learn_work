@@ -122,6 +122,7 @@ export interface CandidateRecord {
     job_id: string;
     interview_status?: string;
     verdict?: string;
+    feedback?: string;
 }
 
 export interface CandidatePaginationResponse {
