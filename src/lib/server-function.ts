@@ -2,7 +2,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse, InterviewConfig, ConfigApiResponse, InterviewSessionInfo, ADKResponse } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse, InterviewConfig, ConfigApiResponse, InterviewSessionInfo, ADKResponse, MultipleCvUploadResponse } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 import { OpenRouter } from "@openrouter/sdk";
@@ -491,6 +491,24 @@ export const addCandidate = createServerFn({ method: 'POST' })
         });
         const returnData = await response.data;
         return returnData as GcsUriDetails;
+
+    })
+
+export const addMultipleCandidates = createServerFn({ method: 'POST' })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: FormData) => data)
+    .handler(async ({ data }): Promise<MultipleCvUploadResponse> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.ADD_MULTIPLE_CANDIDATES.GET_BASE_URL);
+        const url = API_PATH.ADD_MULTIPLE_CANDIDATES.GET_BASE_URL + API_PATH.ADD_MULTIPLE_CANDIDATES.PATH_URL;
+
+        const response = await client.request({
+            url: url,
+            method: 'POST',
+            data: data,
+        });
+        const returnData = await response.data;
+        return returnData as MultipleCvUploadResponse;
 
     })
 

@@ -1,15 +1,16 @@
 import { getCandidatesList } from '@/lib/server-function'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { infiniteQueryOptions, useSuspenseInfiniteQuery } from '@tanstack/react-query'
-import { Suspense, useMemo } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { DataTable } from '@/components/web/data-table'
 import { candidateColumns, CandidateActions } from "@/components/web/candidate-columns"
 import { Button } from '@/components/ui/button'
 import { AppliedCandidatesSkeleton } from '@/components/web/applied-candidates-skeleton'
-import { Plus, Users, Sparkles, Mail, Briefcase, Calendar, User, Loader2, ChevronsRight } from 'lucide-react'
+import { Plus, Users, Sparkles, Mail, Briefcase, Calendar, User, Loader2, ChevronsRight, UserPlus } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { candidate } from '@/lib/types'
 import { format } from 'date-fns'
+import { AddMultipleCandidatesDialog } from '@/components/web/add-multiple-candidates-dialog'
 
 const CANDIDATES_PAGE_SIZE = 10
 
@@ -41,6 +42,7 @@ function RouteComponent() {
 
 function CandidatesContent() {
     const { role } = Route.useRouteContext()
+    const [isAddMultipleOpen, setIsAddMultipleOpen] = useState(false)
     const {
         data,
         fetchNextPage,
@@ -81,14 +83,31 @@ function CandidatesContent() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     {role === "admin" && (
-                        <Link to='/dashboard/candidates/add' className="w-full md:w-auto">
-                            <Button className="w-full h-11 md:h-12 rounded-[1rem] md:rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white">
-                                <Plus className="h-4 w-4" />
-                                <span className="text-[11px] md:text-xs font-black uppercase tracking-widest px-2">Add Candidate</span>
+                        <>
+                            <Button
+                                onClick={() => setIsAddMultipleOpen(true)}
+                                className="w-full sm:w-auto h-11 md:h-12 rounded-[1rem] md:rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white"
+                            >
+                                <UserPlus className="h-4 w-4" />
+                                <span className="text-[11px] md:text-xs font-black uppercase tracking-widest px-2">
+                                    Add Multiple Candidates
+                                </span>
                             </Button>
-                        </Link>
+
+                            <Link to='/dashboard/candidates/add' search={{ jobId: undefined, jobName: undefined }} className="w-full sm:w-auto">
+                                <Button className="w-full h-11 md:h-12 rounded-[1rem] md:rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white">
+                                    <Plus className="h-4 w-4" />
+                                    <span className="text-[11px] md:text-xs font-black uppercase tracking-widest px-2">Add Candidate</span>
+                                </Button>
+                            </Link>
+
+                            <AddMultipleCandidatesDialog
+                                open={isAddMultipleOpen}
+                                onOpenChange={setIsAddMultipleOpen}
+                            />
+                        </>
                     )}
                 </div>
             </div>

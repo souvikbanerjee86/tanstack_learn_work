@@ -123,5 +123,9 @@ export const API_PATH = {
     INTERVIEW_SESSION_INFO: {
         GET_BASE_URL: "https://interview-agent-1081651239029.us-central1.run.app",
         PATH_URL: "/apps/"
+    },
+    ADD_MULTIPLE_CANDIDATES: {
+        GET_BASE_URL: "https://multi-cv-uploads-1081651239029.us-central1.run.app",
+        PATH_URL: "/api/v1/jobs/upload-cvs"
     }
 }

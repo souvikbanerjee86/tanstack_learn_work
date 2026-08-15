@@ -429,3 +429,14 @@ export interface TokenDetail {
     modality: 'TEXT' | 'AUDIO' | string;
     tokenCount: number;
 }
+
+export interface FailedFileDetail {
+    filename: string;
+    reason: string;
+}
+
+export interface MultipleCvUploadResponse {
+    job_id: string;
+    uploaded_files: string[];
+    failed_files: FailedFileDetail[];
+}
