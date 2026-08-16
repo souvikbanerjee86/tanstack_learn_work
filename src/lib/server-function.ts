@@ -29,6 +29,7 @@ export const getSearchProfileDetails = createServerFn({ method: 'GET' })
 
         const client = await auth.getIdTokenClient(API_PATH.RAG_SEARCH_API.GET_BASE_URL);
         const url = API_PATH.RAG_SEARCH_API.GET_BASE_URL + API_PATH.RAG_SEARCH_API.PATH_URL;
+        console.log(url)
         let postData: any = {
             "job_description": data.jobDescription,
             "years_of_experience": data.experience,

@@ -5,17 +5,23 @@ import {
     MapPin,
     Briefcase,
     Share2,
-    Download,
     TimerIcon,
     Edit,
     ChevronLeft,
     Clock,
-    FileText
+    FileText,
+    Sparkles,
+    UserPlus,
+    Compass,
+    CheckCircle2,
+    Layers,
+    Shield
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute('/dashboard/jobs/$id/')({
     component: RouteComponent,
@@ -27,97 +33,141 @@ function RouteComponent() {
 
     if (!jobInfo) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-                <div className="p-4 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
-                    <Briefcase className="h-12 w-12" />
+            <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center space-y-5 animate-in fade-in duration-500">
+                <div className="h-16 w-16 rounded-2xl bg-muted/50 border border-border/60 flex items-center justify-center text-muted-foreground shadow-sm">
+                    <Briefcase className="h-8 w-8" />
                 </div>
-                <p className="text-slate-500 font-medium tracking-tight">Job information not found.</p>
+                <div className="space-y-1.5 max-w-sm">
+                    <h2 className="text-xl font-bold text-foreground">Requisition Not Found</h2>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                        The requested job posting is no longer active in cache or was refreshed.
+                    </p>
+                </div>
                 <Link to="/dashboard/jobs">
-                    <Button variant="outline" className="rounded-xl">Return to Jobs</Button>
+                    <Button variant="outline" className="h-10 rounded-xl px-5 text-xs font-bold border-border/60">
+                        <ChevronLeft className="h-4 w-4 mr-1.5" />
+                        Return to Job Pipeline
+                    </Button>
                 </Link>
             </div>
         );
     }
 
     const job = jobInfo;
+    const isActive = job.status?.toLowerCase() === 'active' || !job.status;
 
     return (
-        <div className="relative min-h-screen w-full bg-slate-50 dark:bg-zinc-950 font-sans selection:bg-indigo-500/30 overflow-hidden p-4 md:p-10 lg:p-14 pb-20">
-            {/* Ambient Background Elements */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-fuchsia-500/10 dark:bg-fuchsia-500/5 blur-[120px] rounded-full animate-pulse [animation-delay:3s]" />
+        <div className="relative min-h-screen w-full bg-transparent font-sans selection:bg-indigo-500/30 overflow-hidden p-4 sm:p-6 md:p-10 lg:p-14 pb-24 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Ambient Background Glow Elements */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-5%] w-[450px] h-[450px] bg-violet-500/10 dark:bg-violet-500/5 blur-[100px] rounded-full animate-pulse [animation-delay:2s]" />
             </div>
 
             <div className="relative z-10 w-full max-w-6xl mx-auto space-y-8">
-                {/* Simplified Back Navigation */}
-                <div className="flex items-center justify-between">
-                    <Link to='/dashboard/jobs'>
+                {/* Top Navigation Strip */}
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <Link to="/dashboard/jobs">
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group gap-2 px-4 text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-zinc-900/50 backdrop-blur-sm rounded-full transition-all"
+                            className="group gap-2 px-3.5 h-9 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl transition-all cursor-pointer"
                         >
                             <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                            <span className="font-semibold tracking-tight">Return to Pipeline</span>
+                            <span className="font-bold text-xs uppercase tracking-wider">Back to Pipeline</span>
                         </Button>
                     </Link>
 
-                    <Link to="/dashboard/jobs/$id/edit" params={{ id: job.job_id }} state={job}>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-9 gap-2 px-4 rounded-full bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border-slate-200 dark:border-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold transition-all"
-                        >
-                            <Edit className="h-3.5 w-3.5" />
-                            Modify Listing
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-2.5">
+                        <Link to="/dashboard/discover">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-9 gap-1.5 px-3.5 rounded-xl border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md text-xs font-bold hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-500/30 transition-all cursor-pointer"
+                            >
+                                <Compass className="h-3.5 w-3.5 text-indigo-500" />
+                                <span>AI Match Profiles</span>
+                            </Button>
+                        </Link>
+
+                        <Link to="/dashboard/jobs/$id/edit" params={{ id: job.job_id }} state={job}>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-9 gap-1.5 px-3.5 rounded-xl border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md text-xs font-bold hover:bg-muted transition-all cursor-pointer"
+                            >
+                                <Edit className="h-3.5 w-3.5" />
+                                <span>Edit Requisition</span>
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
-                {/* --- HERO SECTION --- */}
-                <Card className="border-none bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-2xl shadow-indigo-500/5 dark:shadow-none rounded-[2.5rem] overflow-hidden ring-1 ring-slate-200/50 dark:ring-slate-800/50">
-                    <CardContent className="p-8 sm:p-12">
+                {/* --- HERO REQUISITION CARD --- */}
+                <Card className="rounded-[2.5rem] border border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden">
+                    <CardContent className="p-6 sm:p-10 md:p-12">
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-8">
-                            <div className="space-y-4 max-w-2xl">
-                                <div className="flex flex-wrap items-center gap-3">
-                                    <Badge variant="outline" className="h-6 bg-indigo-500/10 text-indigo-500 border-indigo-500/20 font-black text-[10px] uppercase tracking-widest px-3">
+                            <div className="space-y-4 max-w-3xl min-w-0">
+                                <div className="flex flex-wrap items-center gap-2.5">
+                                    <Badge 
+                                        variant="outline" 
+                                        className={cn(
+                                            "h-6 px-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg",
+                                            isActive 
+                                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" 
+                                                : "bg-muted text-muted-foreground border-border/60"
+                                        )}
+                                    >
+                                        <div className={cn("h-1.5 w-1.5 rounded-full mr-1.5", isActive ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground")} />
                                         {job.status || 'Active'}
                                     </Badge>
-                                    <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                                        ID: {job.job_id}
-                                    </span>
+
+                                    <Badge variant="outline" className="h-6 px-2.5 text-[10px] font-mono font-bold text-muted-foreground bg-muted/30 border-border/60">
+                                        JOB ID: {job.job_id}
+                                    </Badge>
                                 </div>
-                                <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-900 dark:text-white leading-[1.1]">
+
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-foreground leading-[1.15] break-words">
                                     {job.job_title}
                                 </h1>
-                                <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-slate-500 dark:text-slate-400">
-                                    <div className="flex items-center gap-2">
-                                        <MapPin className="h-4 w-4 text-indigo-500" />
-                                        {job.location}
+
+                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm font-medium text-muted-foreground pt-1">
+                                    <div className="flex items-start gap-1.5 max-w-full">
+                                        <MapPin className="h-4 w-4 text-indigo-500 shrink-0 mt-0.5" />
+                                        <span className="break-words whitespace-normal font-semibold text-foreground/80">{job.location}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Briefcase className="h-4 w-4 text-indigo-500" />
-                                        {job.job_type}
+                                    <div className="flex items-center gap-1.5">
+                                        <Briefcase className="h-4 w-4 text-indigo-500 shrink-0" />
+                                        <span className="font-semibold text-foreground/80">{job.job_type}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Clock className="h-4 w-4 text-indigo-500" />
-                                        Posted {format(job.created_at ? new Date(job.created_at) : new Date(), "MMM d, yyyy")}
+                                    <div className="flex items-center gap-1.5">
+                                        <Clock className="h-4 w-4 text-indigo-500 shrink-0" />
+                                        <span>Posted {format(job.created_at ? new Date(job.created_at) : new Date(), "MMM d, yyyy")}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex flex-row md:flex-col gap-3 min-w-[200px]">
-                                <Link to="/dashboard/candidates/add" search={{ jobId: job.job_id, jobName: job.job_title }}>
-                                    <Button className="w-full h-12 gap-2 text-sm font-bold rounded-2xl bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-600/20 text-white group transition-all active:scale-[0.98]">
-                                        Apply for Position
-                                        <Share2 className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                            <div className="flex flex-col sm:flex-row md:flex-col gap-3 min-w-[200px] w-full md:w-auto shrink-0">
+                                <Link 
+                                    to="/dashboard/candidates/add" 
+                                    search={{ jobId: job.job_id, jobName: job.job_title }}
+                                    className="w-full"
+                                >
+                                    <Button className="w-full h-12 gap-2 text-xs font-black uppercase tracking-wider rounded-xl bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-500/20 text-white transition-all hover:scale-[1.02] active:scale-[0.98]">
+                                        <UserPlus className="h-4 w-4" />
+                                        <span>Add Candidate</span>
                                     </Button>
                                 </Link>
-                                <Button variant="outline" className="flex-1 h-12 gap-2 text-sm font-bold rounded-2xl bg-white/50 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800 transition-all hover:bg-slate-100 dark:hover:bg-slate-800">
-                                    <Download className="h-4 w-4" />
-                                    Job Details PDF
-                                </Button>
+
+                                <Link to="/dashboard/discover" className="w-full">
+                                    <Button 
+                                        variant="outline" 
+                                        className="w-full h-12 gap-2 text-xs font-bold rounded-xl border-border/60 bg-white/60 dark:bg-zinc-900/60 hover:bg-muted transition-all"
+                                    >
+                                        <Compass className="h-4 w-4 text-indigo-500" />
+                                        <span>Discover CVs</span>
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     </CardContent>
@@ -127,31 +177,43 @@ function RouteComponent() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* LEFT COLUMN: DESCRIPTION */}
                     <div className="lg:col-span-2 space-y-8">
-                        <Card className="border-none bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-xl shadow-indigo-500/5 dark:shadow-none rounded-[2rem] overflow-hidden ring-1 ring-slate-200/50 dark:ring-slate-800/50">
-                            <CardHeader className="p-8 pb-4 border-b border-slate-100 dark:border-slate-800/50 mx-4">
+                        <Card className="rounded-[2rem] border border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden">
+                            <CardHeader className="p-6 sm:p-8 pb-4 border-b border-border/40 bg-muted/15">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                    <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 shadow-sm">
                                         <FileText className="h-5 w-5" />
                                     </div>
-                                    <CardTitle className="text-xl font-bold tracking-tight text-slate-900 dark:text-white uppercase text-[13px] opacity-70">Job Description</CardTitle>
+                                    <div>
+                                        <CardTitle className="text-lg font-black tracking-tight text-foreground">
+                                            Job Specification & Scope
+                                        </CardTitle>
+                                        <CardDescription className="text-xs text-muted-foreground font-medium">
+                                            Complete role mandate, requirements, and responsibilities
+                                        </CardDescription>
+                                    </div>
                                 </div>
                             </CardHeader>
-                            <CardContent className="p-8 pt-6">
-                                <div className="text-[16px] text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line font-medium selection:bg-indigo-200 dark:selection:bg-indigo-900/40">
+
+                            <CardContent className="p-6 sm:p-8 pt-6">
+                                <div className="text-sm sm:text-base text-foreground/90 leading-relaxed whitespace-pre-line font-normal selection:bg-indigo-500/30">
                                     {job.job_description}
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
 
-                    {/* RIGHT COLUMN: OVERVIEW */}
-                    <div className="space-y-8">
-                        <Card className="border-none bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-xl shadow-indigo-500/5 dark:shadow-none rounded-[2rem] overflow-hidden ring-1 ring-slate-200/50 dark:ring-slate-800/50 sticky top-8">
-                            <CardHeader className="p-8 pb-4">
-                                <CardTitle className="text-xl font-black tracking-tighter text-slate-900 dark:text-white">Role Metrics</CardTitle>
+                    {/* RIGHT COLUMN: REQUISITION METRICS */}
+                    <div className="space-y-6">
+                        <Card className="rounded-[2rem] border border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden sticky top-6">
+                            <CardHeader className="p-6 pb-4 border-b border-border/40 bg-muted/15">
+                                <CardTitle className="text-base font-black tracking-tight text-foreground flex items-center gap-2">
+                                    <Layers className="h-4 w-4 text-indigo-500" />
+                                    <span>Requisition Parameters</span>
+                                </CardTitle>
                             </CardHeader>
-                            <CardContent className="p-8 pt-0 space-y-8">
-                                <div className="grid gap-6">
+
+                            <CardContent className="p-6 space-y-6">
+                                <div className="grid gap-5">
                                     <MetricItem
                                         icon={MapPin}
                                         label="Primary Location"
@@ -159,43 +221,34 @@ function RouteComponent() {
                                     />
                                     <MetricItem
                                         icon={Briefcase}
-                                        label="Listing Status"
+                                        label="Employment Classification"
                                         value={job.job_type}
                                     />
                                     <MetricItem
                                         icon={TimerIcon}
-                                        label="Target Experience"
-                                        value={`${job.experience} Years Required`}
+                                        label="Experience Requirement"
+                                        value={`${job.experience} Years of Proven Track Record`}
                                     />
                                     <MetricItem
                                         icon={Calendar}
-                                        label="Listing Timeline"
-                                        value={`Available until ${job.end_date ? format(new Date(job.end_date), "PPP") : "TBD"}`}
-                                        subValue={job.start_date ? `Started on ${format(new Date(job.start_date), "PPP")}` : undefined}
+                                        label="Requisition Timeline"
+                                        value={`Active until ${job.end_date ? format(new Date(job.end_date), "MMM d, yyyy") : "Open Ongoing"}`}
+                                        subValue={job.start_date ? `Posted: ${format(new Date(job.start_date), "MMM d, yyyy")}` : undefined}
                                     />
                                 </div>
 
-                                <Separator className="bg-slate-200/50 dark:bg-slate-800/50" />
+                                <Separator className="opacity-40" />
 
-                                <div className="p-5 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 space-y-3">
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Candidate Spotlight</h4>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                                        We are actively seeking candidates with strong technical aptitude and a passion for data-driven innovation.
+                                {/* Candidate Evaluation Spotlight */}
+                                <div className="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 space-y-2">
+                                    <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                                        <Sparkles className="h-3.5 w-3.5" />
+                                        <span>Candidate Spotlight</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+                                        Evaluations for this position automatically assess candidate depth against the benchmark requirements specified above.
                                     </p>
                                 </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Help Desk Card */}
-                        <Card className="border-none bg-indigo-600 dark:bg-indigo-950/40 shadow-xl shadow-indigo-600/20 rounded-[2rem] overflow-hidden">
-                            <CardContent className="p-8">
-                                <h3 className="text-white font-black tracking-tight text-xl mb-2">Need Assistance?</h3>
-                                <p className="text-indigo-100/70 text-sm font-medium mb-6 leading-relaxed">
-                                    Have questions about the requirements or application process? Our HR team is here to help.
-                                </p>
-                                <Button variant="secondary" className="w-full h-11 rounded-xl font-bold bg-white text-indigo-600 hover:bg-indigo-50 border-none">
-                                    Contact Recruitment
-                                </Button>
                             </CardContent>
                         </Card>
                     </div>
@@ -207,14 +260,14 @@ function RouteComponent() {
 
 function MetricItem({ icon: Icon, label, value, subValue }: { icon: any, label: string, value: string, subValue?: string }) {
     return (
-        <div className="flex gap-4 group">
-            <div className="p-2.5 bg-indigo-500/10 rounded-2xl h-fit border border-indigo-500/10 group-hover:scale-110 transition-transform">
-                <Icon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+        <div className="flex gap-3.5 group min-w-0">
+            <div className="p-2.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl h-fit border border-indigo-500/20 group-hover:scale-105 transition-transform shrink-0">
+                <Icon className="h-4 w-4" />
             </div>
-            <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-0.5">{label}</p>
-                <p className="text-sm font-bold text-slate-900 dark:text-white tracking-tight leading-tight">{value}</p>
-                {subValue && <p className="text-[11px] font-medium text-slate-500/70 dark:text-slate-400/50 mt-1">{subValue}</p>}
+            <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-0.5">{label}</p>
+                <p className="text-xs sm:text-sm font-bold text-foreground tracking-tight leading-snug break-words whitespace-normal">{value}</p>
+                {subValue && <p className="text-[11px] font-medium text-muted-foreground mt-0.5 break-words whitespace-normal">{subValue}</p>}
             </div>
         </div>
     );

@@ -21,11 +21,11 @@ export const JobIdBadge = ({ jobId }: { jobId: string }) => (
 )
 
 export const JobTitleItem = ({ title }: { title: string }) => (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-2.5 max-w-[260px] min-w-0">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200/50 dark:border-indigo-800/50">
             <Briefcase className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
         </div>
-        <span className="font-bold text-sm tracking-tight">{title}</span>
+        <span className="font-bold text-sm tracking-tight break-words whitespace-normal leading-snug">{title}</span>
     </div>
 )
 
@@ -146,9 +146,9 @@ export const columns: ColumnDef<JobDetail>[] = [
         accessorKey: "location",
         header: () => <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Facility</span>,
         cell: ({ row }) => (
-            <div className="flex items-center gap-2 text-sm font-medium opacity-80">
-                <MapPin className="h-3.5 w-3.5 text-muted-foreground/50" />
-                <span className="truncate">{row.getValue("location")}</span>
+            <div className="flex items-start gap-2 text-sm font-medium opacity-80 max-w-[260px] min-w-0">
+                <MapPin className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
+                <span className="break-words whitespace-normal leading-snug">{row.getValue("location")}</span>
             </div>
         ),
     },

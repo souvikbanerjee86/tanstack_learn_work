@@ -1,7 +1,7 @@
 
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, Calendar, Mail, Eye, CheckCircle2, XCircle, Clock, Gavel } from "lucide-react"
+import { MoreHorizontal, Calendar, Mail, Eye, CheckCircle2, XCircle, Clock } from "lucide-react"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import {

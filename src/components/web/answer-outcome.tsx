@@ -1,4 +1,4 @@
-import { BrainCircuit, CheckCircle2, Mail, Quote, XCircle, Fingerprint, Activity, Clock, ShieldCheck, AlertCircle, UserCheck } from "lucide-react";
+import { BrainCircuit, CheckCircle2, Mail, Quote, XCircle, Fingerprint, Activity, Clock, ShieldCheck, UserCheck, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
@@ -31,74 +31,68 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
     const [evaluation, setEvaluation] = useState(interview_evaluation)
     const { data: answers } = useSuspenseQuery(interviewAnswerQueryOptions(email, id))
 
-    if (answers.data.length === 0) {
+    if (!answers?.data || answers.data.length === 0) {
         return <NoEvaluation />;
     }
     const { data: sessions } = useSuspenseQuery(interviewSessionInfoQueryOptions(email, answers.data[0].session_id))
 
-    // Fetch audio and movement data for the report (non-suspense, optional data)
+    // Fetch audio and movement data for the report
     const { data: voiceAnswersData } = useQuery(interviewVoiceAnswerQueryOptions(email, id))
     const { data: movementDataResult } = useQuery(movementDetectionDetailsQueryOptions(email, id))
+
     const confirmEvaluation = async (data: { verdict: string, feedback: string }) => {
         startTransition(async () => {
             try {
-                await interviewEvaluate({ data: { job_id: answers.data[0].job_id, candidate_email: answers.data[0].candidate, verdict: data.verdict, feedback: data.feedback } })
-                toast.success("Evaluation Successful")
+                await interviewEvaluate({ 
+                    data: { 
+                        job_id: answers.data[0].job_id, 
+                        candidate_email: answers.data[0].candidate, 
+                        verdict: data.verdict, 
+                        feedback: data.feedback 
+                    } 
+                })
+                toast.success("Hiring decision saved successfully")
                 setOpen(false)
                 setEvaluation("EVALUATED")
-
             } catch (e: any) {
-                toast.error(e.message)
+                toast.error(e.message || "Failed to submit evaluation")
             }
         })
     }
 
     const currentScores = answers.data.map((data) => data.score ?? 0);
+
     return (
-        <div className="space-y-12">
+        <div className="space-y-10">
+            {/* Top Score Aggregator */}
             <TotalScoreCard scores={currentScores} />
 
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 flex-wrap">
-                        <Fingerprint className="w-3 h-3" />
-                        Audit Ref: <span className="text-foreground">{id}</span>
-                        <span className="opacity-20 px-1">•</span>
-                        <span className={cn(
-                            "px-2 py-0.5 rounded-full border text-[9px]",
-                            evaluation === "PENDING" ? "bg-amber-500/5 text-amber-600 border-amber-500/10" : "bg-emerald-500/5 text-emerald-600 border-emerald-500/10"
-                        )}>
+            {/* Audit Toolbar & Decision Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 p-6 rounded-3xl bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-border/60 shadow-lg shadow-black/5">
+                <div className="space-y-1.5 min-w-0">
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground flex-wrap">
+                        <Fingerprint className="w-3.5 h-3.5 text-indigo-500" />
+                        <span>Audit Ref:</span>
+                        <span className="text-foreground font-mono font-bold">{id}</span>
+                        <span className="opacity-30">•</span>
+                        <Badge 
+                            variant="outline" 
+                            className={cn(
+                                "text-[9px] font-black uppercase tracking-wider px-2 py-0.5",
+                                evaluation === "PENDING" 
+                                    ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" 
+                                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                            )}
+                        >
                             {evaluation}
-                        </span>
-
+                        </Badge>
                     </div>
-                    <h1 className="text-3xl font-black tracking-tight flex items-center gap-3">
-                        Technical Response Audit
-                    </h1>
-
-                    {/* Admin Evaluation Feedback Display */}
-                    {feedback_value && (
-                        <div className="mt-3 p-4 md:p-5 rounded-2xl border border-l-4 shadow-lg backdrop-blur-md transition-all duration-300 animate-in fade-in slide-in-from-top-2 bg-gradient-to-r from-card to-muted/30 border-primary/20 border-l-primary ring-1 ring-black/5 dark:ring-white/10 max-w-2xl">
-                            <div className="flex items-center justify-between gap-3 mb-2 pb-2 border-b border-border/40">
-                                <div className="flex items-center gap-2">
-                                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
-                                        <UserCheck className="w-4 h-4" />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">
-                                        Admin Evaluation Feedback
-                                    </span>
-                                </div>
-
-                            </div>
-                            <div className="relative pl-3 border-l-2 border-primary/30 mt-2">
-                                <p className="text-xs md:text-sm font-medium text-foreground/90 leading-relaxed italic">
-                                    "{feedback_value}"
-                                </p>
-                            </div>
-                        </div>
-                    )}
+                    <h2 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+                        Technical Response Assessment
+                    </h2>
                 </div>
-                <div className="flex items-center gap-3">
+
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                     <PDFDownloadButton
                         email={email}
                         id={id}
@@ -108,150 +102,166 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
                         voiceAnswers={voiceAnswersData?.data}
                         movementData={movementDataResult?.data}
                     />
-                    <EvaluationDialog confirmEvaluation={confirmEvaluation} isPending={isPending} open={open} setOpen={setOpen} evaluation={evaluation} />
+                    <EvaluationDialog 
+                        confirmEvaluation={confirmEvaluation} 
+                        isPending={isPending} 
+                        open={open} 
+                        setOpen={setOpen} 
+                        evaluation={evaluation} 
+                    />
                 </div>
             </div>
 
-            {/* Report Modal */}
+            {/* Admin Evaluation Feedback Banner (if available) */}
+            {feedback_value && (
+                <div className="p-5 sm:p-6 rounded-3xl border border-l-4 shadow-xl backdrop-blur-xl bg-gradient-to-r from-indigo-500/5 via-background to-transparent border-indigo-500/20 border-l-indigo-600 space-y-2 animate-in fade-in slide-in-from-top-2">
+                    <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+                        <UserCheck className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">
+                            Official Recruiter Verdict Feedback
+                        </span>
+                    </div>
+                    <p className="text-xs sm:text-sm font-medium text-foreground/90 leading-relaxed italic pl-6 border-l border-indigo-500/30">
+                        "{feedback_value}"
+                    </p>
+                </div>
+            )}
 
-            {/* Session IFO */}
-            <SessionTimeline session={sessions} />
-            <div className="space-y-10">
-                {answers.data.map((data, index) => (
-                    <div key={index} className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                        {/* Main Content: The Evaluation Card */}
-                        <Card className="lg:col-span-3 shadow-xl border shadow-zinc-200/50 dark:shadow-none dark:border-muted-foreground/10 overflow-hidden rounded-[2rem] bg-card/50 backdrop-blur-sm">
-                            <div className="bg-zinc-900 dark:bg-zinc-900/80 p-6 md:p-8 text-white flex justify-between items-start relative overflow-hidden">
-                                {/* Decorative Gradient Overlay */}
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] pointer-events-none" />
+            {/* AI Session Telemetry Trace */}
+            {sessions && <SessionTimeline session={sessions} />}
 
-                                <div className="space-y-3 relative z-10 max-w-[80%]">
-                                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] text-zinc-400">
-                                        <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                                        Question Session {index + 1}
-                                    </div>
-                                    <h2 className="text-lg md:text-xl font-bold tracking-tight leading-snug">
-                                        {data.question}
-                                    </h2>
-                                </div>
+            {/* Detailed Question Answers List */}
+            <div className="space-y-8">
+                {answers.data.map((data, index) => {
+                    const isHighImpact = (data.score ?? 0) >= 7;
+                    return (
+                        <div key={index} className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                            {/* Main Content: Question & Answer Evaluation Card */}
+                            <Card className="lg:col-span-3 shadow-xl border border-border/60 overflow-hidden rounded-[2rem] bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl flex flex-col justify-between">
+                                {/* Question Title Header */}
+                                <div className="bg-zinc-900 text-white p-6 sm:p-8 flex justify-between items-start gap-4 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 blur-[60px] pointer-events-none" />
 
-                                {/* Score Indicator inside the Question Header */}
-                                <div className="flex flex-col items-center justify-center bg-white/5 rounded-2xl p-4 min-w-[100px] backdrop-blur-md border border-white/10 shadow-2xl relative z-10">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400/80 mb-1">Impact</span>
-                                    <span className={cn(
-                                        "text-4xl font-black tabular-nums tracking-tighter",
-                                        (data.score ?? 0) < 50 ? 'text-rose-400' : 'text-emerald-400'
-                                    )}>
-                                        {data.score ?? 0}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <CardContent className="p-0">
-                                {/* Candidate's Response Section */}
-                                <div className="p-6 md:p-8 space-y-8">
-                                    <div className="relative group/answer overflow-hidden">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-50 rounded-3xl" />
-                                        <div className="relative z-10 p-6 md:p-8 rounded-3xl border border-primary/10 shadow-inner group-hover/answer:border-primary/20 transition-all duration-500">
-                                            <div className="absolute -top-4 -right-4 w-32 h-32 bg-primary/5 blur-3xl rounded-full" />
-                                            <Quote className="absolute top-4 right-6 w-16 h-16 text-primary/5 rotate-12 transition-transform group-hover/answer:scale-110 duration-700" />
-
-                                            <div className="flex flex-col gap-4 relative z-10">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="h-px w-6 bg-primary/30" />
-                                                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-primary/60">Candidate Transcript</span>
-                                                </div>
-                                                <div className="italic text-lg md:text-2xl text-foreground font-medium leading-relaxed tracking-tight group-hover/answer:text-primary transition-colors duration-500">
-                                                    "{data.answer}"
-                                                </div>
-                                            </div>
+                                    <div className="space-y-2 relative z-10 max-w-[80%]">
+                                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                                            <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
+                                            Question Prompt {index + 1}
                                         </div>
+                                        <h3 className="text-base sm:text-lg font-bold tracking-tight leading-snug text-white">
+                                            {data.question}
+                                        </h3>
                                     </div>
 
-                                    {/* AI Reasoning Section */}
-                                    <div className="pt-6 border-t border-muted-foreground/5 space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-                                                <BrainCircuit className="w-4 h-4" /> AI Feedback Analysis
-                                            </div>
-                                            <Badge variant="outline" className="text-[9px] font-bold opacity-40">GEMINI PRO 1.5</Badge>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-                                            <p className="text-sm md:text-base leading-relaxed text-muted-foreground bg-muted/20 p-5 rounded-2xl border border-muted-foreground/5 relative overflow-hidden">
-                                                <AlertCircle className="absolute -bottom-4 -right-4 w-20 h-20 opacity-[0.03] pointer-events-none" />
-                                                {data.reasoning}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Sidebar: Candidate & Meta */}
-                        <div className="space-y-6 lg:pt-4">
-                            <Card className="shadow-lg border shadow-zinc-200/50 dark:shadow-none dark:border-muted-foreground/10 rounded-[1.5rem] overflow-hidden bg-card/30">
-                                <CardHeader className="pb-4 pt-6 bg-muted/30">
-                                    <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                                        <Fingerprint className="h-3.5 w-3.5 opacity-50" /> Identity verification
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-6 pb-6 pt-6">
-                                    <div className="flex items-center gap-4 group">
-                                        <div className="h-10 w-10 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/10 shadow-inner">
-                                            <Mail className="w-4 h-4" />
-                                        </div>
-                                        <div className="min-w-0">
-                                            <p className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1.5 tracking-widest">Candidate</p>
-                                            <p className="text-xs font-bold truncate text-foreground/80">{data.candidate}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-4">
-                                        <div className={cn(
-                                            "h-10 w-10 shrink-0 rounded-xl flex items-center justify-center border border-amber-500/10 shadow-inner",
-                                            "bg-amber-500/10 text-amber-600"
+                                    {/* Score Indicator */}
+                                    <div className="flex flex-col items-center justify-center bg-white/10 rounded-2xl p-3 sm:p-4 min-w-[80px] sm:min-w-[90px] backdrop-blur-md border border-white/10 shadow-lg relative z-10 shrink-0">
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-300 mb-0.5">Score</span>
+                                        <span className={cn(
+                                            "text-2xl sm:text-3xl font-black tabular-nums tracking-tighter",
+                                            isHighImpact ? 'text-emerald-400' : (data.score ?? 0) >= 4 ? 'text-amber-400' : 'text-rose-400'
                                         )}>
-                                            <Activity className="w-4 h-4" />
+                                            {data.score ?? 0}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <CardContent className="p-6 sm:p-8 space-y-6">
+                                    {/* Candidate's Transcript */}
+                                    <div className="relative group overflow-hidden rounded-2xl border border-indigo-500/15 bg-indigo-500/5 dark:bg-indigo-950/20 p-5 sm:p-6 space-y-3">
+                                        <Quote className="absolute top-4 right-4 w-12 h-12 text-indigo-500/10 rotate-12 pointer-events-none" />
+                                        
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-px w-6 bg-indigo-500/40" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
+                                                Candidate Response Transcript
+                                            </span>
                                         </div>
-                                        <div>
-                                            <p className="text-[9px] font-black text-muted-foreground uppercase leading-none mb-1.5 tracking-widest">Analysis Verdict</p>
-                                            <Badge variant="outline" className="text-[9px] h-5 bg-amber-500/5 border-amber-500/20 text-amber-600 font-black">
-                                                {data?.ai_verdict}
+
+                                        <p className="italic text-sm sm:text-base text-foreground font-medium leading-relaxed">
+                                            "{data.answer}"
+                                        </p>
+                                    </div>
+
+                                    {/* AI Reasoning Analysis */}
+                                    <div className="space-y-3 pt-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
+                                                <BrainCircuit className="w-4 h-4" /> AI Evaluation Reasoning
+                                            </span>
+                                            <Badge variant="outline" className="text-[9px] font-mono text-muted-foreground/60 border-border/40">
+                                                Gemini Engine
                                             </Badge>
                                         </div>
-                                    </div>
-
-                                    <Separator className="opacity-50" />
-
-                                    <div className="space-y-4 pt-2">
-                                        <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50 flex items-center gap-2">
-                                            <ShieldCheck className="h-3 w-3" /> System Diagnostics
-                                        </h4>
-                                        <div className="space-y-3">
-                                            <CheckItem label="Logic Consistency" status={data.answer_evaluation} />
-                                            <CheckItem label="Identity Match (Text)" status={data.text_evaluation} />
-                                            <CheckItem label="Voice Biometrics" status={data.voice_evaluation} />
+                                        <div className="p-4 sm:p-5 rounded-2xl bg-muted/30 border border-border/40 text-xs sm:text-sm leading-relaxed text-muted-foreground font-medium">
+                                            {data.reasoning}
                                         </div>
                                     </div>
                                 </CardContent>
-                                <div className="bg-muted/50 p-4 border-t border-muted/50 flex items-center gap-3">
-                                    <Clock className="h-3 w-3 text-muted-foreground/60" />
-                                    <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tighter">
-                                        Processed: {new Date(data?.evaluated_at).toLocaleDateString()}
-                                    </span>
-                                </div>
                             </Card>
+
+                            {/* Sidebar: Candidate & Meta Diagnostics */}
+                            <div className="space-y-6">
+                                <Card className="shadow-lg border border-border/60 rounded-3xl overflow-hidden bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl">
+                                    <CardHeader className="pb-3 pt-5 px-5 bg-muted/20 border-b border-border/40">
+                                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                                            <ShieldCheck className="h-4 w-4 text-indigo-500" /> Integrity Verification
+                                        </CardTitle>
+                                    </CardHeader>
+                                    
+                                    <CardContent className="p-5 space-y-5">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-9 w-9 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20 shrink-0">
+                                                <Mail className="w-4 h-4" />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-wider">Candidate</p>
+                                                <p className="text-xs font-bold truncate text-foreground">{data.candidate}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20 shrink-0">
+                                                <Activity className="w-4 h-4" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-wider">Analysis Verdict</p>
+                                                <Badge variant="outline" className="text-[10px] font-black uppercase mt-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20">
+                                                    {data?.ai_verdict || "Evaluated"}
+                                                </Badge>
+                                            </div>
+                                        </div>
+
+                                        <Separator className="opacity-40" />
+
+                                        {/* Diagnostics checklist */}
+                                        <div className="space-y-3 pt-1">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/70 flex items-center gap-1.5">
+                                                <Sparkles className="h-3 w-3 text-indigo-500" /> Automated Telemetry
+                                            </span>
+                                            <div className="space-y-2.5">
+                                                <CheckItem label="Logic Consistency" status={data.answer_evaluation} />
+                                                <CheckItem label="Identity Match" status={data.text_evaluation} />
+                                                <CheckItem label="Voice Biometrics" status={data.voice_evaluation} />
+                                            </div>
+                                        </div>
+                                    </CardContent>
+
+                                    <div className="bg-muted/30 px-5 py-3 border-t border-border/40 flex items-center gap-2 text-[10px] font-bold text-muted-foreground font-mono">
+                                        <Clock className="h-3 w-3 opacity-60" />
+                                        <span>Processed: {new Date(data?.evaluated_at).toLocaleDateString()}</span>
+                                    </div>
+                                </Card>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    )
+                })}
             </div>
         </div>
     )
 }
 
 const CheckItem = ({ label, status }: { label: string; status: boolean }) => (
-    <div className="flex items-center justify-between group">
-        <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground group-hover:text-foreground transition-colors">{label}</span>
+    <div className="flex items-center justify-between group text-xs font-semibold">
+        <span className="text-muted-foreground group-hover:text-foreground transition-colors">{label}</span>
         <div className={cn(
             "p-1 rounded-full",
             status ? "bg-emerald-500/10" : "bg-rose-500/10"

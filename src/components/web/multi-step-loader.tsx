@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { Loader2, Sparkles } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
-import { cn } from "@/lib/utils"
 
 const loadingStatuses = [
     "Analyzing dataset...",

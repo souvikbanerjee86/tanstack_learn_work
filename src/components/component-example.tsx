@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,9 +11,7 @@ import { auth } from "@/lib/firebase"
 import { Link } from "@tanstack/react-router"
 import { onAuthStateChanged, User } from "firebase/auth"
 import {
-  BotIcon,
   BriefcaseIcon,
-  UserCheck2Icon,
   MailIcon,
   LineChartIcon,
   UserIcon,
@@ -23,9 +20,11 @@ import {
   ClockIcon,
   SparklesIcon,
   BuildingIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  Compass
 } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { cn } from "@/lib/utils"
 
 // Reusable GlowCard wrapper — tracks mouse position and applies CSS custom properties
 function GlowCard({
@@ -53,7 +52,11 @@ function GlowCard({
     <div
       ref={ref}
       onMouseMove={handleMouseMove}
-      className={`glow-card ${variant === "sm" ? "glow-card-sm" : ""} ${className}`}
+      className={cn(
+        "glow-card transition-all duration-300",
+        variant === "sm" ? "glow-card-sm" : "",
+        className
+      )}
     >
       {children}
     </div>
@@ -62,207 +65,328 @@ function GlowCard({
 
 export function ComponentExample() {
   const [user, setUser] = useState<User | null>(null)
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
     return () => unsubscribe();
   }, []);
-  return (
-    <div className="w-full min-h-screen text-slate-900 dark:text-slate-50 py-16 px-4 sm:px-6 lg:px-8 font-sans selection:bg-indigo-500/30 relative">
 
-      {/* Hero Section */}
-      <section className="max-w-5xl mx-auto text-center space-y-10 mb-24 relative">
+  return (
+    <div className="w-full min-h-screen text-foreground py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 font-sans selection:bg-indigo-500/30 relative overflow-hidden">
+      {/* --- Ambient Background Glows --- */}
+      <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] md:w-[1000px] h-[500px] bg-gradient-to-tr from-indigo-500/15 via-violet-500/10 to-fuchsia-500/10 dark:from-indigo-500/10 dark:via-violet-500/5 dark:to-fuchsia-500/5 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute top-[40%] right-[-10%] w-[500px] h-[500px] bg-violet-500/10 dark:bg-violet-500/5 blur-[100px] rounded-full animate-pulse [animation-delay:2s]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[450px] h-[450px] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[100px] rounded-full animate-pulse [animation-delay:4s]" />
+      </div>
+
+      {/* --- Hero Section --- */}
+      <section className="max-w-5xl mx-auto text-center space-y-8 sm:space-y-10 mb-20 md:mb-32 relative">
         <div className="flex justify-center">
-          <Badge variant="outline" className="px-5 py-2 text-xs font-bold uppercase tracking-widest rounded-full border-indigo-200/50 dark:border-indigo-800/30 text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-indigo-950/20 backdrop-blur-md shadow-sm gap-2 transition-all hover:border-indigo-400">
-            <SparklesIcon className="w-3.5 h-3.5" /> Revolutionizing Hiring
+          <Badge
+            variant="outline"
+            className="px-4 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black uppercase tracking-widest rounded-full border-indigo-500/20 text-indigo-600 dark:text-indigo-400 bg-indigo-500/5 dark:bg-indigo-950/30 backdrop-blur-md shadow-sm gap-2 transition-all hover:border-indigo-500/40 hover:scale-105"
+          >
+            <SparklesIcon className="w-3.5 h-3.5" /> Next-Gen Autonomous Hiring Engine
           </Badge>
         </div>
 
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9]">
+        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-foreground leading-[1.05] sm:leading-[0.95]">
           The Future of<br />
-          <span className="bg-clip-text text-transparent bg-linear-to-r from-indigo-600 via-violet-600 to-fuchsia-600 animate-gradient-x">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 dark:from-indigo-400 dark:via-violet-400 dark:to-fuchsia-400">
             Intelligent Hiring
           </span>
         </h1>
 
-        <p className="text-xl md:text-2xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
-          Empowering organizations with seamless, AI-driven interviews and automated onboarding experiences.
+        <p className="text-base sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-medium">
+          Empowering modern enterprises with autonomous semantic candidate discovery, adaptive AI video interviews, and objective evaluation rubrics.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-6 pt-4">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2 max-w-md sm:max-w-none mx-auto">
           {!user ? (
-            <Link to="/login">
-              <Button size="lg" className="h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-10 text-base font-semibold shadow-xl shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                Get Started
-                <ArrowRightIcon className="w-5 h-5 ml-2" />
+            <Link to="/login" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto h-13 sm:h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-8 sm:px-10 text-sm sm:text-base font-bold shadow-xl shadow-indigo-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Get Started Free</span>
+                <ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Button>
             </Link>
           ) : (
-            <Link to="/dashboard">
-              <Button size="lg" className="h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-10 text-base font-semibold shadow-xl shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                Go to Dashboard
-                <ArrowRightIcon className="w-5 h-5 ml-2" />
+            <Link to="/dashboard" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto h-13 sm:h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl px-8 sm:px-10 text-sm sm:text-base font-bold shadow-xl shadow-indigo-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Go to Workspace</span>
+                <ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Button>
             </Link>
           )}
 
-          <Button size="lg" variant="outline" className="h-14 rounded-2xl px-10 text-base font-semibold border-slate-200/60 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all">
-            Watch Demo
-          </Button>
+          <Link to="/dashboard" className="w-full sm:w-auto">
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto h-13 sm:h-14 rounded-2xl px-8 sm:px-10 text-sm sm:text-base font-bold border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md hover:bg-muted/70 transition-all shadow-sm"
+            >
+              Explore Platform
+            </Button>
+          </Link>
+        </div>
+
+        {/* Quick Highlights Strip */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 max-w-4xl mx-auto">
+          <div className="p-4 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-border/60 flex flex-col items-center justify-center text-center">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">99.4%</span>
+            <span className="text-[11px] text-muted-foreground font-semibold">Semantic Match Score</span>
+          </div>
+          <div className="p-4 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-border/60 flex flex-col items-center justify-center text-center">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">10x</span>
+            <span className="text-[11px] text-muted-foreground font-semibold">Faster Screening</span>
+          </div>
+          <div className="p-4 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-border/60 flex flex-col items-center justify-center text-center">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">24/7</span>
+            <span className="text-[11px] text-muted-foreground font-semibold">Adaptive Sessions</span>
+          </div>
+          <div className="p-4 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-border/60 flex flex-col items-center justify-center text-center">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">Zero Bias</span>
+            <span className="text-[11px] text-muted-foreground font-semibold">Objective Rubrics</span>
+          </div>
         </div>
       </section>
 
-      {/* Main Content Grid */}
-      <section className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 relative z-10">
-
-        {/* Admin / HR View */}
-        <div className="space-y-10">
+      {/* --- Main Dual-View Showcase --- */}
+      <section className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 relative z-10 mb-24">
+        {/* Enterprise & Hiring Teams Column */}
+        <div className="space-y-8">
           <div className="flex items-center gap-4 group cursor-default">
-            <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl ring-1 ring-indigo-200/50 dark:ring-indigo-800/30 group-hover:scale-105 transition-transform duration-500">
-              <BuildingIcon className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
+            <div className="p-3.5 sm:p-4 bg-indigo-500/10 dark:bg-indigo-500/15 rounded-2xl border border-indigo-500/20 shadow-sm text-indigo-600 dark:text-indigo-400 group-hover:scale-105 transition-transform duration-300">
+              <BuildingIcon className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
-            <div className="space-y-1">
-              <h2 className="text-4xl font-black tracking-tighter">Enterprises</h2>
-              <p className="text-sm font-semibold text-indigo-600/70 dark:text-indigo-400/70 uppercase tracking-widest">Efficiency at Scale</p>
+            <div className="space-y-0.5">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">For Enterprises</h2>
+              <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">End-to-End Orchestration</p>
             </div>
           </div>
 
-          <div className="grid gap-6">
+          <div className="grid gap-5">
             <GlowCard>
-              <Card className="glass-card group rounded-3xl overflow-hidden">
-                <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                  <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 rounded-xl text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-500">
+              <Card className="rounded-[2rem] border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden transition-all duration-300 hover:border-indigo-500/30">
+                <CardHeader className="flex flex-row items-center gap-4 pb-2 p-6">
+                  <div className="p-2.5 bg-blue-500/10 rounded-xl text-blue-600 dark:text-blue-400 shrink-0">
                     <BriefcaseIcon className="w-5 h-5" />
                   </div>
-                  <CardTitle className="text-xl font-bold tracking-tight">Add & Manage Jobs</CardTitle>
+                  <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
+                    Job Requisitions & Pipeline
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
-                    Create comprehensive job postings instantly. Define experience levels, required skills, and location preferences with our intuitive job builder.
+                <CardContent className="p-6 pt-0">
+                  <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                    Create comprehensive job profiles instantly. Define experience brackets, core skills, location protocols, and evaluation rubrics with intuitive ease.
                   </CardDescription>
                 </CardContent>
               </Card>
             </GlowCard>
 
             <GlowCard>
-              <Card className="glass-card group rounded-3xl overflow-hidden">
-                <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                  <div className="p-2.5 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-xl text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-500">
-                    <UserCheck2Icon className="w-5 h-5" />
+              <Card className="rounded-[2rem] border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden transition-all duration-300 hover:border-indigo-500/30">
+                <CardHeader className="flex flex-row items-center gap-4 pb-2 p-6">
+                  <div className="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-600 dark:text-indigo-400 shrink-0">
+                    <Compass className="w-5 h-5" />
                   </div>
-                  <CardTitle className="text-xl font-bold tracking-tight">Semantic Search</CardTitle>
+                  <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
+                    Semantic AI Talent Discovery
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
-                    Surface highly relevant candidates based on advanced matching logic. Our semantic engine understands the context behind varying job titles.
+                <CardContent className="p-6 pt-0">
+                  <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                    Surface elite candidates using intelligent vector matching. Contextual RAG matching evaluates depth beyond mere resume keywords.
                   </CardDescription>
                 </CardContent>
               </Card>
             </GlowCard>
 
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="grid sm:grid-cols-2 gap-5">
               <GlowCard variant="sm">
-                <Card className="glass-card group rounded-2xl overflow-hidden">
-                  <CardHeader className="pb-3">
-                    <MailIcon className="w-5 h-5 text-violet-500 mb-2 group-hover:scale-110 transition-transform duration-500" />
-                    <CardTitle className="text-lg font-bold">Smart Invitations</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-[13px]">Dispatch AI interview links to short-listed talent with one click. Automated and secure.</CardDescription>
-                  </CardContent>
+                <Card className="rounded-2xl border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-lg shadow-black/5 overflow-hidden p-5 space-y-2 hover:border-violet-500/30">
+                  <div className="flex items-center gap-2 text-violet-600 dark:text-violet-400">
+                    <MailIcon className="w-4 h-4" />
+                    <CardTitle className="text-base font-bold">Magic Invitations</CardTitle>
+                  </div>
+                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                    Dispatch time-limited token links to shortlisted candidates with one click. Automated and secure.
+                  </CardDescription>
                 </Card>
               </GlowCard>
 
               <GlowCard variant="sm">
-                <Card className="glass-card group rounded-2xl overflow-hidden">
-                  <CardHeader className="pb-3">
-                    <LineChartIcon className="w-5 h-5 text-emerald-500 mb-2 group-hover:scale-110 transition-transform duration-500" />
-                    <CardTitle className="text-lg font-bold">Live Progress</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-[13px]">Real-time dashboards to monitor candidate performance and AI-generated scores.</CardDescription>
-                  </CardContent>
+                <Card className="rounded-2xl border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-lg shadow-black/5 overflow-hidden p-5 space-y-2 hover:border-emerald-500/30">
+                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                    <LineChartIcon className="w-4 h-4" />
+                    <CardTitle className="text-base font-bold">Instant Analytics</CardTitle>
+                  </div>
+                  <CardDescription className="text-xs text-muted-foreground leading-relaxed">
+                    Review automated speech analysis, response fidelity scoring, and downloadable PDF evaluation reports.
+                  </CardDescription>
                 </Card>
               </GlowCard>
             </div>
           </div>
         </div>
 
-        {/* Candidate View */}
-        <div className="space-y-10">
+        {/* Candidate Experience Column */}
+        <div className="space-y-8">
           <div className="flex items-center gap-4 group cursor-default">
-            <div className="p-4 bg-fuchsia-50 dark:bg-fuchsia-900/20 rounded-2xl ring-1 ring-fuchsia-200/50 dark:ring-fuchsia-800/30 group-hover:scale-105 transition-transform duration-500">
-              <UserIcon className="w-7 h-7 text-fuchsia-600 dark:text-fuchsia-400" />
+            <div className="p-3.5 sm:p-4 bg-fuchsia-500/10 dark:bg-fuchsia-500/15 rounded-2xl border border-fuchsia-500/20 shadow-sm text-fuchsia-600 dark:text-fuchsia-400 group-hover:scale-105 transition-transform duration-300">
+              <UserIcon className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
-            <div className="space-y-1 text-left">
-              <h2 className="text-4xl font-black tracking-tighter">Candidates</h2>
-              <p className="text-sm font-semibold text-fuchsia-600/70 dark:text-fuchsia-400/70 uppercase tracking-widest">Your Moment to Shine</p>
+            <div className="space-y-0.5 text-left">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">For Candidates</h2>
+              <p className="text-xs font-bold text-fuchsia-600 dark:text-fuchsia-400 uppercase tracking-widest">Seamless Assessment</p>
             </div>
           </div>
 
-          <div className="grid gap-6">
-            <GlowCard className="lg:translate-y-4">
-              <Card className="glass-card group rounded-3xl overflow-hidden">
-                <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                  <div className="p-2.5 bg-fuchsia-500/10 dark:bg-fuchsia-500/20 rounded-xl text-fuchsia-600 dark:text-fuchsia-400 group-hover:scale-110 transition-transform duration-500">
+          <div className="grid gap-5">
+            <GlowCard>
+              <Card className="rounded-[2rem] border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden transition-all duration-300 hover:border-fuchsia-500/30">
+                <CardHeader className="flex flex-row items-center gap-4 pb-2 p-6">
+                  <div className="p-2.5 bg-fuchsia-500/10 rounded-xl text-fuchsia-600 dark:text-fuchsia-400 shrink-0">
                     <LogInIcon className="w-5 h-5" />
                   </div>
-                  <CardTitle className="text-xl font-bold tracking-tight">Seamless Login</CardTitle>
+                  <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
+                    Zero-Friction Access
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
-                    Access your dedicated interview portal with zero friction. Connect via email magic links or one-click authentication.
+                <CardContent className="p-6 pt-0">
+                  <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                    Access your personalized interview session instantly via secure magic link or authenticated access without complex onboarding hurdles.
                   </CardDescription>
                 </CardContent>
               </Card>
             </GlowCard>
 
             <GlowCard>
-              <Card className="glass-card group rounded-3xl overflow-hidden relative">
-                <div className="absolute right-[-20px] top-[-20px] opacity-10 w-40 h-40 pointer-events-none group-hover:rotate-12 group-hover:opacity-20 transition-all duration-700">
-                  <BotIcon className="w-full h-full text-purple-600" />
-                </div>
-                <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                  <div className="p-2.5 bg-purple-500/10 dark:bg-purple-500/20 rounded-xl text-purple-600 dark:text-purple-400 relative z-10 group-hover:scale-110 transition-transform duration-500">
+              <Card className="rounded-[2rem] border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden transition-all duration-300 hover:border-purple-500/30 relative">
+                <CardHeader className="flex flex-row items-center gap-4 pb-2 p-6">
+                  <div className="p-2.5 bg-purple-500/10 rounded-xl text-purple-600 dark:text-purple-400 shrink-0">
                     <CpuIcon className="w-5 h-5" />
                   </div>
-                  <CardTitle className="text-xl font-bold tracking-tight relative z-10">Next-Gen AI Agent</CardTitle>
+                  <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
+                    Conversational AI Evaluator
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="relative z-10">
-                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed font-medium">
-                    Experience a conversational interview with our cutting-edge AI. It listens, adapts, and evaluates your skills in real-time.
+                <CardContent className="p-6 pt-0">
+                  <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                    Experience structured, interactive voice & video interview sessions with an AI agent that adapts questions in real-time to your answers.
                   </CardDescription>
                 </CardContent>
               </Card>
             </GlowCard>
 
-            <GlowCard className="lg:-translate-y-4">
-              <Card className="glass-card group rounded-3xl overflow-hidden">
-                <CardHeader className="flex flex-row items-center gap-5 pb-3">
-                  <div className="p-2.5 bg-pink-500/10 dark:bg-pink-500/20 rounded-xl text-pink-600 dark:text-pink-400 group-hover:scale-110 transition-transform duration-500">
+            <GlowCard>
+              <Card className="rounded-[2rem] border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden transition-all duration-300 hover:border-pink-500/30">
+                <CardHeader className="flex flex-row items-center gap-4 pb-2 p-6">
+                  <div className="p-2.5 bg-pink-500/10 rounded-xl text-pink-600 dark:text-pink-400 shrink-0">
                     <ClockIcon className="w-5 h-5" />
                   </div>
-                  <CardTitle className="text-xl font-bold tracking-tight">Interview 24/7</CardTitle>
+                  <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
+                    Interview On Your Schedule
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed">
-                    Take your interview exactly when you feel most prepared. No more scheduling conflicts or time-zone anxiety.
+                <CardContent className="p-6 pt-0">
+                  <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                    Complete your evaluation when you are at your peak readiness. Eliminate timezone friction, scheduling delays, and interview anxiety.
                   </CardDescription>
                 </CardContent>
               </Card>
             </GlowCard>
           </div>
         </div>
-
       </section>
 
-      {/* Footer Sparkle */}
-      <div className="mt-24 pb-12 flex justify-center opacity-50">
-        <div className="flex items-center gap-2 text-sm font-medium">
-          Powered by next-gen Artificial Intelligence
-          <BotIcon className="w-4 h-4" />
+      {/* --- Interactive 3-Step Flow --- */}
+      <section className="max-w-5xl mx-auto mb-24 space-y-10">
+        <div className="text-center space-y-2">
+          <Badge variant="outline" className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-500/5 border-indigo-500/20">
+            Workflow Architecture
+          </Badge>
+          <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-foreground">
+            How The Intelligence Engine Works
+          </h2>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-6 rounded-3xl bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl border border-border/60 space-y-3">
+            <div className="h-10 w-10 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-sm">
+              01
+            </div>
+            <h3 className="text-base font-bold text-foreground">Ingest & Vectorize</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Archive bank ingests candidate resumes from cloud storage and automatically chunks, indexes, and vectorizes content.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-3xl bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl border border-border/60 space-y-3">
+            <div className="h-10 w-10 rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center font-black text-sm">
+              02
+            </div>
+            <h3 className="text-base font-bold text-foreground">Match & Align</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Semantic AI evaluates job criteria against candidate CVs, producing ranked match scores, alignment points, and clarification notes.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-3xl bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl border border-border/60 space-y-3">
+            <div className="h-10 w-10 rounded-2xl bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 flex items-center justify-center font-black text-sm">
+              03
+            </div>
+            <h3 className="text-base font-bold text-foreground">Assess & Score</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Automated AI sessions conduct technical interviews, providing synthesized audio timelines, transcripts, and decision reports.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* --- Footer CTA & Status --- */}
+      <section className="max-w-4xl mx-auto rounded-[2.5rem] bg-gradient-to-br from-indigo-600 to-violet-700 text-white p-8 sm:p-12 text-center space-y-6 shadow-2xl shadow-indigo-500/20 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 space-y-3 max-w-xl mx-auto">
+          <h2 className="text-2xl sm:text-4xl font-black tracking-tight">
+            Ready to Modernize Your Hiring Pipeline?
+          </h2>
+          <p className="text-xs sm:text-sm text-indigo-100 font-medium leading-relaxed">
+            Experience the next era of autonomous talent acquisition with streamlined workflows and transparent assessment rubrics.
+          </p>
+        </div>
+
+        <div className="relative z-10 flex justify-center gap-4 pt-2">
+          <Link to={user ? "/dashboard" : "/login"}>
+            <Button
+              size="lg"
+              className="h-12 sm:h-13 bg-white text-indigo-700 hover:bg-white/90 rounded-2xl px-8 font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105"
+            >
+              <span>{user ? "Open Dashboard" : "Get Started Now"}</span>
+              <ArrowRightIcon className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* --- Footer Signature --- */}
+      <div className="mt-16 sm:mt-24 pb-8 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-6xl mx-auto border-t border-border/40 pt-8 text-xs text-muted-foreground font-medium">
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Talent Engine Core Operational</span>
+        </div>
+        <p className="text-center sm:text-right">
+          © {new Date().getFullYear()} Intelligent Hiring Protocol. All rights reserved.
+        </p>
       </div>
     </div>
   )

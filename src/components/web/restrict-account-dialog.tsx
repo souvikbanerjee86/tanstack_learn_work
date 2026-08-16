@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Lock, Unlock, Loader2, ShieldCheck } from "lucide-react"
+import { Lock, Unlock, Loader2 } from "lucide-react"
 import {
     AlertDialog,
     AlertDialogAction,
