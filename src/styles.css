@@ -180,10 +180,6 @@ code {
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-background/40 backdrop-blur-2xl border border-border/10 shadow-2xl;
-  }
-  
   .glass-morphism {
     @apply bg-background/60 backdrop-blur-xl border border-border/5 shadow-xl transition-all duration-300;
   }

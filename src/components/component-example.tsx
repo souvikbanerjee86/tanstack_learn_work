@@ -77,9 +77,9 @@ export function ComponentExample() {
     <div className="w-full min-h-screen text-foreground py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 font-sans selection:bg-indigo-500/30 relative overflow-hidden">
       {/* --- Ambient Background Glows --- */}
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] md:w-[1000px] h-[500px] bg-gradient-to-tr from-indigo-500/15 via-violet-500/10 to-fuchsia-500/10 dark:from-indigo-500/10 dark:via-violet-500/5 dark:to-fuchsia-500/5 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute top-[40%] right-[-10%] w-[500px] h-[500px] bg-violet-500/10 dark:bg-violet-500/5 blur-[100px] rounded-full animate-pulse [animation-delay:2s]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[450px] h-[450px] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[100px] rounded-full animate-pulse [animation-delay:4s]" />
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-175 md:w-250 h-125 bg-linear-to-tr from-indigo-500/15 via-violet-500/10 to-fuchsia-500/10 dark:from-indigo-500/10 dark:via-violet-500/5 dark:to-fuchsia-500/5 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute top-[40%] right-[-10%] w-125 h-125 bg-violet-500/10 dark:bg-violet-500/5 blur-[100px] rounded-full animate-pulse [animation-delay:2s]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-112.5 h-112.5 bg-indigo-500/10 dark:bg-indigo-500/5 blur-[100px] rounded-full animate-pulse [animation-delay:4s]" />
       </div>
 
       {/* --- Hero Section --- */}
@@ -95,7 +95,7 @@ export function ComponentExample() {
 
         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-foreground leading-[1.05] sm:leading-[0.95]">
           The Future of<br />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 dark:from-indigo-400 dark:via-violet-400 dark:to-fuchsia-400">
+          <span className="bg-clip-text text-transparent bg-linear-to-r from-indigo-600 via-violet-600 to-fuchsia-600 dark:from-indigo-400 dark:via-violet-400 dark:to-fuchsia-400">
             Intelligent Hiring
           </span>
         </h1>
@@ -354,7 +354,7 @@ export function ComponentExample() {
       </section>
 
       {/* --- Footer CTA & Status --- */}
-      <section className="max-w-4xl mx-auto rounded-[2.5rem] bg-gradient-to-br from-indigo-600 to-violet-700 text-white p-8 sm:p-12 text-center space-y-6 shadow-2xl shadow-indigo-500/20 relative overflow-hidden">
+      <section className="max-w-4xl mx-auto rounded-[2.5rem] bg-linear-to-br from-indigo-600 to-violet-700 text-white p-8 sm:p-12 text-center space-y-6 shadow-2xl shadow-indigo-500/20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-3 max-w-xl mx-auto">
           <h2 className="text-2xl sm:text-4xl font-black tracking-tight">

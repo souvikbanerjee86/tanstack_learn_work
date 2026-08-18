@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { infiniteQueryOptions, useSuspenseInfiniteQuery } from '@tanstack/react-query'
 import { Suspense, useMemo, useState } from 'react'
 
-import { columns, JobIdBadge, JobTitleItem, JobStatusBadge, JobTypeBadge, JobActionsMenu } from "@/components/web/columns"
+import { columns, JobIdBadge, JobTitleItem, JobStatusBadge, JobTypeBadge, JobActionsMenu, FacilityLocationItem } from "@/components/web/columns"
 import { DataTable } from "@/components/web/data-table"
 import { getJobDetails } from '@/lib/server-function'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,6 @@ import {
   Briefcase, 
   Plus, 
   Sparkles, 
-  MapPin, 
   Calendar, 
   Clock, 
   Loader2, 
@@ -349,7 +348,7 @@ function JobContent() {
 const JobProtocolCard = ({ job }: { job: JobDetail }) => (
   <Card className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-xl shadow-black/5 p-6 space-y-6">
     <div className="flex items-start justify-between gap-4">
-      <JobTitleItem title={job.job_title} />
+      <JobTitleItem job={job} />
       <JobActionsMenu rowData={job} />
     </div>
 
@@ -362,10 +361,11 @@ const JobProtocolCard = ({ job }: { job: JobDetail }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-border/20">
       <div className="flex flex-col gap-1.5 min-w-0">
         <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Deployment Site</span>
-        <div className="flex items-start gap-2 text-sm font-medium opacity-80">
-          <MapPin className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
-          <span className="break-words whitespace-normal leading-snug">{job.location}</span>
-        </div>
+        <FacilityLocationItem
+          location={job.location}
+          jobTitle={job.job_title}
+          jobId={job.job_id}
+        />
       </div>
 
       <div className="flex flex-col gap-1.5 min-w-0">

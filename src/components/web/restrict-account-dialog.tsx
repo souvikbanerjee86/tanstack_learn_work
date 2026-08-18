@@ -56,7 +56,7 @@ export function RestrictAccountDialog({ open, onOpenChange, user }: RestrictAcco
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="max-w-[440px] rounded-[2.5rem] border-border/40 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-3xl shadow-2xl p-0 overflow-hidden">
+            <AlertDialogContent className="max-w-110 rounded-[2.5rem] border-border/40 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-3xl shadow-2xl p-0 overflow-hidden">
                 <div className="relative pt-10 px-8 pb-6">
                     <div className={cn(
                         "absolute top-0 right-0 w-32 h-32 blur-[60px] rounded-full pointer-events-none",
@@ -66,8 +66,8 @@ export function RestrictAccountDialog({ open, onOpenChange, user }: RestrictAcco
                     <AlertDialogHeader className="space-y-4">
                         <div className={cn(
                             "h-14 w-14 rounded-2xl flex items-center justify-center border shadow-inner group transition-colors duration-500",
-                            isActive 
-                                ? "bg-rose-500/10 border-rose-500/20" 
+                            isActive
+                                ? "bg-rose-500/10 border-rose-500/20"
                                 : "bg-emerald-500/10 border-emerald-500/20"
                         )}>
                             {isActive ? (
@@ -107,8 +107,8 @@ export function RestrictAccountDialog({ open, onOpenChange, user }: RestrictAcco
                         disabled={isRestricting}
                         className={cn(
                             "rounded-xl px-8 h-11 font-black uppercase tracking-widest text-[10px] text-white shadow-xl transition-all gap-2",
-                            isActive 
-                                ? "bg-rose-600 hover:bg-rose-700 shadow-rose-500/20" 
+                            isActive
+                                ? "bg-rose-600 hover:bg-rose-700 shadow-rose-500/20"
                                 : "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20"
                         )}
                     >

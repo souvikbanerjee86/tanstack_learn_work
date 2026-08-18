@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { JobDetail } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { useNavigate } from "@tanstack/react-router"
+import { useNavigate, Link } from "@tanstack/react-router"
+import { FacilityMapDialog } from "@/components/web/facility-map-dialog"
 
 export const JobIdBadge = ({ jobId }: { jobId: string }) => (
     <span className="font-mono text-[10px] sm:text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-md border border-muted-foreground/10 tracking-tight">
@@ -20,14 +21,36 @@ export const JobIdBadge = ({ jobId }: { jobId: string }) => (
     </span>
 )
 
-export const JobTitleItem = ({ title }: { title: string }) => (
-    <div className="flex items-center gap-2.5 max-w-[260px] min-w-0">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200/50 dark:border-indigo-800/50">
-            <Briefcase className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-        </div>
-        <span className="font-bold text-sm tracking-tight break-words whitespace-normal leading-snug">{title}</span>
-    </div>
-)
+export const JobTitleItem = ({ job }: { job: JobDetail }) => {
+    const extraData = {
+        id: job.id,
+        job_id: job.job_id,
+        job_description: job.job_description,
+        job_title: job.job_title,
+        start_date: job.start_date ? format(new Date(job.start_date), "yyyy-MM-dd") : "",
+        end_date: job.end_date ? format(new Date(job.end_date), "yyyy-MM-dd") : "",
+        location: job.location,
+        job_type: job.job_type,
+        status: job.status,
+        experience: job.experience
+    }
+
+    return (
+        <Link
+            to="/dashboard/jobs/$id"
+            params={{ id: job.job_id }}
+            state={extraData as any}
+            className="group flex items-center gap-2.5 max-w-[260px] min-w-0 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+        >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200/50 dark:border-indigo-800/50 group-hover:scale-105 group-hover:bg-indigo-600 group-hover:text-white dark:group-hover:bg-indigo-600 dark:group-hover:text-white transition-all">
+                <Briefcase className="h-4 w-4 text-indigo-600 dark:text-indigo-400 group-hover:text-white transition-colors" />
+            </div>
+            <span className="font-bold text-sm tracking-tight break-words whitespace-normal leading-snug group-hover:underline underline-offset-2">
+                {job.job_title}
+            </span>
+        </Link>
+    )
+}
 
 export const JobStatusBadge = ({ status }: { status: string }) => (
     <div className="flex items-center gap-1.5">
@@ -111,6 +134,39 @@ export const JobActionsMenu = ({ rowData }: { rowData: JobDetail }) => {
     )
 }
 
+
+export const FacilityLocationItem = ({
+    location,
+    jobTitle,
+    jobId,
+}: {
+    location: string
+    jobTitle?: string
+    jobId?: string
+}) => {
+    return (
+        <FacilityMapDialog
+            locationString={location}
+            jobTitle={jobTitle}
+            jobId={jobId}
+            trigger={
+                <div className="group/fac flex items-start gap-2 text-sm font-medium opacity-85 hover:opacity-100 max-w-[260px] min-w-0 transition-opacity">
+                    <button
+                        type="button"
+                        title="Click to view facility state map"
+                        className="p-1 -m-1 rounded-md text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 group-hover/fac:scale-110 group-hover/fac:border-emerald-500/40 transition-all shrink-0 mt-0.5"
+                    >
+                        <MapPin className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="break-words whitespace-normal leading-snug group-hover/fac:text-foreground transition-colors">
+                        {location}
+                    </span>
+                </div>
+            }
+        />
+    )
+}
+
 export const columns: ColumnDef<JobDetail>[] = [
     {
         accessorKey: "job_id",
@@ -120,7 +176,7 @@ export const columns: ColumnDef<JobDetail>[] = [
     {
         accessorKey: "job_title",
         header: () => <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Position Title</span>,
-        cell: ({ row }) => <JobTitleItem title={row.getValue("job_title")} />,
+        cell: ({ row }) => <JobTitleItem job={row.original} />,
     },
     {
         accessorKey: "start_date",
@@ -146,10 +202,11 @@ export const columns: ColumnDef<JobDetail>[] = [
         accessorKey: "location",
         header: () => <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Facility</span>,
         cell: ({ row }) => (
-            <div className="flex items-start gap-2 text-sm font-medium opacity-80 max-w-[260px] min-w-0">
-                <MapPin className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
-                <span className="break-words whitespace-normal leading-snug">{row.getValue("location")}</span>
-            </div>
+            <FacilityLocationItem
+                location={row.getValue("location")}
+                jobTitle={row.original.job_title}
+                jobId={row.original.job_id}
+            />
         ),
     },
     {

@@ -29,11 +29,14 @@ export const getSearchProfileDetails = createServerFn({ method: 'GET' })
 
         const client = await auth.getIdTokenClient(API_PATH.RAG_SEARCH_API.GET_BASE_URL);
         const url = API_PATH.RAG_SEARCH_API.GET_BASE_URL + API_PATH.RAG_SEARCH_API.PATH_URL;
-        console.log(url)
+        const parsedSkills = data.skills 
+            ? data.skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+            : [];
+
         let postData: any = {
             "job_description": data.jobDescription,
             "years_of_experience": data.experience,
-            "primary_skills": data.skills.split(','),
+            "primary_skills": parsedSkills,
             "prefered_domain": data.preferedDomain
         }
 
@@ -591,12 +594,12 @@ export const getJobDescription = createServerFn({ method: 'GET' })
                 }
             });
 
-            const content = response.choices[0].message.content;
-            return content;
+            const content = response.choices?.[0]?.message?.content || "";
+            return typeof content === 'string' ? content : JSON.stringify(content);
 
         } catch (error: any) {
             console.error("OpenRouter Error:", error);
-            throw new Error("Failed to fetch job description");
+            throw new Error(error?.message || "Failed to fetch job description");
         }
     });
 

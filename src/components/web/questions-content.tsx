@@ -7,14 +7,14 @@ import { Input } from "../ui/input";
 import { JobQuestion } from "@/lib/types";
 import { toast } from "sonner";
 
-export function QuestionsContent({ 
-    questions, 
+export function QuestionsContent({
+    questions,
     deleteQuestion,
-    onOpenAiModal 
-}: { 
-    questions: JobQuestion[], 
+    onOpenAiModal
+}: {
+    questions: JobQuestion[],
     deleteQuestion: (question_id: string) => void,
-    onOpenAiModal?: () => void 
+    onOpenAiModal?: () => void
 }) {
     const [searchQuery, setSearchQuery] = useState("")
     const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -60,12 +60,12 @@ export function QuestionsContent({
                 </div>
             )}
 
-            <ScrollArea className="flex-1 h-full min-h-[300px]">
+            <ScrollArea className="flex-1 h-full min-h-75">
                 {filteredQuestions.length > 0 ? (
                     <div className="p-3 sm:p-6 space-y-3.5">
                         {filteredQuestions.map((q, idx) => (
-                            <div 
-                                key={q.id || idx} 
+                            <div
+                                key={q.id || idx}
                                 className="group relative flex items-start gap-3 sm:gap-4 p-4 rounded-2xl bg-white/70 dark:bg-zinc-900/70 border border-border/60 shadow-sm hover:shadow-md hover:border-indigo-500/30 transition-all duration-200"
                             >
                                 <div className="flex-none pt-0.5">
@@ -110,11 +110,11 @@ export function QuestionsContent({
                         ))}
                     </div>
                 ) : questions.length > 0 && searchQuery ? (
-                    <div className="flex flex-col items-center justify-center min-h-[250px] p-8 text-center space-y-2">
+                    <div className="flex flex-col items-center justify-center min-h-62.5 p-8 text-center space-y-2">
                         <p className="text-sm font-semibold text-foreground">No questions match "{searchQuery}"</p>
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
+                        <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => setSearchQuery("")}
                             className="h-8 rounded-xl text-xs"
                         >
@@ -122,7 +122,7 @@ export function QuestionsContent({
                         </Button>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center min-h-[320px] text-center p-6 sm:p-10 space-y-4">
+                    <div className="flex flex-col items-center justify-center min-h-80 text-center p-6 sm:p-10 space-y-4">
                         <div className="h-16 w-16 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center shadow-inner">
                             <MessageSquarePlus className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
                         </div>
@@ -133,8 +133,8 @@ export function QuestionsContent({
                             </p>
                         </div>
                         {onOpenAiModal && (
-                            <Button 
-                                onClick={onOpenAiModal} 
+                            <Button
+                                onClick={onOpenAiModal}
                                 className="h-9 px-4 rounded-xl text-xs font-bold gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20"
                             >
                                 <Sparkles className="h-3.5 w-3.5" />

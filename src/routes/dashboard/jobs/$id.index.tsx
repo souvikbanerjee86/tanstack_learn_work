@@ -4,7 +4,6 @@ import {
     Calendar,
     MapPin,
     Briefcase,
-    Share2,
     TimerIcon,
     Edit,
     ChevronLeft,
@@ -13,14 +12,14 @@ import {
     Sparkles,
     UserPlus,
     Compass,
-    CheckCircle2,
     Layers,
-    Shield
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { PDFJobDownloadButton } from "@/components/web/pdf-job-download-button";
+import { FacilityMapDialog } from "@/components/web/facility-map-dialog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute('/dashboard/jobs/$id/')({
@@ -78,7 +77,10 @@ function RouteComponent() {
                         </Button>
                     </Link>
 
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                        {/* PDF Download Button */}
+                        <PDFJobDownloadButton job={job} />
+
                         <Link to="/dashboard/discover">
                             <Button
                                 variant="outline"
@@ -112,7 +114,7 @@ function RouteComponent() {
                                     <Badge 
                                         variant="outline" 
                                         className={cn(
-                                            "h-6 px-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg",
+                                             "h-6 px-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg",
                                             isActive 
                                                 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" 
                                                 : "bg-muted text-muted-foreground border-border/60"
@@ -132,10 +134,23 @@ function RouteComponent() {
                                 </h1>
 
                                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm font-medium text-muted-foreground pt-1">
-                                    <div className="flex items-start gap-1.5 max-w-full">
-                                        <MapPin className="h-4 w-4 text-indigo-500 shrink-0 mt-0.5" />
-                                        <span className="break-words whitespace-normal font-semibold text-foreground/80">{job.location}</span>
-                                    </div>
+                                    <FacilityMapDialog
+                                        locationString={job.location}
+                                        jobTitle={job.job_title}
+                                        jobId={job.job_id}
+                                        trigger={
+                                            <button
+                                                type="button"
+                                                className="group/loc flex items-start gap-1.5 max-w-full text-left hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer"
+                                                title="View facility deployment map"
+                                            >
+                                                <MapPin className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5 group-hover/loc:scale-110 transition-transform" />
+                                                <span className="break-words whitespace-normal font-semibold text-foreground/90 group-hover/loc:underline underline-offset-2">
+                                                    {job.location}
+                                                </span>
+                                            </button>
+                                        }
+                                    />
                                     <div className="flex items-center gap-1.5">
                                         <Briefcase className="h-4 w-4 text-indigo-500 shrink-0" />
                                         <span className="font-semibold text-foreground/80">{job.job_type}</span>
@@ -178,24 +193,28 @@ function RouteComponent() {
                     {/* LEFT COLUMN: DESCRIPTION */}
                     <div className="lg:col-span-2 space-y-8">
                         <Card className="rounded-[2rem] border border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 overflow-hidden">
-                            <CardHeader className="p-6 sm:p-8 pb-4 border-b border-border/40 bg-muted/15">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 shadow-sm">
+                            <CardHeader className="p-6 sm:p-8 pb-4 border-b border-border/40 bg-muted/15 flex flex-row items-center justify-between gap-4">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 shadow-sm shrink-0">
                                         <FileText className="h-5 w-5" />
                                     </div>
-                                    <div>
+                                    <div className="min-w-0">
                                         <CardTitle className="text-lg font-black tracking-tight text-foreground">
                                             Job Specification & Scope
                                         </CardTitle>
-                                        <CardDescription className="text-xs text-muted-foreground font-medium">
+                                        <CardDescription className="text-xs text-muted-foreground font-medium truncate">
                                             Complete role mandate, requirements, and responsibilities
                                         </CardDescription>
                                     </div>
                                 </div>
+
+                                <div className="shrink-0">
+                                    <PDFJobDownloadButton job={job} className="h-8 text-[11px]" />
+                                </div>
                             </CardHeader>
 
                             <CardContent className="p-6 sm:p-8 pt-6">
-                                <div className="text-sm sm:text-base text-foreground/90 leading-relaxed whitespace-pre-line font-normal selection:bg-indigo-500/30">
+                                <div className="text-sm sm:text-base text-foreground/90 leading-relaxed whitespace-pre-line font-normal selection:bg-indigo-500/30 break-words">
                                     {job.job_description}
                                 </div>
                             </CardContent>
@@ -214,10 +233,20 @@ function RouteComponent() {
 
                             <CardContent className="p-6 space-y-6">
                                 <div className="grid gap-5">
-                                    <MetricItem
-                                        icon={MapPin}
-                                        label="Primary Location"
-                                        value={job.location}
+                                    <FacilityMapDialog
+                                        locationString={job.location}
+                                        jobTitle={job.job_title}
+                                        jobId={job.job_id}
+                                        trigger={
+                                            <div className="w-full cursor-pointer group/metric">
+                                                <MetricItem
+                                                    icon={MapPin}
+                                                    label="Primary Location (Click for Map)"
+                                                    value={job.location}
+                                                    subValue="Tap to inspect interactive facility map"
+                                                />
+                                            </div>
+                                        }
                                     />
                                     <MetricItem
                                         icon={Briefcase}

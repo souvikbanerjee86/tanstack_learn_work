@@ -274,7 +274,7 @@ export function OnboardingTourDialog({
 
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-            <DialogContent 
+            <DialogContent
                 className="sm:max-w-2xl md:max-w-3xl border border-border/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl shadow-2xl rounded-3xl p-0 overflow-hidden"
                 aria-describedby="tour-description"
             >
@@ -282,8 +282,8 @@ export function OnboardingTourDialog({
                 <div className="p-6 sm:p-8 pb-4 bg-muted/20 border-b border-border/40 space-y-4">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2.5">
-                            <Badge 
-                                variant="outline" 
+                            <Badge
+                                variant="outline"
                                 className={cn(
                                     "text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5",
                                     currentSlide.accentBg,
@@ -308,11 +308,11 @@ export function OnboardingTourDialog({
 
                     {/* Progress Bar */}
                     <div className="w-full h-1 bg-muted/50 rounded-full overflow-hidden">
-                        <div 
+                        <div
                             className={cn(
-                                "h-full bg-gradient-to-r transition-all duration-300 rounded-full",
+                                "h-full bg-linear-to-r transition-all duration-300 rounded-full",
                                 currentSlide.color
-                            )} 
+                            )}
                             style={{ width: `${progressPercent}%` }}
                         />
                     </div>
