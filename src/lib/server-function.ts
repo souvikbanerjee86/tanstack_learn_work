@@ -94,7 +94,7 @@ export const triggerIndexes = createServerFn({ method: 'GET' })
                     'Content-Type': 'application/json',
                 },
             });
-            const returnData = await response.data;
+            await response.data;
             return { "success": true, "message": "Indexing triggered successfully" }
         } catch (e) {
             console.log(e)

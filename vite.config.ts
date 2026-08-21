@@ -9,15 +9,6 @@ import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
-  nitro: {
-    noExternals: ['firebase-admin'],
-    externals: {
-      trace: [
-        '@google-cloud/dialogflow-cx', 
-        'google-gax'
-      ]
-    }
-  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

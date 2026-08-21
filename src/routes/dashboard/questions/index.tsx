@@ -258,6 +258,7 @@ function QuestionsDashboardWrapper() {
                                         job_id={selectedJobId} 
                                         deleteQuestion={deleteQuestion} 
                                         onOpenAiModal={() => setIsOpen(true)}
+                                        jobTitle={selectedJob?.job_title}
                                     />
                                 </Suspense>
                             </Card>
@@ -282,11 +283,13 @@ function QuestionsDashboardWrapper() {
 function Questions({ 
     job_id, 
     deleteQuestion,
-    onOpenAiModal 
+    onOpenAiModal,
+    jobTitle, 
 }: { 
     job_id: string | null, 
     deleteQuestion: (question_id: string) => void,
-    onOpenAiModal: () => void 
+    onOpenAiModal: () => void,
+    jobTitle?: string,
 }) {
     const { data } = useSuspenseQuery(questionsQueryOptions(job_id!))
     const questions = data.questions || []
@@ -294,7 +297,8 @@ function Questions({
         <QuestionsContent 
             questions={questions} 
             deleteQuestion={deleteQuestion} 
-            onOpenAiModal={onOpenAiModal} 
+            onOpenAiModal={onOpenAiModal}
+            jobTitle={jobTitle} 
         />
     )
 }

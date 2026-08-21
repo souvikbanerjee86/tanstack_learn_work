@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, Svg, Path, Circle } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Svg, Path } from '@react-pdf/renderer';
 import { JobDetail } from '@/lib/types';
 import { format } from 'date-fns';
 

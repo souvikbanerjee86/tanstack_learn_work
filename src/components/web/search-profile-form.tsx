@@ -19,7 +19,6 @@ interface ChildProps {
 export function SearchProfileForm({ onProfileSearchSubmit, jobDetails }: ChildProps) {
     const [open, setOpen] = useState(false);
     const experienceYears = Array.from({ length: 31 }, (_, i) => i.toString());
-    const thresholds = Array.from({ length: 9 }, (_, i) => (40 + i * 5).toString());
 
     const form = useForm({
         defaultValues: {

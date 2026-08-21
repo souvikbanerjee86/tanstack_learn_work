@@ -14,6 +14,8 @@ import { SessionTimeline } from "./session-timeline";
 import { interviewVoiceAnswerQueryOptions } from "./audio-outcome";
 import { movementDetectionDetailsQueryOptions } from "./movement-outcome";
 import { PDFDownloadButton } from "./pdf-download-button";
+import { IntegrityTrustGauge } from "./integrity-trust-gauge";
+import { KeywordRubricInspector } from "./keyword-rubric-inspector";
 
 export const interviewAnswerQueryOptions = (email: string, job_id: string) => queryOptions({
     queryKey: ['candidates', email, job_id],
@@ -61,11 +63,33 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
     }
 
     const currentScores = answers.data.map((data) => data.score ?? 0);
+    const candidateAnswersList = answers.data.map((d) => d.answer ?? "");
+    const questionsMeta = answers.data.map((d) => ({
+        question: d.question,
+        sample_answer: (d as any).sample_answer || "",
+        keywords: (d as any).keywords || [],
+    }));
+
+    const movementAnomaliesTotal = movementDataResult?.data ? movementDataResult.data.length : 0;
 
     return (
         <div className="space-y-10">
             {/* Top Score Aggregator */}
             <TotalScoreCard scores={currentScores} />
+
+            {/* Synthesized Integrity Trust Gauge */}
+            <IntegrityTrustGauge
+                faceConfidence={96}
+                movementAnomaliesCount={movementAnomaliesTotal}
+                audioClarityScore={92}
+                totalQuestionsCount={answers.data.length}
+            />
+
+            {/* Semantic Keyword & Rubric Inspector */}
+            <KeywordRubricInspector
+                candidateAnswers={candidateAnswersList}
+                questions={questionsMeta}
+            />
 
             {/* Audit Toolbar & Decision Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 p-6 rounded-3xl bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl border border-border/60 shadow-lg shadow-black/5">

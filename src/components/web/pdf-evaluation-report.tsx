@@ -562,7 +562,6 @@ export function InterviewPDFReport({
 }: InterviewPDFReportProps) {
     const scores = answers.map((a) => a.score ?? 0);
     const totalScore = scores.reduce((acc, curr) => acc + curr, 0);
-    const maxScore = answers.length * 100;
     const avgScoreNum = answers.length > 0 ? totalScore / answers.length : 0;
     const avgScoreStr = avgScoreNum.toFixed(1);
 

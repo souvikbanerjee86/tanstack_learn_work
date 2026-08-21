@@ -18,7 +18,7 @@ import {
   Hourglass
 } from 'lucide-react'
 import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { Suspense, useState, useMemo } from 'react'
+import { Suspense, useState } from 'react'
 import { toast } from 'sonner'
 import { configSchema } from '@/schemas/evaluate'
 import { getSiteConfig, saveSiteConfig } from '@/lib/server-function'
@@ -113,6 +113,81 @@ function ConfigSuspenseWrapper() {
                 Configure evaluation session duration, token lifespan, and prompt density.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* 1-Click Assessment Presets */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-white/60 dark:bg-zinc-900/60 border border-border/60 backdrop-blur-xl shadow-md space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
+              1-Click Recommended Presets
+            </span>
+            <span className="text-[11px] text-muted-foreground hidden sm:inline">
+              Instantly populate best-practice values
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                form.setFieldValue("interviewTime", "60")
+                form.setFieldValue("linkValidity", "3")
+                form.setFieldValue("questionsCount", "10")
+                toast.success("Applied 'Strict High-Security' preset")
+              }}
+              className="flex flex-col items-start p-3.5 rounded-xl border border-border/60 bg-muted/20 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left group"
+            >
+              <div className="flex items-center justify-between w-full">
+                <span className="text-xs font-bold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                  🛡️ Strict High-Security
+                </span>
+              </div>
+              <span className="text-[11px] text-muted-foreground mt-1 font-mono">
+                60 mins • 10 questions • 3 days
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                form.setFieldValue("interviewTime", "45")
+                form.setFieldValue("linkValidity", "5")
+                form.setFieldValue("questionsCount", "8")
+                toast.success("Applied 'Standard Balanced' preset")
+              }}
+              className="flex flex-col items-start p-3.5 rounded-xl border border-border/60 bg-muted/20 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left group"
+            >
+              <div className="flex items-center justify-between w-full">
+                <span className="text-xs font-bold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                  ⚡ Standard Balanced
+                </span>
+              </div>
+              <span className="text-[11px] text-muted-foreground mt-1 font-mono">
+                45 mins • 8 questions • 5 days
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                form.setFieldValue("interviewTime", "15")
+                form.setFieldValue("linkValidity", "7")
+                form.setFieldValue("questionsCount", "5")
+                toast.success("Applied 'Rapid Screening' preset")
+              }}
+              className="flex flex-col items-start p-3.5 rounded-xl border border-border/60 bg-muted/20 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left group"
+            >
+              <div className="flex items-center justify-between w-full">
+                <span className="text-xs font-bold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                  🚀 Rapid Tech Screening
+                </span>
+              </div>
+              <span className="text-[11px] text-muted-foreground mt-1 font-mono">
+                15 mins • 5 questions • 7 days
+              </span>
+            </button>
           </div>
         </div>
 

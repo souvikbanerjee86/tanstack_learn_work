@@ -182,8 +182,8 @@ export function AudioOutcome({ email, id }: { email: string, id: string }) {
 
             {/* Audio Playback Modal */}
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent className="sm:max-w-md bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border border-border/60 rounded-3xl p-6 shadow-2xl">
-                    <DialogHeader className="mb-4">
+                <DialogContent className="sm:max-w-md bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border border-border/60 rounded-3xl p-6 shadow-2xl space-y-4">
+                    <DialogHeader className="mb-2">
                         <DialogTitle className="flex items-center gap-3 text-lg font-black tracking-tight">
                             <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20">
                                 <Headphones className="w-5 h-5" />
@@ -192,16 +192,39 @@ export function AudioOutcome({ email, id }: { email: string, id: string }) {
                         </DialogTitle>
                     </DialogHeader>
 
-                    <div className="flex flex-col items-center justify-center p-6 bg-muted/30 rounded-2xl border border-border/40">
+                    <div className="flex flex-col items-center justify-center p-6 bg-muted/30 rounded-2xl border border-border/40 space-y-4">
                         {fileUrl ? (
-                            <audio
-                                controls
-                                autoPlay
-                                className="w-full max-w-[320px] rounded-xl"
-                                src={decodeURIComponent(fileUrl)}
-                            >
-                                Your browser does not support audio playback.
-                            </audio>
+                            <>
+                                <audio
+                                    id="candidate-audio-player"
+                                    controls
+                                    autoPlay
+                                    className="w-full rounded-xl"
+                                    src={decodeURIComponent(fileUrl)}
+                                >
+                                    Your browser does not support audio playback.
+                                </audio>
+
+                                {/* Playback Speed Controller */}
+                                <div className="w-full flex items-center justify-between pt-2 border-t border-border/30">
+                                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Playback Speed</span>
+                                    <div className="flex items-center gap-1">
+                                        {['0.75', '1.0', '1.25', '1.5', '2.0'].map((spd) => (
+                                            <button
+                                                key={spd}
+                                                onClick={() => {
+                                                    const audioEl = document.getElementById('candidate-audio-player') as HTMLAudioElement;
+                                                    if (audioEl) audioEl.playbackRate = parseFloat(spd);
+                                                    toast.info(`Playback set to ${spd}x`);
+                                                }}
+                                                className="px-2 py-0.5 rounded-lg text-[11px] font-mono font-bold bg-muted/60 hover:bg-indigo-600 hover:text-white transition-colors border border-border/40"
+                                            >
+                                                {spd}x
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </>
                         ) : (
                             <div className="flex items-center justify-center p-6">
                                 <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />

@@ -4,7 +4,7 @@ import { createFileRoute, useLocation, Link } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import InterviewFeedbackSkeleton from '@/components/web/interview-feedback-skeleton'
 import { MovementOutCome } from '@/components/web/movement-outcome'
-import { ChevronLeft, PieChart, ShieldCheck, Mail } from 'lucide-react'
+import { ChevronLeft, ShieldCheck, Mail } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
 export const Route = createFileRoute('/dashboard/interview/$id')({

@@ -1,23 +1,29 @@
 import { useState, useMemo } from "react";
-import { MessageSquarePlus, Trash2, HelpCircle, Copy, Check, Search, X, Sparkles } from "lucide-react";
+import { MessageSquarePlus, Trash2, HelpCircle, Copy, Check, Search, X, Sparkles, Eye, Download } from "lucide-react";
 import { Button } from "../ui/button";
 import { CardContent } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 import { Input } from "../ui/input";
 import { JobQuestion } from "@/lib/types";
 import { toast } from "sonner";
+import { QuestionSimulatorDialog } from "./question-simulator-dialog";
+import { exportToCSV } from "@/lib/export-utils";
 
 export function QuestionsContent({
     questions,
     deleteQuestion,
-    onOpenAiModal
+    onOpenAiModal,
+    jobTitle,
 }: {
     questions: JobQuestion[],
     deleteQuestion: (question_id: string) => void,
-    onOpenAiModal?: () => void
+    onOpenAiModal?: () => void,
+    jobTitle?: string,
 }) {
     const [searchQuery, setSearchQuery] = useState("")
     const [copiedId, setCopiedId] = useState<string | null>(null)
+    const [simulatedQuestion, setSimulatedQuestion] = useState<string | null>(null)
+    const [simulatorOpen, setSimulatorOpen] = useState(false)
 
     const filteredQuestions = useMemo(() => {
         const q = searchQuery.trim().toLowerCase()
@@ -31,6 +37,26 @@ export function QuestionsContent({
         toast.success("Question copied to clipboard");
         setTimeout(() => setCopiedId(null), 2000);
     }
+
+    const handleOpenSimulator = (text: string) => {
+        setSimulatedQuestion(text);
+        setSimulatorOpen(true);
+    };
+
+    const handleExportCSV = () => {
+        if (!questions.length) {
+            toast.error("No questions in this bank to export");
+            return;
+        }
+        const exportData = questions.map((q, idx) => ({
+            "Question Number": idx + 1,
+            "Question ID": q.id,
+            "Position": jobTitle || "Target Role",
+            "Question Text": q.question,
+        }));
+        exportToCSV(exportData, `question-bank-${jobTitle ? jobTitle.toLowerCase().replace(/\s+/g, '-') : 'export'}`);
+        toast.success(`Exported ${exportData.length} questions to CSV`);
+    };
 
     return (
         <CardContent className="p-0 flex-1 flex flex-col overflow-hidden min-h-0">
@@ -54,9 +80,21 @@ export function QuestionsContent({
                             </button>
                         )}
                     </div>
-                    <span className="text-xs font-medium text-muted-foreground self-start sm:self-center">
-                        Showing <strong className="text-foreground">{filteredQuestions.length}</strong> of {questions.length} questions
-                    </span>
+                    <div className="flex items-center gap-2 self-start sm:self-center">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleExportCSV}
+                            className="h-8 px-2.5 rounded-lg text-xs font-bold gap-1 border-border/60"
+                            title="Export Questions to CSV"
+                        >
+                            <Download className="h-3 w-3 text-indigo-500" />
+                            <span>Export CSV</span>
+                        </Button>
+                        <span className="text-xs font-medium text-muted-foreground">
+                            Showing <strong className="text-foreground">{filteredQuestions.length}</strong> of {questions.length}
+                        </span>
+                    </div>
                 </div>
             )}
 
@@ -87,6 +125,15 @@ export function QuestionsContent({
                                 </div>
 
                                 <div className="flex-none flex items-center gap-1">
+                                    <Button
+                                        onClick={() => handleOpenSimulator(q.question)}
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 rounded-lg text-muted-foreground hover:text-indigo-600 hover:bg-indigo-500/10 transition-all"
+                                        title="Preview as Candidate"
+                                    >
+                                        <Eye className="h-3.5 w-3.5" />
+                                    </Button>
                                     <Button
                                         onClick={() => copyToClipboard(q.question, q.id)}
                                         variant="ghost"
@@ -144,6 +191,14 @@ export function QuestionsContent({
                     </div>
                 )}
             </ScrollArea>
+
+            {/* Candidate Simulator Modal */}
+            <QuestionSimulatorDialog
+                questionText={simulatedQuestion || ""}
+                jobName={jobTitle}
+                open={simulatorOpen}
+                onOpenChange={setSimulatorOpen}
+            />
         </CardContent>
     );
 }

@@ -193,7 +193,7 @@ export function GlobalSearchDialog({ open, onOpenChange, onOpenTour }: GlobalSea
           </CommandItem>
 
           <CommandItem
-            onSelect={() => runCommand(() => navigate({ to: "/dashboard/candidates/add" }))}
+            onSelect={() => runCommand(() => navigate({ to: "/dashboard/candidates/add", search: { jobId: undefined, jobName: undefined } }))}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-muted/80 data-selected:bg-blue-500/10 data-selected:text-blue-600 dark:data-selected:text-blue-400"
           >
             <div className="h-7 w-7 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">

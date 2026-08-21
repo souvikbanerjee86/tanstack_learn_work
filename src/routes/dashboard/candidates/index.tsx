@@ -1,7 +1,7 @@
 import { getCandidatesList } from '@/lib/server-function'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { infiniteQueryOptions, useSuspenseInfiniteQuery } from '@tanstack/react-query'
-import { Suspense, useMemo, useState } from 'react'
+import { Suspense, useMemo, useState, useEffect } from 'react'
 import { DataTable } from '@/components/web/data-table'
 import { candidateColumns, CandidateActions } from "@/components/web/candidate-columns"
 import { Button } from '@/components/ui/button'
@@ -22,14 +22,22 @@ import {
     UserPlus, 
     Search, 
     X, 
-    Inbox 
+    Inbox,
+    Star,
+    Download,
+    CalendarCheck2
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { candidate } from '@/lib/types'
 import { format } from 'date-fns'
 import { AddMultipleCandidatesDialog } from '@/components/web/add-multiple-candidates-dialog'
+import { CandidateScheduleDialog } from '@/components/web/candidate-schedule-dialog'
+import { exportToCSV } from '@/lib/export-utils'
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 const CANDIDATES_PAGE_SIZE = 10
+const STARRED_STORAGE_KEY = 'eazyai_starred_candidates'
 
 export const candidatesQueryOptions = infiniteQueryOptions({
     queryKey: ['candidates', 'list'],
@@ -62,6 +70,40 @@ function CandidatesContent() {
     const [isAddMultipleOpen, setIsAddMultipleOpen] = useState(false)
     const [searchQuery, setSearchQuery] = useState<string>("")
     const [selectedPosition, setSelectedPosition] = useState<string>("all")
+    const [starredOnly, setStarredOnly] = useState<boolean>(false)
+    const [starredEmails, setStarredEmails] = useState<string[]>([])
+    const [selectedCandidateForSchedule, setSelectedCandidateForSchedule] = useState<candidate | null>(null)
+    const [scheduleDialogOpen, setScheduleDialogOpen] = useState<boolean>(false)
+
+    // Load starred candidates from localStorage
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem(STARRED_STORAGE_KEY)
+            if (saved) {
+                setStarredEmails(JSON.parse(saved))
+            }
+        } catch {
+            // Ignore storage issues
+        }
+    }, [])
+
+    const toggleStar = (email: string) => {
+        setStarredEmails((prev) => {
+            const exists = prev.includes(email)
+            const next = exists ? prev.filter((e) => e !== email) : [...prev, email]
+            try {
+                localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(next))
+            } catch {
+                // Ignore
+            }
+            if (exists) {
+                toast.info("Candidate unstarred")
+            } else {
+                toast.success("Candidate saved to starred list!")
+            }
+            return next
+        })
+    }
 
     const {
         data,
@@ -86,12 +128,17 @@ function CandidatesContent() {
         return Array.from(set).sort()
     }, [allCandidates])
 
-    // Universal text search across all candidate fields & position filter
+    // Universal text search across all candidate fields & position & star filter
     const filteredCandidates = useMemo(() => {
         const query = searchQuery.trim().toLowerCase()
         const tokens = query.split(/\s+/).filter(Boolean)
 
         return allCandidates.filter((cand) => {
+            // Starred filter
+            if (starredOnly && !starredEmails.includes(cand.email)) {
+                return false
+            }
+
             // Position filter
             if (selectedPosition !== "all" && cand.job_name !== selectedPosition) {
                 return false
@@ -118,9 +165,34 @@ function CandidatesContent() {
             // Ensure all search tokens match
             return tokens.every((token) => searchableBlob.includes(token))
         })
-    }, [allCandidates, searchQuery, selectedPosition])
+    }, [allCandidates, searchQuery, selectedPosition, starredOnly, starredEmails])
 
-    const hasFiltersApplied = searchQuery.trim().length > 0 || selectedPosition !== "all"
+    const hasFiltersApplied = searchQuery.trim().length > 0 || selectedPosition !== "all" || starredOnly
+
+    const handleExportCSV = () => {
+        if (filteredCandidates.length === 0) {
+            toast.error("No candidates available to export")
+            return
+        }
+
+        const exportRows = filteredCandidates.map((cand) => ({
+            "Name": cand.name || "Candidate",
+            "Email": cand.email,
+            "Target Position": cand.job_name || "N/A",
+            "Job ID": cand.job_id || "N/A",
+            "Interview Status": (cand as any).interview_status || "PENDING",
+            "Starred": starredEmails.includes(cand.email) ? "YES" : "NO",
+            "Uploaded Date": cand.uploaded_at ? format(new Date(cand.uploaded_at), "yyyy-MM-dd HH:mm") : "",
+        }))
+
+        exportToCSV(exportRows, `eazyai-candidates-${format(new Date(), "yyyyMMdd-HHmm")}`)
+        toast.success(`Exported ${exportRows.length} candidates to CSV`)
+    }
+
+    const handleOpenSchedule = (cand: candidate) => {
+        setSelectedCandidateForSchedule(cand)
+        setScheduleDialogOpen(true)
+    }
 
     return (
         <div className="relative min-h-screen flex flex-col gap-8 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -153,12 +225,24 @@ function CandidatesContent() {
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2.5">
+                    {/* Export Candidates CSV */}
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleExportCSV}
+                        className="h-10 md:h-11 rounded-xl px-3.5 border-border/60 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm hover:bg-muted/80 text-xs font-bold gap-2 shadow-xs transition-all active:scale-[0.98]"
+                        title="Export Candidates to CSV"
+                    >
+                        <Download className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                        <span className="hidden sm:inline">Export CSV</span>
+                    </Button>
+
                     {role === "admin" && (
                         <>
                             <Button
                                 onClick={() => setIsAddMultipleOpen(true)}
-                                className="w-full sm:w-auto h-11 md:h-12 rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider"
+                                className="w-full sm:w-auto h-10 md:h-11 rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider"
                             >
                                 <UserPlus className="h-4 w-4" />
                                 <span className="px-1">
@@ -167,7 +251,7 @@ function CandidatesContent() {
                             </Button>
 
                             <Link to='/dashboard/candidates/add' search={{ jobId: undefined, jobName: undefined }} className="w-full sm:w-auto">
-                                <Button className="w-full sm:w-auto h-11 md:h-12 rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider">
+                                <Button className="w-full sm:w-auto h-10 md:h-11 rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider">
                                     <Plus className="h-4 w-4" />
                                     <span className="px-1">Add Candidate</span>
                                 </Button>
@@ -206,33 +290,57 @@ function CandidatesContent() {
                         )}
                     </div>
 
-                    {/* Filter Controls & Result Counter */}
+                    {/* Star & Position Filters */}
                     <div className="flex flex-wrap items-center gap-3">
-                        {uniquePositions.length > 0 && (
-                            <div className="w-full sm:w-auto">
-                                <Select value={selectedPosition} onValueChange={setSelectedPosition}>
-                                    <SelectTrigger className="w-full sm:w-[200px] h-11 rounded-xl bg-muted/40 border-border/60 text-xs font-semibold">
-                                        <SelectValue placeholder="All Positions" />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-2xl border-border/60 shadow-2xl">
-                                        <SelectGroup>
-                                            <SelectItem value="all" className="rounded-xl my-1 text-xs font-medium">
-                                                All Positions ({allCandidates.length})
-                                            </SelectItem>
-                                            {uniquePositions.map((pos) => (
-                                                <SelectItem key={pos} value={pos} className="rounded-xl my-1 text-xs font-medium">
-                                                    {pos}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        )}
+                        {/* Starred Filter Tabs */}
+                        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-muted/40 border border-border/60 shadow-inner">
+                            <Button
+                                variant={!starredOnly ? 'default' : 'ghost'}
+                                size="sm"
+                                onClick={() => setStarredOnly(false)}
+                                className={cn(
+                                    "h-8 sm:h-9 px-3 rounded-lg text-xs font-bold transition-all",
+                                    !starredOnly
+                                        ? "bg-violet-600 text-white shadow-sm hover:bg-violet-700"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                                )}
+                            >
+                                All ({allCandidates.length})
+                            </Button>
+                            <Button
+                                variant={starredOnly ? 'default' : 'ghost'}
+                                size="sm"
+                                onClick={() => setStarredOnly(true)}
+                                className={cn(
+                                    "h-8 sm:h-9 px-3 rounded-lg text-xs font-bold gap-1.5 transition-all",
+                                    starredOnly
+                                        ? "bg-amber-500 text-white shadow-sm hover:bg-amber-600"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                                )}
+                            >
+                                <Star className={cn("h-3.5 w-3.5", starredOnly ? "fill-white" : "fill-amber-400 text-amber-400")} />
+                                <span>Starred ({starredEmails.length})</span>
+                            </Button>
+                        </div>
 
-                        <span className="text-xs font-medium text-muted-foreground/70 ml-1">
-                            Showing <strong className="text-foreground">{filteredCandidates.length}</strong> of {allCandidates.length} candidates
-                        </span>
+                        {/* Position Select */}
+                        {uniquePositions.length > 0 && (
+                            <Select value={selectedPosition} onValueChange={setSelectedPosition}>
+                                <SelectTrigger className="h-10 w-[200px] rounded-xl bg-muted/40 border-border/60 text-xs font-medium focus:bg-background">
+                                    <SelectValue placeholder="All Positions" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl max-h-64">
+                                    <SelectGroup>
+                                        <SelectItem value="all" className="text-xs font-bold">All Positions ({allCandidates.length})</SelectItem>
+                                        {uniquePositions.map((pos) => (
+                                            <SelectItem key={pos} value={pos} className="text-xs">
+                                                {pos}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        )}
                     </div>
                 </div>
 
@@ -257,7 +365,7 @@ function CandidatesContent() {
                                 </h3>
                                 <p className="text-xs text-muted-foreground">
                                     {hasFiltersApplied
-                                        ? "Try adjusting your search query or position filter."
+                                        ? "Try adjusting your search query or filter options."
                                         : "Add candidates or import resumes to start tracking applicants."}
                                 </p>
                             </div>
@@ -268,6 +376,7 @@ function CandidatesContent() {
                                     onClick={() => {
                                         setSearchQuery("")
                                         setSelectedPosition("all")
+                                        setStarredOnly(false)
                                     }}
                                     className="h-8 rounded-xl text-xs font-bold border-border/60"
                                 >
@@ -282,7 +391,13 @@ function CandidatesContent() {
                 <div className="flex flex-col gap-4 lg:hidden">
                     {filteredCandidates.length > 0 ? (
                         filteredCandidates.map((cand: candidate) => (
-                            <CandidateMobileCard key={cand.id} candidate={cand} />
+                            <CandidateMobileCard 
+                                key={cand.id} 
+                                candidate={cand} 
+                                isStarred={starredEmails.includes(cand.email)}
+                                onToggleStar={() => toggleStar(cand.email)}
+                                onSchedule={() => handleOpenSchedule(cand)}
+                            />
                         ))
                     ) : (
                         <div className="text-center py-16 bg-white/30 dark:bg-zinc-950/30 rounded-[2rem] border border-dashed border-border/40 p-6 space-y-3">
@@ -297,6 +412,7 @@ function CandidatesContent() {
                                     onClick={() => {
                                         setSearchQuery("")
                                         setSelectedPosition("all")
+                                        setStarredOnly(false)
                                     }}
                                     className="h-8 rounded-xl text-xs font-bold border-border/60"
                                 >
@@ -329,11 +445,28 @@ function CandidatesContent() {
                     )}
                 </div>
             </div>
+
+            {/* Candidate Schedule Dialog */}
+            <CandidateScheduleDialog
+                candidate={selectedCandidateForSchedule}
+                open={scheduleDialogOpen}
+                onOpenChange={setScheduleDialogOpen}
+            />
         </div>
     )
 }
 
-const CandidateMobileCard = ({ candidate }: { candidate: candidate }) => (
+const CandidateMobileCard = ({ 
+    candidate, 
+    isStarred, 
+    onToggleStar, 
+    onSchedule 
+}: { 
+    candidate: candidate;
+    isStarred: boolean;
+    onToggleStar: () => void;
+    onSchedule: () => void;
+}) => (
     <Card className="relative overflow-hidden rounded-2xl border border-border/60 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-xl shadow-xl shadow-black/5 p-5 space-y-4 transition-all hover:border-violet-500/30">
         <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
@@ -341,14 +474,34 @@ const CandidateMobileCard = ({ candidate }: { candidate: candidate }) => (
                     <User className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                    <span className="font-bold text-sm tracking-tight truncate">{candidate.name}</span>
+                    <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm tracking-tight truncate">{candidate.name}</span>
+                        <button 
+                            onClick={onToggleStar}
+                            className="text-muted-foreground hover:text-amber-500 transition-colors p-0.5"
+                            title={isStarred ? "Unstar" : "Star Candidate"}
+                        >
+                            <Star className={cn("h-3.5 w-3.5", isStarred ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40")} />
+                        </button>
+                    </div>
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium opacity-80 truncate">
                         <Mail className="h-3 w-3 shrink-0" />
                         <span className="truncate">{candidate.email}</span>
                     </div>
                 </div>
             </div>
-            <CandidateActions rowData={candidate} />
+            <div className="flex items-center gap-1">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onSchedule}
+                    className="h-8 w-8 rounded-lg text-muted-foreground hover:text-indigo-600"
+                    title="Schedule Interview"
+                >
+                    <CalendarCheck2 className="h-4 w-4" />
+                </Button>
+                <CandidateActions rowData={candidate} />
+            </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border/20">

@@ -15,7 +15,6 @@ import {
   Search, 
   X, 
   CheckCircle2, 
-  Sparkles,
   Inbox,
   ShieldAlert
 } from 'lucide-react'

@@ -22,11 +22,14 @@ import {
     Briefcase, 
     ChevronDown, 
     ChevronUp, 
-    FileText 
+    FileText,
+    Download
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { exportToCSV } from '@/lib/export-utils';
+import { format } from 'date-fns';
 
 export const Route = createFileRoute('/dashboard/discover')({
     component: RouteComponent,
@@ -162,6 +165,25 @@ function RouteComponent() {
 
     const isAllFilteredSelected = filteredMatches.length > 0 && 
         filteredMatches.every((m) => selectedItems.includes(m.candidate_email));
+
+    const handleExportDiscoveredCSV = () => {
+        if (!filteredMatches.length) {
+            toast.error("No candidate matches available to export");
+            return;
+        }
+
+        const exportRows = filteredMatches.map((m, idx) => ({
+            "Rank": idx + 1,
+            "Candidate Email": m.candidate_email,
+            "Match Score (%)": m.matched_score,
+            "Target Role": activeJob?.job_title || searchCriteria?.jobId || "N/A",
+            "Matched Skills": ((m as any).matched_skills || []).join(", "),
+            "Summary": (m as any).match_summary || "",
+        }));
+
+        exportToCSV(exportRows, `eazyai-discovered-talent-${format(new Date(), "yyyyMMdd-HHmm")}`);
+        toast.success(`Exported ${exportRows.length} discovered profiles to CSV`);
+    };
 
     const activeJobDescription = searchCriteria?.jobDescription || activeJob?.job_description || ""
     const activeSkillsList = searchCriteria?.skills 
@@ -366,6 +388,17 @@ function RouteComponent() {
                                         &ge; 60% Match
                                     </Button>
                                 </div>
+
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleExportDiscoveredCSV}
+                                    className="h-9 rounded-xl text-xs font-bold gap-1.5 border-border/60 hover:bg-muted/80"
+                                    title="Export Discovered Candidates to CSV"
+                                >
+                                    <Download className="h-3.5 w-3.5 text-indigo-500" />
+                                    <span>Export CSV</span>
+                                </Button>
 
                                 <Button
                                     variant="outline"
