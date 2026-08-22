@@ -56,18 +56,18 @@ export function GlobalSearchDialog({ open, onOpenChange, onOpenTour }: GlobalSea
   };
 
   return (
-    <CommandDialog 
-      open={open} 
+    <CommandDialog
+      open={open}
       onOpenChange={onOpenChange}
       title="Global Command Palette"
       description="Quickly navigate across sections or run actions"
       className="max-w-2xl border-border/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl shadow-2xl shadow-black/20 rounded-[2rem] overflow-hidden"
     >
-      <CommandInput 
-        placeholder="Type a command, section, or action..." 
+      <CommandInput
+        placeholder="Type a command, section, or action..."
       />
 
-      <CommandList className="max-h-[380px] p-2">
+      <CommandList className="max-h-95 p-2">
         <CommandEmpty className="py-8 text-center text-xs text-muted-foreground">
           <Sparkles className="h-6 w-6 mx-auto mb-2 opacity-30 text-indigo-500" />
           No matching commands or destinations found.

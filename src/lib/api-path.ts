@@ -127,5 +127,9 @@ export const API_PATH = {
     ADD_MULTIPLE_CANDIDATES: {
         GET_BASE_URL: "https://multi-cv-uploads-1081651239029.us-central1.run.app",
         PATH_URL: "/api/v1/jobs/upload-cvs"
+    },
+    VOICE_FRAUD_DETECTION: {
+        GET_BASE_URL: "https://voice-fraud-api-1081651239029.us-central1.run.app",
+        PATH_URL: "/api/interview/audio-analysis"
     }
 }

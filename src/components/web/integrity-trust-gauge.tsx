@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-    ShieldCheck, 
-    ShieldAlert, 
-    Shield, 
-    ScanFace, 
-    Activity, 
-    Mic 
+import {
+    ShieldCheck,
+    ShieldAlert,
+    Shield,
+    ScanFace,
+    Activity,
+    Mic
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,10 @@ interface IntegrityTrustGaugeProps {
     movementAnomaliesCount?: number; // e.g. 0, 1, 2...
     audioClarityScore?: number; // 0 - 100
     totalQuestionsCount?: number;
+    voiceFraudStatus?: {
+        isAiGenerated?: boolean;
+        confidenceScore?: number;
+    };
 }
 
 export function IntegrityTrustGauge({
@@ -23,16 +27,23 @@ export function IntegrityTrustGauge({
     movementAnomaliesCount = 0,
     audioClarityScore = 90,
     totalQuestionsCount = 5,
+    voiceFraudStatus,
 }: IntegrityTrustGaugeProps) {
     // Calculate synthesized integrity index
     const { trustScore, statusLevel, badgeColor, badgeBg, badgeBorder, icon: Icon } = useMemo(() => {
-        // Base starting score from face confidence
+        // Base starting score from face confidence & audio clarity
         let score = (faceConfidence * 0.45) + (audioClarityScore * 0.35);
 
         // Deduct points for movement anomalies (head turns, multi-face, out of frame)
         const penaltyPerAnomaly = totalQuestionsCount > 0 ? (20 / totalQuestionsCount) : 4;
         const movementPenalty = Math.min(30, movementAnomaliesCount * penaltyPerAnomaly);
         score = Math.max(10, Math.min(100, score - movementPenalty + 20));
+
+        // Deduct points if AI synthetic voice was detected
+        if (voiceFraudStatus?.isAiGenerated) {
+            const aiPenalty = (voiceFraudStatus.confidenceScore ?? 0.8) * 35;
+            score = Math.max(5, score - aiPenalty);
+        }
 
         const finalScore = Math.round(score);
 
@@ -57,14 +68,14 @@ export function IntegrityTrustGauge({
         } else {
             return {
                 trustScore: finalScore,
-                statusLevel: "Integrity Caution / Anomaly Detected",
+                statusLevel: voiceFraudStatus?.isAiGenerated ? "AI Voice Fraud Flagged" : "Integrity Caution / Anomaly Detected",
                 badgeColor: "text-rose-600 dark:text-rose-400",
                 badgeBg: "bg-rose-500/10 dark:bg-rose-500/15",
                 badgeBorder: "border-rose-500/30",
                 icon: ShieldAlert,
             };
         }
-    }, [faceConfidence, movementAnomaliesCount, audioClarityScore, totalQuestionsCount]);
+    }, [faceConfidence, movementAnomaliesCount, audioClarityScore, totalQuestionsCount, voiceFraudStatus]);
 
     // SVG Circular progress math
     const radius = 42;
@@ -100,8 +111,8 @@ export function IntegrityTrustGauge({
                                     trustScore >= 85
                                         ? "stroke-emerald-500"
                                         : trustScore >= 65
-                                        ? "stroke-amber-500"
-                                        : "stroke-rose-500"
+                                            ? "stroke-amber-500"
+                                            : "stroke-rose-500"
                                 )}
                                 strokeWidth="8"
                                 strokeDasharray={circumference}
@@ -140,24 +151,47 @@ export function IntegrityTrustGauge({
                 </div>
 
                 {/* Right: Sub-telemetry Breakdown Pills */}
-                <div className="grid grid-cols-3 gap-2.5 w-full sm:w-auto shrink-0">
-                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-muted/40 border border-border/50 text-center min-w-[90px]">
+                <div className={cn(
+                    "grid gap-2.5 w-full sm:w-auto shrink-0",
+                    voiceFraudStatus ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"
+                )}>
+                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-muted/40 border border-border/50 text-center min-w-22.5">
                         <ScanFace className="h-4 w-4 text-indigo-500 mb-1" />
                         <span className="text-[10px] font-bold text-muted-foreground uppercase">Face Match</span>
                         <span className="text-sm font-black font-mono text-foreground mt-0.5">{faceConfidence}%</span>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-muted/40 border border-border/50 text-center min-w-[90px]">
+                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-muted/40 border border-border/50 text-center min-w-22.5">
                         <Activity className="h-4 w-4 text-purple-500 mb-1" />
                         <span className="text-[10px] font-bold text-muted-foreground uppercase">Anomalies</span>
                         <span className="text-sm font-black font-mono text-foreground mt-0.5">{movementAnomaliesCount}</span>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-muted/40 border border-border/50 text-center min-w-[90px]">
+                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-muted/40 border border-border/50 text-center min-w-22.5">
                         <Mic className="h-4 w-4 text-emerald-500 mb-1" />
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase">Audio Stream</span>
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase">Audio Clarity</span>
                         <span className="text-sm font-black font-mono text-foreground mt-0.5">{audioClarityScore}%</span>
                     </div>
+
+                    {voiceFraudStatus && (
+                        <div className={cn(
+                            "flex flex-col items-center justify-center p-3 rounded-2xl border text-center min-w-22.5",
+                            voiceFraudStatus.isAiGenerated
+                                ? "bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400"
+                                : "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                        )}>
+                            <Shield className={cn(
+                                "h-4 w-4 mb-1",
+                                voiceFraudStatus.isAiGenerated ? "text-rose-500" : "text-emerald-500"
+                            )} />
+                            <span className="text-[10px] font-bold uppercase truncate max-w-20">
+                                {voiceFraudStatus.isAiGenerated ? "AI Voice" : "Human"}
+                            </span>
+                            <span className="text-sm font-black font-mono mt-0.5">
+                                {Math.round((voiceFraudStatus.confidenceScore ?? 0) * 100)}%
+                            </span>
+                        </div>
+                    )}
                 </div>
             </div>
         </Card>

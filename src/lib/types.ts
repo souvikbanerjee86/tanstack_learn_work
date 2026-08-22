@@ -440,3 +440,35 @@ export interface MultipleCvUploadResponse {
     uploaded_files: string[];
     failed_files: FailedFileDetail[];
 }
+
+export interface AudioAnalysisRecord {
+    id: string;
+    conclusion: "AI-generated" | "Human" | "Suspicious" | string;
+    confidence_score: number;
+    reasoning: string;
+    candidate: string;
+    job_id: string;
+    session_id?: string;
+    gcs_uri?: string;
+    file_name?: string;
+    status: string;
+    timestamp?: string;
+}
+
+export interface AggregatedVoiceAnalysisResponse {
+    candidate: string;
+    job_id: string;
+    total_audios_analyzed: number;
+    overall_conclusion: "AI-generated" | "Suspicious" | "Human" | string;
+    average_confidence: number;
+    ai_generated_count: number;
+    human_count: number;
+    records: AudioAnalysisRecord[];
+}
+
+export type AudioAnalysisResponse = AggregatedVoiceAnalysisResponse;
+
+export interface AudioAnalysisInputSchema {
+    candidateEmail: string;
+    jobId: string;
+}

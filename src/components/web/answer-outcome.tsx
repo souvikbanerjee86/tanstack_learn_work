@@ -16,6 +16,7 @@ import { movementDetectionDetailsQueryOptions } from "./movement-outcome";
 import { PDFDownloadButton } from "./pdf-download-button";
 import { IntegrityTrustGauge } from "./integrity-trust-gauge";
 import { KeywordRubricInspector } from "./keyword-rubric-inspector";
+import { AiVoiceFraudPanel, audioAnalysisQueryOptions } from "./ai-voice-fraud-panel";
 
 export const interviewAnswerQueryOptions = (email: string, job_id: string) => queryOptions({
     queryKey: ['candidates', email, job_id],
@@ -38,20 +39,21 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
     }
     const { data: sessions } = useSuspenseQuery(interviewSessionInfoQueryOptions(email, answers.data[0].session_id))
 
-    // Fetch audio and movement data for the report
+    // Fetch audio, movement and voice fraud data for the report
     const { data: voiceAnswersData } = useQuery(interviewVoiceAnswerQueryOptions(email, id))
     const { data: movementDataResult } = useQuery(movementDetectionDetailsQueryOptions(email, id))
+    const { data: voiceFraudAnalysis } = useQuery(audioAnalysisQueryOptions(email, id))
 
     const confirmEvaluation = async (data: { verdict: string, feedback: string }) => {
         startTransition(async () => {
             try {
-                await interviewEvaluate({ 
-                    data: { 
-                        job_id: answers.data[0].job_id, 
-                        candidate_email: answers.data[0].candidate, 
-                        verdict: data.verdict, 
-                        feedback: data.feedback 
-                    } 
+                await interviewEvaluate({
+                    data: {
+                        job_id: answers.data[0].job_id,
+                        candidate_email: answers.data[0].candidate,
+                        verdict: data.verdict,
+                        feedback: data.feedback
+                    }
                 })
                 toast.success("Hiring decision saved successfully")
                 setOpen(false)
@@ -72,6 +74,14 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
 
     const movementAnomaliesTotal = movementDataResult?.data ? movementDataResult.data.length : 0;
 
+    const isAiVoiceDetected = Boolean(
+        voiceFraudAnalysis &&
+        (voiceFraudAnalysis.ai_generated_count > 0 ||
+         voiceFraudAnalysis.overall_conclusion?.toLowerCase().includes("ai") ||
+         voiceFraudAnalysis.overall_conclusion?.toLowerCase().includes("suspicious"))
+    );
+    const voiceConfidence = voiceFraudAnalysis?.average_confidence ?? 0;
+
     return (
         <div className="space-y-10">
             {/* Top Score Aggregator */}
@@ -83,7 +93,15 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
                 movementAnomaliesCount={movementAnomaliesTotal}
                 audioClarityScore={92}
                 totalQuestionsCount={answers.data.length}
+                voiceFraudStatus={
+                    voiceFraudAnalysis?.total_audios_analyzed
+                        ? { isAiGenerated: isAiVoiceDetected, confidenceScore: voiceConfidence }
+                        : undefined
+                }
             />
+
+            {/* AI Voice Authenticity & Fraud Detection Panel */}
+            <AiVoiceFraudPanel candidateEmail={email} jobId={id} />
 
             {/* Semantic Keyword & Rubric Inspector */}
             <KeywordRubricInspector
@@ -99,12 +117,12 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
                         <span>Audit Ref:</span>
                         <span className="text-foreground font-mono font-bold">{id}</span>
                         <span className="opacity-30">•</span>
-                        <Badge 
-                            variant="outline" 
+                        <Badge
+                            variant="outline"
                             className={cn(
                                 "text-[9px] font-black uppercase tracking-wider px-2 py-0.5",
-                                evaluation === "PENDING" 
-                                    ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" 
+                                evaluation === "PENDING"
+                                    ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
                                     : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
                             )}
                         >
@@ -126,12 +144,12 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
                         voiceAnswers={voiceAnswersData?.data}
                         movementData={movementDataResult?.data}
                     />
-                    <EvaluationDialog 
-                        confirmEvaluation={confirmEvaluation} 
-                        isPending={isPending} 
-                        open={open} 
-                        setOpen={setOpen} 
-                        evaluation={evaluation} 
+                    <EvaluationDialog
+                        confirmEvaluation={confirmEvaluation}
+                        isPending={isPending}
+                        open={open}
+                        setOpen={setOpen}
+                        evaluation={evaluation}
                     />
                 </div>
             </div>
@@ -192,7 +210,7 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
                                     {/* Candidate's Transcript */}
                                     <div className="relative group overflow-hidden rounded-2xl border border-indigo-500/15 bg-indigo-500/5 dark:bg-indigo-950/20 p-5 sm:p-6 space-y-3">
                                         <Quote className="absolute top-4 right-4 w-12 h-12 text-indigo-500/10 rotate-12 pointer-events-none" />
-                                        
+
                                         <div className="flex items-center gap-2">
                                             <div className="h-px w-6 bg-indigo-500/40" />
                                             <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
@@ -230,7 +248,7 @@ export function AnswerOutcome({ email, id, interview_evaluation, feedback_value 
                                             <ShieldCheck className="h-4 w-4 text-indigo-500" /> Integrity Verification
                                         </CardTitle>
                                     </CardHeader>
-                                    
+
                                     <CardContent className="p-5 space-y-5">
                                         <div className="flex items-center gap-3">
                                             <div className="h-9 w-9 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20 shrink-0">

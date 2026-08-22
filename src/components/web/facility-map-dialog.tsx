@@ -103,7 +103,7 @@ export function FacilityMapDialog({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent
           className={cn(
-            "w-[95vw] sm:max-w-5xl md:max-w-6xl lg:max-w-7xl xl:max-w-[1240px]",
+            "w-[95vw] sm:max-w-5xl md:max-w-6xl lg:max-w-7xl xl:max-w-310",
             "max-h-[92vh] flex flex-col p-0 overflow-hidden",
             "border border-zinc-200/80 dark:border-zinc-800",
             "bg-white/98 dark:bg-zinc-950/98 backdrop-blur-2xl shadow-2xl rounded-2xl sm:rounded-3xl gap-0"
@@ -172,7 +172,7 @@ export function FacilityMapDialog({
           {/* Main Map & Information Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 flex-1 overflow-y-auto min-h-0">
             {/* SVG Interactive Map Canvas */}
-            <div className="lg:col-span-8 p-3 sm:p-6 flex flex-col items-center justify-center bg-zinc-50/40 dark:bg-zinc-950/40 relative min-h-[340px] sm:min-h-[460px] lg:min-h-[560px]">
+            <div className="lg:col-span-8 p-3 sm:p-6 flex flex-col items-center justify-center bg-zinc-50/40 dark:bg-zinc-950/40 relative min-h-85 sm:min-h-115 lg:min-h-140">
               {/* Map Glow Filter Definition */}
               <svg className="w-0 h-0 absolute pointer-events-none">
                 <defs>
@@ -186,7 +186,7 @@ export function FacilityMapDialog({
               </svg>
 
               {/* Map SVG container */}
-              <div className="w-full max-w-[620px] aspect-[1000/1100] relative flex items-center justify-center">
+              <div className="w-full max-w-155 aspect-1000/1100 relative flex items-center justify-center">
                 <svg
                   viewBox="0 0 1000 1100"
                   className="w-full h-full drop-shadow-md select-none transition-all duration-300"
@@ -207,7 +207,7 @@ export function FacilityMapDialog({
                           "transition-all duration-300 cursor-pointer outline-none",
                           active
                             ? isHovered
-                              ? "fill-emerald-500/40 stroke-emerald-400 stroke-[4] filter-[url(#emerald-glow-hover)]"
+                              ? "fill-emerald-500/40 stroke-emerald-400 stroke-4 filter-[url(#emerald-glow-hover)]"
                               : "fill-emerald-500/25 stroke-emerald-500 dark:stroke-emerald-400 stroke-[2.5] filter-[url(#emerald-glow)]"
                             : isHovered
                               ? "fill-zinc-300/80 dark:fill-zinc-800 stroke-zinc-500 dark:stroke-zinc-400 stroke-[1.5]"
@@ -223,7 +223,7 @@ export function FacilityMapDialog({
 
               {/* Floating Hover Info Card */}
               {hoveredRegion && (
-                <div className="absolute bottom-3 left-3 right-3 sm:right-auto sm:min-w-[280px] p-3 rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200 dark:border-zinc-700 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95 duration-150 z-20">
+                <div className="absolute bottom-3 left-3 right-3 sm:right-auto sm:min-w-70 p-3 rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200 dark:border-zinc-700 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95 duration-150 z-20">
                   <div className="flex items-center justify-between gap-3">
                     <span className="font-black text-xs text-zinc-900 dark:text-zinc-50 tracking-tight">
                       {hoveredRegion.state}
@@ -286,7 +286,7 @@ export function FacilityMapDialog({
                 </div>
 
                 {/* State list */}
-                <div className="space-y-2 max-h-[220px] sm:max-h-[300px] lg:max-h-[360px] overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-55 sm:max-h-75 lg:max-h-90 overflow-y-auto pr-1">
                   {filteredActiveRegions.length > 0 ? (
                     filteredActiveRegions.map((region) => (
                       <div

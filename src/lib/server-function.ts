@@ -2,11 +2,12 @@
 import { createServerFn } from '@tanstack/react-start';
 import { GoogleAuth } from 'google-auth-library';
 import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse, InterviewConfig, ConfigApiResponse, InterviewSessionInfo, ADKResponse, MultipleCvUploadResponse } from './types';
+import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse, InterviewConfig, ConfigApiResponse, InterviewSessionInfo, ADKResponse, MultipleCvUploadResponse, AudioAnalysisResponse, AudioAnalysisInputSchema } from './types';
 import { isLoginMiddleware } from './middleware';
 import { queryOptions } from '@tanstack/react-query'
 import { OpenRouter } from "@openrouter/sdk";
 const auth = new GoogleAuth();
+
 
 export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(async (): Promise<BucketListResponse> => {
 
@@ -29,7 +30,7 @@ export const getSearchProfileDetails = createServerFn({ method: 'GET' })
 
         const client = await auth.getIdTokenClient(API_PATH.RAG_SEARCH_API.GET_BASE_URL);
         const url = API_PATH.RAG_SEARCH_API.GET_BASE_URL + API_PATH.RAG_SEARCH_API.PATH_URL;
-        const parsedSkills = data.skills 
+        const parsedSkills = data.skills
             ? data.skills.split(',').map((s: string) => s.trim()).filter(Boolean)
             : [];
 
@@ -870,6 +871,7 @@ export const getSiteConfig = createServerFn({ method: 'GET' })
     })
 
 export const getInterviewSessionInfo = createServerFn({ method: 'POST' })
+    .middleware([isLoginMiddleware])
     .inputValidator((data: InterviewSessionInfo) => data)
     .handler(async ({ data }): Promise<ADKResponse> => {
 
@@ -909,3 +911,37 @@ export const getInterviewSessionInfo = createServerFn({ method: 'POST' })
         }
 
     })
+
+
+export const getAudioAnalysisResultFn = createServerFn({ method: "GET" })
+    .middleware([isLoginMiddleware])
+    .inputValidator((data: AudioAnalysisInputSchema) => data)
+    .handler(async ({ data }): Promise<AudioAnalysisResponse | null> => {
+
+        const client = await auth.getIdTokenClient(API_PATH.VOICE_FRAUD_DETECTION.GET_BASE_URL);
+        let url = API_PATH.VOICE_FRAUD_DETECTION.GET_BASE_URL + API_PATH.VOICE_FRAUD_DETECTION.PATH_URL;
+        console.log(url)
+        if (data.candidateEmail) {
+            url += `?candidate_email=${data.candidateEmail}`;
+        }
+        if (data.jobId) {
+            url += `&job_id=${data.jobId}`;
+        }
+
+        try {
+            const response = await client.request({
+                url: url,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const finalData = await response.data;
+            console.log(finalData);
+            return finalData as AudioAnalysisResponse;
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+
+    });

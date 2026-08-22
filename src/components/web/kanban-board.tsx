@@ -5,14 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
     Briefcase,
-    MapPin,
     Calendar,
     Share2,
     CheckCircle2,
     AlertCircle,
     Archive,
-    Sparkles,
-    DollarSign
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -161,17 +158,7 @@ export function KanbanBoard({ jobs, role: _role, onShareJob }: KanbanBoardProps)
                                                     </Badge>
                                                 </div>
 
-                                                {/* Job Title & Description - Plain text, no hyperlinks */}
-                                                <div className="space-y-1">
-                                                    <h4 className="text-base font-black text-zinc-950 dark:text-zinc-50 leading-snug break-words">
-                                                        {job.job_title}
-                                                    </h4>
-                                                    {job.job_description && (
-                                                        <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed font-normal break-words line-clamp-3">
-                                                            {job.job_description}
-                                                        </p>
-                                                    )}
-                                                </div>
+
 
                                                 {/* Footer: Date & Share Modal Trigger */}
                                                 <div className="flex items-center justify-between gap-3 pt-3 border-t border-zinc-200 dark:border-zinc-800 mt-1">
