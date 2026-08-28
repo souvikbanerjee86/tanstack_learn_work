@@ -1,63 +1,68 @@
-
-
-import { redirect } from "@tanstack/react-router";
-import { adminAuth } from "./firebase-server";
-import { createServerFn } from "@tanstack/react-start";
-import { setCookie, deleteCookie, getCookie } from '@tanstack/react-start/server';
+import { redirect } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
+import {
+  deleteCookie,
+  getCookie,
+  setCookie,
+} from '@tanstack/react-start/server'
+import { adminAuth } from './firebase-server'
 
 export const loginFn = createServerFn({ method: 'POST' })
-    .inputValidator((idToken: string) => idToken)
-    .handler(async ({ data: idToken }) => {
-        const expiresIn = 60 * 60 * 24 * 5 * 1000;
-        try {
-            const sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
+  .inputValidator((idToken: string) => idToken)
+  .handler(async ({ data: idToken }) => {
+    const expiresIn = 60 * 60 * 24 * 5 * 1000
+    try {
+      const sessionCookie = await adminAuth.createSessionCookie(idToken, {
+        expiresIn,
+      })
 
-            setCookie("session", sessionCookie, {
-                maxAge: expiresIn,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                path: "/",
-            });
+      setCookie('session', sessionCookie, {
+        maxAge: expiresIn,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+      })
 
-            return { success: true };
-        } catch (error) {
-            console.error("Login failed", error);
-            throw new Error("Unauthorized");
-        }
-    })
-
+      return { success: true }
+    } catch (error) {
+      console.error('Login failed', error)
+      throw new Error('Unauthorized')
+    }
+  })
 
 export const logoutFn = createServerFn({ method: 'POST' }).handler(async () => {
-    deleteCookie("session");
-    return { success: true };
+  deleteCookie('session')
+  return { success: true }
 })
 
 export const getUserFn = createServerFn({ method: 'GET' }).handler(async () => {
-    const session = getCookie("session");
+  const session = getCookie('session')
+
+  if (!session) {
+    throw redirect({ to: '/login' })
+  }
+
+  try {
+    const decodedClaims = await adminAuth.verifySessionCookie(session, true)
+    return decodedClaims
+  } catch (error) {
+    return null
+  }
+})
+
+export const isLoggedIn = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const session = getCookie('session')
 
     if (!session) {
-        throw redirect({ to: "/login" })
+      return null
     }
 
     try {
-        const decodedClaims = await adminAuth.verifySessionCookie(session, true);
-        return decodedClaims;
+      const decodedClaims = await adminAuth.verifySessionCookie(session, true)
+      return decodedClaims
     } catch (error) {
-        return null;
+      return null
     }
-})
-
-export const isLoggedIn = createServerFn({ method: 'GET' }).handler(async () => {
-    const session = getCookie("session");
-
-    if (!session) {
-        return null
-    }
-
-    try {
-        const decodedClaims = await adminAuth.verifySessionCookie(session, true);
-        return decodedClaims;
-    } catch (error) {
-        return null;
-    }
-})
+  },
+)

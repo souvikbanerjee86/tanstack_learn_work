@@ -1,19 +1,19 @@
-import { initializeApp, getApps, cert } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
+import { cert, getApps, initializeApp } from 'firebase-admin/app'
+import { getAuth } from 'firebase-admin/auth'
 
 if (!getApps().length) {
-    // const serviceAccountString = process.env.APP_FIREBASE_SERVICE_ACCOUNT_JSON;
+  // const serviceAccountString = process.env.APP_FIREBASE_SERVICE_ACCOUNT_JSON
 
-    // if (!serviceAccountString) {
-    //     throw new Error(
-    //         "The APP_FIREBASE_SERVICE_ACCOUNT_JSON environment variable is not set."
-    //     );
-    // }
-    // const serviceAccount = JSON.parse(serviceAccountString);
-    // initializeApp({
-    //     credential: cert(serviceAccount),
-    // });
-    initializeApp()
+  // if (!serviceAccountString) {
+  //   throw new Error(
+  //     'The APP_FIREBASE_SERVICE_ACCOUNT_JSON environment variable is not set.',
+  //   )
+  // }
+  // const serviceAccount = JSON.parse(serviceAccountString)
+  // initializeApp({
+  //   credential: cert(serviceAccount),
+  // })
+  initializeApp()
 }
 
-export const adminAuth = getAuth();
+export const adminAuth = getAuth()

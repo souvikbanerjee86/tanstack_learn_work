@@ -1,10 +1,9 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
-@import "@fontsource-variable/outfit";
-@import "@fontsource-variable/geist-mono";
-
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/outfit';
+@import '@fontsource-variable/geist-mono';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -14,11 +13,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
 code {
   @apply font-mono;
 }
-
 
 :root {
   --background: oklch(1 0 0);
@@ -138,18 +135,24 @@ code {
   * {
     @apply border-border outline-ring/50;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading tracking-tight;
   }
 
   body {
     @apply bg-background text-foreground relative min-h-screen overflow-x-hidden;
   }
-  
+
   /* Ambient Background Effects */
-  body::before, body::after {
-    content: "";
+  body::before,
+  body::after {
+    content: '';
     position: fixed;
     z-index: -1;
     width: 50vw;
@@ -196,7 +199,7 @@ code {
   }
 
   .glow-card::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: -2px;
     border-radius: inherit;
@@ -274,12 +277,21 @@ code {
 }
 
 @keyframes ambient-pulse {
-  0% { transform: translate(0, 0) scale(1); opacity: 0.1; }
-  50% { transform: translate(5%, 5%) scale(1.1); opacity: 0.2; }
-  100% { transform: translate(-5%, -2%) scale(1.05); opacity: 0.15; }
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate(5%, 5%) scale(1.1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translate(-5%, -2%) scale(1.05);
+    opacity: 0.15;
+  }
 }
 
 /* Fix native date input calendar icon visibility in dark mode */
-.dark input[type="date"]::-webkit-calendar-picker-indicator {
+.dark input[type='date']::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }

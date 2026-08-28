@@ -1,947 +1,1091 @@
 'use server'
-import { createServerFn } from '@tanstack/react-start';
-import { GoogleAuth } from 'google-auth-library';
-import { API_PATH } from './api-path';
-import { BucketListResponse, CandidatePaginationResponse, EvaluationResponse, JobQuestionsResponse, InterviewVoiceOutcomeResponse, JobPosting, PaginatedCandidateResponse, PaginatedJobResponse, ProfileSearchResponse, RagProcessRecord, UserRoleResponse, GcsUriDetails, DashboardSummaryResponse, PaginatedEmailSyncResponse, MovementOutcomeResponse, AdminUserResponse, InterviewConfig, ConfigApiResponse, InterviewSessionInfo, ADKResponse, MultipleCvUploadResponse, AudioAnalysisResponse, AudioAnalysisInputSchema } from './types';
-import { isLoginMiddleware } from './middleware';
+import { createServerFn } from '@tanstack/react-start'
+import { GoogleAuth } from 'google-auth-library'
 import { queryOptions } from '@tanstack/react-query'
-import { OpenRouter } from "@openrouter/sdk";
-const auth = new GoogleAuth();
+import { OpenRouter } from '@openrouter/sdk'
+import { API_PATH } from './api-path'
+import { isLoginMiddleware } from './middleware'
+import type {
+  ADKResponse,
+  AdminUserResponse,
+  AudioAnalysisInputSchema,
+  AudioAnalysisResponse,
+  BucketListResponse,
+  CandidatePaginationResponse,
+  ConfigApiResponse,
+  DashboardSummaryResponse,
+  EvaluationResponse,
+  GcsUriDetails,
+  InterviewConfig,
+  InterviewSessionInfo,
+  InterviewVoiceOutcomeResponse,
+  JobPosting,
+  JobQuestionsResponse,
+  MovementOutcomeResponse,
+  MultipleCvUploadResponse,
+  PaginatedCandidateResponse,
+  PaginatedEmailSyncResponse,
+  PaginatedJobResponse,
+  ProfileSearchResponse,
+  RagProcessRecord,
+  UserRoleResponse,
+} from './types'
 
+const auth = new GoogleAuth()
 
-export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(async (): Promise<BucketListResponse> => {
-
+export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<BucketListResponse> => {
     console.log(API_PATH.BUCKET_LIST_API.GET_BASE_URL)
-    const client = await auth.getIdTokenClient(API_PATH.BUCKET_LIST_API.GET_BASE_URL);
-    const url = API_PATH.BUCKET_LIST_API.GET_BASE_URL + API_PATH.BUCKET_LIST_API.PATH_URL;
+    const client = await auth.getIdTokenClient(
+      API_PATH.BUCKET_LIST_API.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.BUCKET_LIST_API.GET_BASE_URL + API_PATH.BUCKET_LIST_API.PATH_URL
     const response = await client.request({
-        url: url,
-        method: 'GET',
-    });
-    const data = await response.data;
-    return data as BucketListResponse;
-})
-
-
+      url: url,
+      method: 'GET',
+    })
+    const data = await response.data
+    return data as BucketListResponse
+  },
+)
 
 export const getSearchProfileDetails = createServerFn({ method: 'GET' })
-    .inputValidator((data: { jobDescription: string, preferedDomain: string, skills: string, experience: number, fileIds: string[] | null }) => data)
-    .handler(async ({ data }): Promise<ProfileSearchResponse> => {
+  .inputValidator(
+    (data: {
+      jobDescription: string
+      preferedDomain: string
+      skills: string
+      experience: number
+      fileIds: Array<string> | null
+    }) => data,
+  )
+  .handler(async ({ data }): Promise<ProfileSearchResponse> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.RAG_SEARCH_API.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.RAG_SEARCH_API.GET_BASE_URL + API_PATH.RAG_SEARCH_API.PATH_URL
+    const parsedSkills = data.skills
+      ? data.skills
+          .split(',')
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      : []
 
-        const client = await auth.getIdTokenClient(API_PATH.RAG_SEARCH_API.GET_BASE_URL);
-        const url = API_PATH.RAG_SEARCH_API.GET_BASE_URL + API_PATH.RAG_SEARCH_API.PATH_URL;
-        const parsedSkills = data.skills
-            ? data.skills.split(',').map((s: string) => s.trim()).filter(Boolean)
-            : [];
+    const postData: any = {
+      job_description: data.jobDescription,
+      years_of_experience: data.experience,
+      primary_skills: parsedSkills,
+      prefered_domain: data.preferedDomain,
+    }
 
-        let postData: any = {
-            "job_description": data.jobDescription,
-            "years_of_experience": data.experience,
-            "primary_skills": parsedSkills,
-            "prefered_domain": data.preferedDomain
-        }
+    if (data.fileIds && data.fileIds.length > 0) {
+      postData['rag_file_ids'] = data.fileIds
+    }
 
-        if (data.fileIds && data.fileIds.length > 0) {
-            postData["rag_file_ids"] = data.fileIds
-        }
-
-        const sendData = JSON.stringify(postData)
-        const response = await client.request({
-            url: url,
-            method: 'POST',
-            data: sendData,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const returnData = await response.data;
-        return returnData as ProfileSearchResponse;
-    })
-
-
-export const getProcessedIndexFilesId = createServerFn({ method: 'GET' }).handler(async (): Promise<RagProcessRecord[]> => {
-
-    console.log(API_PATH.PROCESSED_FILES_ID.GET_BASE_URL)
-    const client = await auth.getIdTokenClient(API_PATH.PROCESSED_FILES_ID.GET_BASE_URL);
-    const url = API_PATH.PROCESSED_FILES_ID.GET_BASE_URL + API_PATH.PROCESSED_FILES_ID.PATH_URL;
+    const sendData = JSON.stringify(postData)
     const response = await client.request({
-        url: url,
-        method: 'GET',
-    });
-    const data = await response.data;
-    return data as RagProcessRecord[];
+      url: url,
+      method: 'POST',
+      data: sendData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const returnData = await response.data
+    return returnData as ProfileSearchResponse
+  })
+
+export const getProcessedIndexFilesId = createServerFn({
+  method: 'GET',
+}).handler(async (): Promise<Array<RagProcessRecord>> => {
+  console.log(API_PATH.PROCESSED_FILES_ID.GET_BASE_URL)
+  const client = await auth.getIdTokenClient(
+    API_PATH.PROCESSED_FILES_ID.GET_BASE_URL,
+  )
+  const url =
+    API_PATH.PROCESSED_FILES_ID.GET_BASE_URL +
+    API_PATH.PROCESSED_FILES_ID.PATH_URL
+  const response = await client.request({
+    url: url,
+    method: 'GET',
+  })
+  const data = await response.data
+  return data as Array<RagProcessRecord>
 })
 
-
 export const triggerIndexes = createServerFn({ method: 'GET' })
-    .inputValidator((data: { date: string }) => data)
-    .handler(async ({ data }): Promise<{ success: boolean, message: string }> => {
+  .inputValidator((data: { date: string }) => data)
+  .handler(async ({ data }): Promise<{ success: boolean; message: string }> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.TRIGGER_INDEX.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.TRIGGER_INDEX.GET_BASE_URL + API_PATH.TRIGGER_INDEX.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.TRIGGER_INDEX.GET_BASE_URL);
-        const url = API_PATH.TRIGGER_INDEX.GET_BASE_URL + API_PATH.TRIGGER_INDEX.PATH_URL;
-
-
-        const postData = {
-            "date": data.date,
-            "corpus_id": API_PATH.TRIGGER_INDEX.CORPUS_ID
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            await response.data;
-            return { "success": true, "message": "Indexing triggered successfully" }
-        } catch (e) {
-            console.log(e)
-            return { "success": false, "message": "Indexing failed" }
-        }
-
-
-    })
+    const postData = {
+      date: data.date,
+      corpus_id: API_PATH.TRIGGER_INDEX.CORPUS_ID,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      await response.data
+      return { success: true, message: 'Indexing triggered successfully' }
+    } catch (e) {
+      console.log(e)
+      return { success: false, message: 'Indexing failed' }
+    }
+  })
 
 export const getJobDetails = createServerFn({ method: 'GET' })
-    .inputValidator((data: { limit: number | null, status: string | null, last_doc_id: string | null }) => data)
-    .handler(async ({ data }): Promise<PaginatedJobResponse> => {
+  .inputValidator(
+    (data: {
+      limit: number | null
+      status: string | null
+      last_doc_id: string | null
+    }) => data,
+  )
+  .handler(async ({ data }): Promise<PaginatedJobResponse> => {
+    console.log(API_PATH.JOB_DETAILS.GET_BASE_URL)
+    const client = await auth.getIdTokenClient(
+      API_PATH.JOB_DETAILS.GET_BASE_URL,
+    )
+    let url = API_PATH.JOB_DETAILS.GET_BASE_URL + API_PATH.JOB_DETAILS.PATH_URL
 
-        console.log(API_PATH.JOB_DETAILS.GET_BASE_URL)
-        const client = await auth.getIdTokenClient(API_PATH.JOB_DETAILS.GET_BASE_URL);
-        var url = API_PATH.JOB_DETAILS.GET_BASE_URL + API_PATH.JOB_DETAILS.PATH_URL;
-
-        if (data.limit) {
-            url += `?limit=${data.limit}`;
-        }
-        if (data.last_doc_id) {
-            url += `&last_doc_id=${data.last_doc_id}`;
-        }
-        if (data.status) {
-            url += `&status=${data.status}`;
-        }
-        const response = await client.request({
-            url: url,
-            method: 'GET',
-        });
-        const returnData = await response.data;
-        return returnData as PaginatedJobResponse;
-
+    if (data.limit) {
+      url += `?limit=${data.limit}`
+    }
+    if (data.last_doc_id) {
+      url += `&last_doc_id=${data.last_doc_id}`
+    }
+    if (data.status) {
+      url += `&status=${data.status}`
+    }
+    const response = await client.request({
+      url: url,
+      method: 'GET',
     })
-
+    const returnData = await response.data
+    return returnData as PaginatedJobResponse
+  })
 
 export const jobInterviewCandidates = createServerFn({ method: 'GET' })
-    .inputValidator((data: { job_id: string, candidates: string[] }) => data)
-    .handler(async ({ data }): Promise<{ success: boolean, message: string }> => {
+  .inputValidator((data: { job_id: string; candidates: Array<string> }) => data)
+  .handler(async ({ data }): Promise<{ success: boolean; message: string }> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.JOB_INTERVIEW_CANDIDATES.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.JOB_INTERVIEW_CANDIDATES.GET_BASE_URL +
+      API_PATH.JOB_INTERVIEW_CANDIDATES.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.JOB_INTERVIEW_CANDIDATES.GET_BASE_URL);
-        const url = API_PATH.JOB_INTERVIEW_CANDIDATES.GET_BASE_URL + API_PATH.JOB_INTERVIEW_CANDIDATES.PATH_URL;
-
-
-        const postData = {
-            "job_id": data.job_id,
-            "candidates": data.candidates
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            await response.data;
-            return { "success": true, "message": "Email Initiated, Candidate will receive the interview email" }
-        } catch (e) {
-            return { "success": false, "message": "Indexing failed" }
-        }
-
-
-    })
+    const postData = {
+      job_id: data.job_id,
+      candidates: data.candidates,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      await response.data
+      return {
+        success: true,
+        message: 'Email Initiated, Candidate will receive the interview email',
+      }
+    } catch (e) {
+      return { success: false, message: 'Indexing failed' }
+    }
+  })
 
 export const getInterviewCandidateEmailList = createServerFn({ method: 'GET' })
-    .inputValidator((data: { limit: number | null, last_doc_id: string | null }) => data)
-    .handler(async ({ data }): Promise<CandidatePaginationResponse> => {
+  .inputValidator(
+    (data: { limit: number | null; last_doc_id: string | null }) => data,
+  )
+  .handler(async ({ data }): Promise<CandidatePaginationResponse> => {
+    console.log(API_PATH.JOB_INTERVIEW_CANDIDATE_EMAIL_LIST.GET_BASE_URL)
+    const client = await auth.getIdTokenClient(
+      API_PATH.JOB_INTERVIEW_CANDIDATE_EMAIL_LIST.GET_BASE_URL,
+    )
+    let url =
+      API_PATH.JOB_INTERVIEW_CANDIDATE_EMAIL_LIST.GET_BASE_URL +
+      API_PATH.JOB_INTERVIEW_CANDIDATE_EMAIL_LIST.PATH_URL
 
-        console.log(API_PATH.JOB_INTERVIEW_CANDIDATE_EMAIL_LIST.GET_BASE_URL)
-        const client = await auth.getIdTokenClient(API_PATH.JOB_INTERVIEW_CANDIDATE_EMAIL_LIST.GET_BASE_URL);
-        var url = API_PATH.JOB_INTERVIEW_CANDIDATE_EMAIL_LIST.GET_BASE_URL + API_PATH.JOB_INTERVIEW_CANDIDATE_EMAIL_LIST.PATH_URL;
-
-        if (data.limit) {
-            url += `&limit=${data.limit}`;
-        }
-        if (data.last_doc_id) {
-            url += `&last_doc_id=${data.last_doc_id}`;
-        }
-        const response = await client.request({
-            url: url,
-            method: 'GET',
-        });
-        const returnData = await response.data;
-        return returnData as CandidatePaginationResponse;
-
+    if (data.limit) {
+      url += `&limit=${data.limit}`
+    }
+    if (data.last_doc_id) {
+      url += `&last_doc_id=${data.last_doc_id}`
+    }
+    const response = await client.request({
+      url: url,
+      method: 'GET',
     })
-
-
+    const returnData = await response.data
+    return returnData as CandidatePaginationResponse
+  })
 
 export const getDownloadURL = createServerFn({ method: 'GET' })
-    .inputValidator((data: { bucket_name: string, file_path: string }) => data)
-    .handler(async ({ data }): Promise<{ download_url: string | null }> => {
+  .inputValidator((data: { bucket_name: string; file_path: string }) => data)
+  .handler(async ({ data }): Promise<{ download_url: string | null }> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.DOWNLOAD_FILE_URL.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.DOWNLOAD_FILE_URL.GET_BASE_URL +
+      API_PATH.DOWNLOAD_FILE_URL.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.DOWNLOAD_FILE_URL.GET_BASE_URL);
-        const url = API_PATH.DOWNLOAD_FILE_URL.GET_BASE_URL + API_PATH.DOWNLOAD_FILE_URL.PATH_URL;
-
-
-        const postData = {
-            "bucket_name": data.bucket_name,
-            "full_path": data.file_path
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as { download_url: string };
-        } catch (e) {
-            return { "download_url": null }
-        }
-
-
-    })
-
+    const postData = {
+      bucket_name: data.bucket_name,
+      full_path: data.file_path,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as { download_url: string }
+    } catch (e) {
+      return { download_url: null }
+    }
+  })
 
 export const getInterviewAnswersList = createServerFn({ method: 'GET' })
-    .inputValidator((data: { candidate: string, job_id: string }) => data)
-    .handler(async ({ data }): Promise<EvaluationResponse> => {
+  .inputValidator((data: { candidate: string; job_id: string }) => data)
+  .handler(async ({ data }): Promise<EvaluationResponse> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.CANDIDATE_INTERVIEW_ANSWER_LIST.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.CANDIDATE_INTERVIEW_ANSWER_LIST.GET_BASE_URL +
+      API_PATH.CANDIDATE_INTERVIEW_ANSWER_LIST.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.CANDIDATE_INTERVIEW_ANSWER_LIST.GET_BASE_URL);
-        const url = API_PATH.CANDIDATE_INTERVIEW_ANSWER_LIST.GET_BASE_URL + API_PATH.CANDIDATE_INTERVIEW_ANSWER_LIST.PATH_URL;
-
-
-        const postData = {
-            "candidate": data.candidate,
-            "job_id": data.job_id
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as EvaluationResponse;
-        } catch (e) {
-            console.log(e)
-            return { "success": false, "count": 0, "data": [] }
-        }
-
-
-    })
-
+    const postData = {
+      candidate: data.candidate,
+      job_id: data.job_id,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as EvaluationResponse
+    } catch (e) {
+      console.log(e)
+      return { success: false, count: 0, data: [] }
+    }
+  })
 
 export const getInterviewVoiceAnswersList = createServerFn({ method: 'GET' })
-    .inputValidator((data: { candidate: string, job_id: string }) => data)
-    .handler(async ({ data }): Promise<InterviewVoiceOutcomeResponse> => {
+  .inputValidator((data: { candidate: string; job_id: string }) => data)
+  .handler(async ({ data }): Promise<InterviewVoiceOutcomeResponse> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST.GET_BASE_URL +
+      API_PATH.CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST.PATH_URL
+    console.log(url)
 
-        const client = await auth.getIdTokenClient(API_PATH.CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST.GET_BASE_URL);
-        const url = API_PATH.CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST.GET_BASE_URL + API_PATH.CANDIDATE_INTERVIEW_VOICE_UTCOME_LIST.PATH_URL;
-        console.log(url)
-
-        const postData = {
-            "candidate": data.candidate,
-            "job_id": data.job_id
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as InterviewVoiceOutcomeResponse;
-        } catch (e) {
-            console.log(e)
-            return { "success": false, "count": 0, "data": [] }
-        }
-
-
-    })
-
+    const postData = {
+      candidate: data.candidate,
+      job_id: data.job_id,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as InterviewVoiceOutcomeResponse
+    } catch (e) {
+      console.log(e)
+      return { success: false, count: 0, data: [] }
+    }
+  })
 
 export const createJob = createServerFn({ method: 'POST' })
-    .inputValidator((data: JobPosting) => data)
-    .handler(async ({ data }): Promise<{ "id": string, "message": string }> => {
+  .inputValidator((data: JobPosting) => data)
+  .handler(async ({ data }): Promise<{ id: string; message: string }> => {
+    const client = await auth.getIdTokenClient(API_PATH.ADD_JOB.GET_BASE_URL)
+    const url = API_PATH.ADD_JOB.GET_BASE_URL + API_PATH.ADD_JOB.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.ADD_JOB.GET_BASE_URL);
-        const url = API_PATH.ADD_JOB.GET_BASE_URL + API_PATH.ADD_JOB.PATH_URL;
-
-
-        const postData = {
-            "jobTitle": data.jobTitle,
-            "jobDescription": data.jobDescription,
-            "jobType": data.jobType,
-            "locations": data.locations,
-            "startDate": data.startDate,
-            "endDate": data.endDate,
-            "jobId": data.jobId,
-            "experience": data.experience,
-            "status": data.status === 'Active' ? 1 : 0
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as { "id": string, "message": string }
-        } catch (e) {
-            return { "id": "", "message": "" };
-        }
-
-    })
+    const postData = {
+      jobTitle: data.jobTitle,
+      jobDescription: data.jobDescription,
+      jobType: data.jobType,
+      locations: data.locations,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      jobId: data.jobId,
+      experience: data.experience,
+      status: data.status === 'Active' ? 1 : 0,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as { id: string; message: string }
+    } catch (e) {
+      return { id: '', message: '' }
+    }
+  })
 
 export const verifyFaceRecognition = createServerFn({ method: 'POST' })
-    .inputValidator((data: { capturedImageBase64: string, referenceImageBase64: string }) => data)
-    .handler(async ({ data }): Promise<{ "score": number, "message": string, "match": boolean }> => {
-        console.log("Captured Image Base64 length:", data.capturedImageBase64.length);
-        console.log("Reference Image Base64 length:", data.referenceImageBase64.length);
+  .inputValidator(
+    (data: { capturedImageBase64: string; referenceImageBase64: string }) =>
+      data,
+  )
+  .handler(
+    async ({
+      data,
+    }): Promise<{ score: number; message: string; match: boolean }> => {
+      console.log(
+        'Captured Image Base64 length:',
+        data.capturedImageBase64.length,
+      )
+      console.log(
+        'Reference Image Base64 length:',
+        data.referenceImageBase64.length,
+      )
 
-        const client = await auth.getIdTokenClient(API_PATH.FACE_DETECTION.GET_BASE_URL);
-        const url = API_PATH.FACE_DETECTION.GET_BASE_URL + API_PATH.FACE_DETECTION.PATH_URL;
+      const client = await auth.getIdTokenClient(
+        API_PATH.FACE_DETECTION.GET_BASE_URL,
+      )
+      const url =
+        API_PATH.FACE_DETECTION.GET_BASE_URL + API_PATH.FACE_DETECTION.PATH_URL
 
-        const postData = {
-            "image1_base64": data.capturedImageBase64,
-            "image2_base64": data.referenceImageBase64
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as { "score": number, "message": string, "match": boolean }
-        } catch (e) {
-            return { "score": 0, "message": "", "match": false };
-        }
-
-    })
-
+      const postData = {
+        image1_base64: data.capturedImageBase64,
+        image2_base64: data.referenceImageBase64,
+      }
+      const sendData = JSON.stringify(postData)
+      try {
+        const response = await client.request({
+          url: url,
+          method: 'POST',
+          data: sendData,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        const finalData = await response.data
+        return finalData as { score: number; message: string; match: boolean }
+      } catch (e) {
+        return { score: 0, message: '', match: false }
+      }
+    },
+  )
 
 export const getUserRole = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { user_id: string | null }) => data)
-    .handler(async ({ data, context }): Promise<UserRoleResponse> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: { user_id: string | null }) => data)
+  .handler(async ({ data, context }): Promise<UserRoleResponse> => {
+    console.log(API_PATH.USER_ROLE.GET_BASE_URL)
+    if (data.user_id === null) {
+      data.user_id = context?.userInfo?.user_id as string
+    }
 
-        console.log(API_PATH.USER_ROLE.GET_BASE_URL)
-        if (data.user_id === null) {
-            data.user_id = context?.userInfo?.user_id as string;
-        }
+    const client = await auth.getIdTokenClient(API_PATH.USER_ROLE.GET_BASE_URL)
+    const url =
+      API_PATH.USER_ROLE.GET_BASE_URL +
+      API_PATH.USER_ROLE.PATH_URL +
+      data.user_id
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'GET',
+      })
+      const returnData = await response.data
 
-        const client = await auth.getIdTokenClient(API_PATH.USER_ROLE.GET_BASE_URL);
-        var url = API_PATH.USER_ROLE.GET_BASE_URL + API_PATH.USER_ROLE.PATH_URL + data.user_id;
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'GET',
-            });
-            const returnData = await response.data;
-
-            return returnData as UserRoleResponse;
-        } catch (e) {
-            return { "user_id": "", "role": "" };
-        }
-
-    })
+      return returnData as UserRoleResponse
+    } catch (e) {
+      return { user_id: '', role: '' }
+    }
+  })
 
 export const userRoleQueryOptions = queryOptions({
-    queryKey: ['userRole'],
-    queryFn: () => getUserRole({ data: { user_id: null } }),
-    staleTime: Infinity,
+  queryKey: ['userRole'],
+  queryFn: () => getUserRole({ data: { user_id: null } }),
+  staleTime: Infinity,
 })
 
 export const getCandidatesList = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { limit: number | null, last_doc_id: string | null }) => data)
-    .handler(async ({ data }): Promise<PaginatedCandidateResponse> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator(
+    (data: { limit: number | null; last_doc_id: string | null }) => data,
+  )
+  .handler(async ({ data }): Promise<PaginatedCandidateResponse> => {
+    console.log(API_PATH.CANDIDATE_LIST.GET_BASE_URL)
+    const client = await auth.getIdTokenClient(
+      API_PATH.CANDIDATE_LIST.GET_BASE_URL,
+    )
+    let url =
+      API_PATH.CANDIDATE_LIST.GET_BASE_URL + API_PATH.CANDIDATE_LIST.PATH_URL
 
-        console.log(API_PATH.CANDIDATE_LIST.GET_BASE_URL)
-        const client = await auth.getIdTokenClient(API_PATH.CANDIDATE_LIST.GET_BASE_URL);
-        var url = API_PATH.CANDIDATE_LIST.GET_BASE_URL + API_PATH.CANDIDATE_LIST.PATH_URL;
-
-        if (data.limit) {
-            url += `?limit=${data.limit}`;
-        }
-        if (data.last_doc_id) {
-            url += `&last_doc_id=${data.last_doc_id}`;
-        }
-        const response = await client.request({
-            url: url,
-            method: 'GET',
-        });
-        const returnData = await response.data;
-        return returnData as PaginatedCandidateResponse;
-
+    if (data.limit) {
+      url += `?limit=${data.limit}`
+    }
+    if (data.last_doc_id) {
+      url += `&last_doc_id=${data.last_doc_id}`
+    }
+    const response = await client.request({
+      url: url,
+      method: 'GET',
     })
+    const returnData = await response.data
+    return returnData as PaginatedCandidateResponse
+  })
 
 export const getInterviewQuestions = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { limit: number | null, offset: number | null, job_id: string }) => data)
-    .handler(async ({ data }): Promise<JobQuestionsResponse> => {
-
-
-        const client = await auth.getIdTokenClient(API_PATH.QUESTION_LIST.GET_BASE_URL);
-        var url = API_PATH.QUESTION_LIST.GET_BASE_URL + API_PATH.QUESTION_LIST.PATH_URL + data.job_id + "/questions";
-        console.log(url)
-        const response = await client.request({
-            url: url,
-            method: 'GET',
-        });
-        const returnData = await response.data;
-
-        return returnData as JobQuestionsResponse;
-
+  .middleware([isLoginMiddleware])
+  .inputValidator(
+    (data: { limit: number | null; offset: number | null; job_id: string }) =>
+      data,
+  )
+  .handler(async ({ data }): Promise<JobQuestionsResponse> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.QUESTION_LIST.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.QUESTION_LIST.GET_BASE_URL +
+      API_PATH.QUESTION_LIST.PATH_URL +
+      data.job_id +
+      '/questions'
+    console.log(url)
+    const response = await client.request({
+      url: url,
+      method: 'GET',
     })
+    const returnData = await response.data
 
+    return returnData as JobQuestionsResponse
+  })
 
 export const addInterviewQuestion = createServerFn({ method: 'POST' })
-    .inputValidator((data: { job_id: string, question: string }) => data)
-    .handler(async ({ data }): Promise<{ "job_id": string, "question_id": string, "question": string, "message": string }> => {
+  .inputValidator((data: { job_id: string; question: string }) => data)
+  .handler(
+    async ({
+      data,
+    }): Promise<{
+      job_id: string
+      question_id: string
+      question: string
+      message: string
+    }> => {
+      const client = await auth.getIdTokenClient(
+        API_PATH.QUESTION_ADD.GET_BASE_URL,
+      )
+      const url =
+        API_PATH.QUESTION_ADD.GET_BASE_URL + API_PATH.QUESTION_ADD.PATH_URL
 
-
-        const client = await auth.getIdTokenClient(API_PATH.QUESTION_ADD.GET_BASE_URL);
-        const url = API_PATH.QUESTION_ADD.GET_BASE_URL + API_PATH.QUESTION_ADD.PATH_URL;
-
-        const postData = {
-            "job_id": data.job_id,
-            "question": data.question
+      const postData = {
+        job_id: data.job_id,
+        question: data.question,
+      }
+      const sendData = JSON.stringify(postData)
+      try {
+        const response = await client.request({
+          url: url,
+          method: 'POST',
+          data: sendData,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        const finalData = await response.data
+        return finalData as {
+          job_id: string
+          question_id: string
+          question: string
+          message: string
         }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as { "job_id": string, "question_id": string, "question": string, "message": string }
-        } catch (e) {
-            return { "job_id": "", "question_id": "", "question": "", "message": "" };
-        }
-
-    })
+      } catch (e) {
+        return { job_id: '', question_id: '', question: '', message: '' }
+      }
+    },
+  )
 
 export const deleteInterviewQuestion = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { question_id: string }) => data)
-    .handler(async ({ data }): Promise<{ "status": string, "message": string }> => {
-
-
-        const client = await auth.getIdTokenClient(API_PATH.QUESTION_DELETE.GET_BASE_URL);
-        var url = API_PATH.QUESTION_DELETE.GET_BASE_URL + API_PATH.QUESTION_DELETE.PATH_URL + data.question_id;
-        console.log(url)
-        const response = await client.request({
-            url: url,
-            method: 'DELETE',
-        });
-        const returnData = await response.data;
-        return returnData as { "status": string, "message": string };
-
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: { question_id: string }) => data)
+  .handler(async ({ data }): Promise<{ status: string; message: string }> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.QUESTION_DELETE.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.QUESTION_DELETE.GET_BASE_URL +
+      API_PATH.QUESTION_DELETE.PATH_URL +
+      data.question_id
+    console.log(url)
+    const response = await client.request({
+      url: url,
+      method: 'DELETE',
     })
-
+    const returnData = await response.data
+    return returnData as { status: string; message: string }
+  })
 
 export const addCandidate = createServerFn({ method: 'POST' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: FormData) => data)
-    .handler(async ({ data }): Promise<GcsUriDetails> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: FormData) => data)
+  .handler(async ({ data }): Promise<GcsUriDetails> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.ADD_CANDIDATE.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.ADD_CANDIDATE.GET_BASE_URL + API_PATH.ADD_CANDIDATE.PATH_URL
 
-
-        const client = await auth.getIdTokenClient(API_PATH.ADD_CANDIDATE.GET_BASE_URL);
-        var url = API_PATH.ADD_CANDIDATE.GET_BASE_URL + API_PATH.ADD_CANDIDATE.PATH_URL;
-
-        const response = await client.request({
-            url: url,
-            method: 'POST',
-            data: data,
-        });
-        const returnData = await response.data;
-        return returnData as GcsUriDetails;
-
+    const response = await client.request({
+      url: url,
+      method: 'POST',
+      data: data,
     })
+    const returnData = await response.data
+    return returnData as GcsUriDetails
+  })
 
 export const addMultipleCandidates = createServerFn({ method: 'POST' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: FormData) => data)
-    .handler(async ({ data }): Promise<MultipleCvUploadResponse> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: FormData) => data)
+  .handler(async ({ data }): Promise<MultipleCvUploadResponse> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.ADD_MULTIPLE_CANDIDATES.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.ADD_MULTIPLE_CANDIDATES.GET_BASE_URL +
+      API_PATH.ADD_MULTIPLE_CANDIDATES.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.ADD_MULTIPLE_CANDIDATES.GET_BASE_URL);
-        const url = API_PATH.ADD_MULTIPLE_CANDIDATES.GET_BASE_URL + API_PATH.ADD_MULTIPLE_CANDIDATES.PATH_URL;
-
-        const response = await client.request({
-            url: url,
-            method: 'POST',
-            data: data,
-        });
-        const returnData = await response.data;
-        return returnData as MultipleCvUploadResponse;
-
+    const response = await client.request({
+      url: url,
+      method: 'POST',
+      data: data,
     })
+    const returnData = await response.data
+    return returnData as MultipleCvUploadResponse
+  })
 
 export const addQuestionUsingAI = createServerFn({ method: 'POST' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { job_id: string, num_of_questions: number }) => data)
-    .handler(async ({ data }): Promise<{ "questions_generated": number, "message": string }> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: { job_id: string; num_of_questions: number }) => data)
+  .handler(
+    async ({
+      data,
+    }): Promise<{ questions_generated: number; message: string }> => {
+      const client = await auth.getIdTokenClient(
+        API_PATH.QUESTION_ADD_AI.GET_BASE_URL,
+      )
+      const url =
+        API_PATH.QUESTION_ADD_AI.GET_BASE_URL +
+        API_PATH.QUESTION_ADD_AI.PATH_URL
+      console.log(url)
 
+      const postData = {
+        job_id: data.job_id,
+        num_of_questions: data.num_of_questions,
+      }
+      const sendData = JSON.stringify(postData)
 
-        const client = await auth.getIdTokenClient(API_PATH.QUESTION_ADD_AI.GET_BASE_URL);
-        var url = API_PATH.QUESTION_ADD_AI.GET_BASE_URL + API_PATH.QUESTION_ADD_AI.PATH_URL;
-        console.log(url)
-
-        const postData = {
-            "job_id": data.job_id,
-            "num_of_questions": data.num_of_questions
-        }
-        const sendData = JSON.stringify(postData)
-
-        const response = await client.request({
-            url: url,
-            method: 'POST',
-            data: sendData,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const returnData = await response.data;
-        return returnData as { "questions_generated": number, "message": string };
-
-    })
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const returnData = await response.data
+      return returnData as { questions_generated: number; message: string }
+    },
+  )
 
 export const getDashbaordSummary = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .handler(async (): Promise<DashboardSummaryResponse> => {
+  .middleware([isLoginMiddleware])
+  .handler(async (): Promise<DashboardSummaryResponse> => {
+    console.log(API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL)
 
-        console.log(API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL)
-
-        const client = await auth.getIdTokenClient(API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL);
-        var url = API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL + API_PATH.DASHBOARD_SUMMARY.PATH_URL;
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'GET',
-            });
-            const returnData = await response.data;
-            return returnData as DashboardSummaryResponse;
-        } catch (e) {
-            return {
-                "active_jobs": 0,
-                "total_applicants": 0,
-                "hired": 0,
-                "growth_percentage": 0
-            };
-        }
-
-    })
-
-
+    const client = await auth.getIdTokenClient(
+      API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.DASHBOARD_SUMMARY.GET_BASE_URL +
+      API_PATH.DASHBOARD_SUMMARY.PATH_URL
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'GET',
+      })
+      const returnData = await response.data
+      return returnData as DashboardSummaryResponse
+    } catch (e) {
+      return {
+        active_jobs: 0,
+        total_applicants: 0,
+        hired: 0,
+        growth_percentage: 0,
+      }
+    }
+  })
 
 export const getJobDescription = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { job_title: string, experience: number }) => data)
-    .handler(async ({ data }): Promise<string> => {
-        const openrouter = new OpenRouter({
-            apiKey: process.env.APP_OPENROUTER_KEY
-        });
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: { job_title: string; experience: number }) => data)
+  .handler(async ({ data }): Promise<string> => {
+    const openrouter = new OpenRouter({
+      apiKey: process.env.APP_OPENROUTER_KEY,
+    })
 
-        try {
-            const response = await openrouter.chat.send({
-                chatGenerationParams: {
-                    model: "nvidia/nemotron-3-super-120b-a12b:free",
-                    messages: [
-                        {
-                            role: "user",
-                            content: "Give me a JD for a " + data.job_title + " Having " + data.experience + " yrs of Exp.Only provide Job Description, no other values required"
-                        }
-                    ],
-                }
-            });
+    try {
+      const response = await openrouter.chat.send({
+        chatGenerationParams: {
+          model: 'nvidia/nemotron-3-super-120b-a12b:free',
+          messages: [
+            {
+              role: 'user',
+              content:
+                'Give me a JD for a ' +
+                data.job_title +
+                ' Having ' +
+                data.experience +
+                ' yrs of Exp.Only provide Job Description, no other values required',
+            },
+          ],
+        },
+      })
 
-            const content = response.choices?.[0]?.message?.content || "";
-            return typeof content === 'string' ? content : JSON.stringify(content);
-
-        } catch (error: any) {
-            console.error("OpenRouter Error:", error);
-            throw new Error(error?.message || "Failed to fetch job description");
-        }
-    });
+      const content = response.choices?.[0]?.message?.content || ''
+      return typeof content === 'string' ? content : JSON.stringify(content)
+    } catch (error: any) {
+      console.error('OpenRouter Error:', error)
+      throw new Error(error?.message || 'Failed to fetch job description')
+    }
+  })
 
 export const interviewEvaluate = createServerFn({ method: 'POST' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { job_id: string, candidate_email: string, verdict: string, feedback: string }) => data)
-    .handler(async ({ data }): Promise<{ "message": string, "feedback": string }> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator(
+    (data: {
+      job_id: string
+      candidate_email: string
+      verdict: string
+      feedback: string
+    }) => data,
+  )
+  .handler(async ({ data }): Promise<{ message: string; feedback: string }> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.INTERVIEW_EVALUTE.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.INTERVIEW_EVALUTE.GET_BASE_URL +
+      API_PATH.INTERVIEW_EVALUTE.PATH_URL
+    console.log(url)
 
+    const postData = {
+      job_id: data.job_id,
+      candidate_email: data.candidate_email,
+      verdict: data.verdict,
+      feedback: data.feedback,
+    }
+    const sendData = JSON.stringify(postData)
 
-        const client = await auth.getIdTokenClient(API_PATH.INTERVIEW_EVALUTE.GET_BASE_URL);
-        var url = API_PATH.INTERVIEW_EVALUTE.GET_BASE_URL + API_PATH.INTERVIEW_EVALUTE.PATH_URL;
-        console.log(url)
-
-        const postData = {
-            "job_id": data.job_id,
-            "candidate_email": data.candidate_email,
-            "verdict": data.verdict,
-            "feedback": data.feedback
-        }
-        const sendData = JSON.stringify(postData)
-
-        const response = await client.request({
-            url: url,
-            method: 'POST',
-            data: sendData,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const returnData = await response.data;
-        return returnData as { "message": string, "feedback": string };
-
+    const response = await client.request({
+      url: url,
+      method: 'POST',
+      data: sendData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
-
+    const returnData = await response.data
+    return returnData as { message: string; feedback: string }
+  })
 
 export const getEmailSyncs = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { limit: number | null, last_doc_id: string | null }) => data)
-    .handler(async ({ data }): Promise<PaginatedEmailSyncResponse> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator(
+    (data: { limit: number | null; last_doc_id: string | null }) => data,
+  )
+  .handler(async ({ data }): Promise<PaginatedEmailSyncResponse> => {
+    console.log(API_PATH.EMAIL_SYNC.GET_BASE_URL)
+    const client = await auth.getIdTokenClient(API_PATH.EMAIL_SYNC.GET_BASE_URL)
+    let url = API_PATH.EMAIL_SYNC.GET_BASE_URL + API_PATH.EMAIL_SYNC.PATH_URL
 
-        console.log(API_PATH.EMAIL_SYNC.GET_BASE_URL)
-        const client = await auth.getIdTokenClient(API_PATH.EMAIL_SYNC.GET_BASE_URL);
-        var url = API_PATH.EMAIL_SYNC.GET_BASE_URL + API_PATH.EMAIL_SYNC.PATH_URL;
-
-        if (data.limit) {
-            url += `&limit=${data.limit}`;
-        }
-        if (data.last_doc_id) {
-            url += `&last_doc_id=${data.last_doc_id}`;
-        }
-        const response = await client.request({
-            url: url,
-            method: 'GET',
-        });
-        const returnData = await response.data;
-        return returnData as PaginatedEmailSyncResponse;
-
+    if (data.limit) {
+      url += `&limit=${data.limit}`
+    }
+    if (data.last_doc_id) {
+      url += `&last_doc_id=${data.last_doc_id}`
+    }
+    const response = await client.request({
+      url: url,
+      method: 'GET',
     })
-
+    const returnData = await response.data
+    return returnData as PaginatedEmailSyncResponse
+  })
 
 export const editJob = createServerFn({ method: 'POST' })
-    .inputValidator((data: JobPosting) => data)
-    .handler(async ({ data }): Promise<{ "id": string, "message": string }> => {
+  .inputValidator((data: JobPosting) => data)
+  .handler(async ({ data }): Promise<{ id: string; message: string }> => {
+    const client = await auth.getIdTokenClient(API_PATH.EDIT_JOB.GET_BASE_URL)
+    const url = API_PATH.EDIT_JOB.GET_BASE_URL + API_PATH.EDIT_JOB.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.EDIT_JOB.GET_BASE_URL);
-        const url = API_PATH.EDIT_JOB.GET_BASE_URL + API_PATH.EDIT_JOB.PATH_URL;
-
-
-        const postData = {
-            "id": data.id,
-            "jobTitle": data.jobTitle,
-            "jobDescription": data.jobDescription,
-            "jobType": data.jobType,
-            "locations": data.locations,
-            "startDate": data.startDate,
-            "endDate": data.endDate,
-            "jobId": data.jobId,
-            "experience": data.experience,
-            "status": data.status
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'PUT',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as { "id": string, "message": string }
-        } catch (e) {
-            return { "id": "", "message": "" };
-        }
-
-    })
+    const postData = {
+      id: data.id,
+      jobTitle: data.jobTitle,
+      jobDescription: data.jobDescription,
+      jobType: data.jobType,
+      locations: data.locations,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      jobId: data.jobId,
+      experience: data.experience,
+      status: data.status,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'PUT',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as { id: string; message: string }
+    } catch (e) {
+      return { id: '', message: '' }
+    }
+  })
 
 export const getMovementDetectionDetails = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { user_email: string, job_id: string }) => data)
-    .handler(async ({ data }): Promise<MovementOutcomeResponse> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: { user_email: string; job_id: string }) => data)
+  .handler(async ({ data }): Promise<MovementOutcomeResponse> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.MOVEMENT_OUTCOME.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.MOVEMENT_OUTCOME.GET_BASE_URL +
+      API_PATH.MOVEMENT_OUTCOME.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.MOVEMENT_OUTCOME.GET_BASE_URL);
-        const url = API_PATH.MOVEMENT_OUTCOME.GET_BASE_URL + API_PATH.MOVEMENT_OUTCOME.PATH_URL;
-
-
-        const postData = {
-            "user_email": data.user_email,
-            "job_id": data.job_id
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as MovementOutcomeResponse;
-        } catch (e) {
-            return { "success": false, "count": 0, "data": [] }
-        }
-    })
+    const postData = {
+      user_email: data.user_email,
+      job_id: data.job_id,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as MovementOutcomeResponse
+    } catch (e) {
+      return { success: false, count: 0, data: [] }
+    }
+  })
 
 export const getVoiceDownloadURL = createServerFn({ method: 'GET' })
-    .inputValidator((data: { bucket_name: string, file_path: string }) => data)
-    .handler(async ({ data }): Promise<{ download_url: string | null }> => {
+  .inputValidator((data: { bucket_name: string; file_path: string }) => data)
+  .handler(async ({ data }): Promise<{ download_url: string | null }> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.DOWNLOAD_VOICE_FILE_URL.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.DOWNLOAD_VOICE_FILE_URL.GET_BASE_URL +
+      API_PATH.DOWNLOAD_VOICE_FILE_URL.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.DOWNLOAD_VOICE_FILE_URL.GET_BASE_URL);
-        const url = API_PATH.DOWNLOAD_VOICE_FILE_URL.GET_BASE_URL + API_PATH.DOWNLOAD_VOICE_FILE_URL.PATH_URL;
-
-
-        const postData = {
-            "bucket_name": data.bucket_name,
-            "full_path": data.file_path
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as { download_url: string };
-        } catch (e) {
-            return { "download_url": null }
-        }
-
-
-    })
-
+    const postData = {
+      bucket_name: data.bucket_name,
+      full_path: data.file_path,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as { download_url: string }
+    } catch (e) {
+      return { download_url: null }
+    }
+  })
 
 export const adminUsersList = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .handler(async (): Promise<AdminUserResponse> => {
+  .middleware([isLoginMiddleware])
+  .handler(async (): Promise<AdminUserResponse> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.ADMIN_USER_LIST.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.ADMIN_USER_LIST.GET_BASE_URL + API_PATH.ADMIN_USER_LIST.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.ADMIN_USER_LIST.GET_BASE_URL);
-        const url = API_PATH.ADMIN_USER_LIST.GET_BASE_URL + API_PATH.ADMIN_USER_LIST.PATH_URL;
-
-
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as AdminUserResponse;
-        } catch (e) {
-            return { "count": 0, "data": [] } as AdminUserResponse
-        }
-    })
-
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as AdminUserResponse
+    } catch (e) {
+      return { count: 0, data: [] } as AdminUserResponse
+    }
+  })
 
 export const adminActivity = createServerFn({ method: 'POST' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { user_id: string, role: string, active: boolean, update_timestamp: string }) => data)
-    .handler(async ({ data }): Promise<{ status: string | null, message: string | null, user_id: string | null }> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator(
+    (data: {
+      user_id: string
+      role: string
+      active: boolean
+      update_timestamp: string
+    }) => data,
+  )
+  .handler(
+    async ({
+      data,
+    }): Promise<{
+      status: string | null
+      message: string | null
+      user_id: string | null
+    }> => {
+      const client = await auth.getIdTokenClient(
+        API_PATH.ADMIN_USER_ACTIVITY.GET_BASE_URL,
+      )
+      const url =
+        API_PATH.ADMIN_USER_ACTIVITY.GET_BASE_URL +
+        API_PATH.ADMIN_USER_ACTIVITY.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.ADMIN_USER_ACTIVITY.GET_BASE_URL);
-        const url = API_PATH.ADMIN_USER_ACTIVITY.GET_BASE_URL + API_PATH.ADMIN_USER_ACTIVITY.PATH_URL;
-
-
-        const postData = {
-            "user_id": data.user_id,
-            "role": data.role,
-            "active": data.active,
-            "update_timestamp": data.update_timestamp
+      const postData = {
+        user_id: data.user_id,
+        role: data.role,
+        active: data.active,
+        update_timestamp: data.update_timestamp,
+      }
+      const sendData = JSON.stringify(postData)
+      try {
+        const response = await client.request({
+          url: url,
+          method: 'POST',
+          data: sendData,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        const finalData = await response.data
+        return finalData as {
+          status: string | null
+          message: string | null
+          user_id: string | null
         }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as { status: string | null, message: string | null, user_id: string | null };
-        } catch (e) {
-            return { "status": null, "message": null, "user_id": null }
-        }
-    })
+      } catch (e) {
+        return { status: null, message: null, user_id: null }
+      }
+    },
+  )
 
 export const saveSiteConfig = createServerFn({ method: 'POST' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: { interviewTime: string, linkValidity: string, questionsCount: string }) => data)
-    .handler(async ({ data }): Promise<InterviewConfig> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator(
+    (data: {
+      interviewTime: string
+      linkValidity: string
+      questionsCount: string
+    }) => data,
+  )
+  .handler(async ({ data }): Promise<InterviewConfig> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.INTERVIEW_CONFIG_SET.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.INTERVIEW_CONFIG_SET.GET_BASE_URL +
+      API_PATH.INTERVIEW_CONFIG_SET.PATH_URL
 
-        const client = await auth.getIdTokenClient(API_PATH.INTERVIEW_CONFIG_SET.GET_BASE_URL);
-        const url = API_PATH.INTERVIEW_CONFIG_SET.GET_BASE_URL + API_PATH.INTERVIEW_CONFIG_SET.PATH_URL;
-
-        const postData = {
-            "interviewTime": data.interviewTime,
-            "linkValidity": data.linkValidity,
-            "questionsCount": data.questionsCount
-        }
-        const sendData = JSON.stringify(postData)
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'POST',
-                data: sendData,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data as ConfigApiResponse;
-            return finalData.data as InterviewConfig;
-        } catch (e) {
-            console.error(e)
-            return { interviewTime: "", linkValidity: "", questionsCount: "" } as InterviewConfig
-        }
-    })
+    const postData = {
+      interviewTime: data.interviewTime,
+      linkValidity: data.linkValidity,
+      questionsCount: data.questionsCount,
+    }
+    const sendData = JSON.stringify(postData)
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'POST',
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = (await response.data) as ConfigApiResponse
+      return finalData.data
+    } catch (e) {
+      console.error(e)
+      return {
+        interviewTime: '',
+        linkValidity: '',
+        questionsCount: '',
+      } as InterviewConfig
+    }
+  })
 
 export const getSiteConfig = createServerFn({ method: 'GET' })
-    .middleware([isLoginMiddleware])
-    .handler(async (): Promise<ConfigApiResponse> => {
-
-        const client = await auth.getIdTokenClient(API_PATH.INTERVIEW_CONFIG_GET.GET_BASE_URL);
-        const url = API_PATH.INTERVIEW_CONFIG_GET.GET_BASE_URL + API_PATH.INTERVIEW_CONFIG_GET.PATH_URL;
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data as ConfigApiResponse;
-            return finalData;
-        } catch (e) {
-            console.error(e)
-            return { data: { interviewTime: "", linkValidity: "", questionsCount: "" } } as ConfigApiResponse
-        }
-    })
+  .middleware([isLoginMiddleware])
+  .handler(async (): Promise<ConfigApiResponse> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.INTERVIEW_CONFIG_GET.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.INTERVIEW_CONFIG_GET.GET_BASE_URL +
+      API_PATH.INTERVIEW_CONFIG_GET.PATH_URL
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = (await response.data) as ConfigApiResponse
+      return finalData
+    } catch (e) {
+      console.error(e)
+      return {
+        data: { interviewTime: '', linkValidity: '', questionsCount: '' },
+      } as ConfigApiResponse
+    }
+  })
 
 export const getInterviewSessionInfo = createServerFn({ method: 'POST' })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: InterviewSessionInfo) => data)
-    .handler(async ({ data }): Promise<ADKResponse> => {
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: InterviewSessionInfo) => data)
+  .handler(async ({ data }): Promise<ADKResponse> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.INTERVIEW_SESSION_INFO.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.INTERVIEW_SESSION_INFO.GET_BASE_URL +
+      API_PATH.INTERVIEW_SESSION_INFO.PATH_URL +
+      data.app +
+      '/users/' +
+      data.user_id +
+      '/sessions/' +
+      data.session_id
 
-        const client = await auth.getIdTokenClient(API_PATH.INTERVIEW_SESSION_INFO.GET_BASE_URL);
-        const url = API_PATH.INTERVIEW_SESSION_INFO.GET_BASE_URL + API_PATH.INTERVIEW_SESSION_INFO.PATH_URL + data.app + "/users/" + data.user_id + "/sessions/" + data.session_id;
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as ADKResponse
+    } catch (e) {
+      return {
+        id: '',
+        appName: '',
+        userId: '',
+        state: {
+          total_prompt_tokens: 0,
+          total_candidates_tokens: 0,
+          total_tokens_consumed: 0,
+          user_name: '',
+          job_id: '',
+          user_self_info: '',
+          questions: [],
+          current_question_index: 0,
+          token_usage_saved_to_firestore: false,
+        },
+        events: [],
+        lastUpdateTime: 0,
+      }
+    }
+  })
 
+export const getAudioAnalysisResultFn = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: AudioAnalysisInputSchema) => data)
+  .handler(async ({ data }): Promise<AudioAnalysisResponse | null> => {
+    const client = await auth.getIdTokenClient(
+      API_PATH.VOICE_FRAUD_DETECTION.GET_BASE_URL,
+    )
+    let url =
+      API_PATH.VOICE_FRAUD_DETECTION.GET_BASE_URL +
+      API_PATH.VOICE_FRAUD_DETECTION.PATH_URL
+    console.log(url)
+    if (data.candidateEmail) {
+      url += `?candidate_email=${data.candidateEmail}`
+    }
+    if (data.jobId) {
+      url += `&job_id=${data.jobId}`
+    }
 
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            return finalData as ADKResponse
-        } catch (e) {
-            return {
-                "id": "",
-                "appName": "",
-                "userId": "",
-                "state": {
-                    "total_prompt_tokens": 0,
-                    "total_candidates_tokens": 0,
-                    "total_tokens_consumed": 0,
-                    "user_name": "",
-                    "job_id": "",
-                    "user_self_info": "",
-                    "questions": [],
-                    "current_question_index": 0,
-                    "token_usage_saved_to_firestore": false
-                },
-                "events": [],
-                "lastUpdateTime": 0
-            }
-        }
-
-    })
-
-
-export const getAudioAnalysisResultFn = createServerFn({ method: "GET" })
-    .middleware([isLoginMiddleware])
-    .inputValidator((data: AudioAnalysisInputSchema) => data)
-    .handler(async ({ data }): Promise<AudioAnalysisResponse | null> => {
-
-        const client = await auth.getIdTokenClient(API_PATH.VOICE_FRAUD_DETECTION.GET_BASE_URL);
-        let url = API_PATH.VOICE_FRAUD_DETECTION.GET_BASE_URL + API_PATH.VOICE_FRAUD_DETECTION.PATH_URL;
-        console.log(url)
-        if (data.candidateEmail) {
-            url += `?candidate_email=${data.candidateEmail}`;
-        }
-        if (data.jobId) {
-            url += `&job_id=${data.jobId}`;
-        }
-
-        try {
-            const response = await client.request({
-                url: url,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const finalData = await response.data;
-            console.log(finalData);
-            return finalData as AudioAnalysisResponse;
-        } catch (e) {
-            console.log(e);
-            return null;
-        }
-
-    });
+    try {
+      const response = await client.request({
+        url: url,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as AudioAnalysisResponse
+    } catch (e) {
+      console.log(e)
+      return null
+    }
+  })

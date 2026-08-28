@@ -1,32 +1,37 @@
-import { adminUsersList } from '@/lib/server-function'
 import { createFileRoute } from '@tanstack/react-router'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense, useMemo, useState } from 'react'
+import {
+  Activity,
+  Calendar,
+  CheckCircle2,
+  Command,
+  Inbox,
+  Lock,
+  Mail,
+  Search,
+  Shield,
+  ShieldAlert,
+  Users,
+  X,
+} from 'lucide-react'
+import { format } from 'date-fns'
+import type { UserData } from '@/lib/types'
+import { adminUsersList } from '@/lib/server-function'
 import { DataTable } from '@/components/web/data-table'
 import { AdminUserSkeleton } from '@/components/web/admin-user-skeleton'
-import { 
-  Users, 
-  Shield, 
-  Lock, 
-  Activity, 
-  Command, 
-  Mail, 
-  Calendar, 
-  Search, 
-  X, 
-  CheckCircle2, 
-  Inbox,
-  ShieldAlert
-} from 'lucide-react'
-import { getAdminColumns, RoleBadge, StatusBadge, AdminActions } from '@/components/web/admin-columns'
-import { Card, CardContent } from "@/components/ui/card"
+import {
+  AdminActions,
+  RoleBadge,
+  StatusBadge,
+  getAdminColumns,
+} from '@/components/web/admin-columns'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { format } from "date-fns"
-import { UserData } from "@/lib/types"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export const adminsQueryOptions = queryOptions({
   queryKey: ['admins'],
@@ -56,15 +61,20 @@ function CandidatesContent() {
   const { data } = useSuspenseQuery(adminsQueryOptions)
   const allUsers = data?.data ?? []
 
-  const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'restricted'>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'active' | 'restricted'
+  >('all')
 
   // Calculate statistics (Memoized)
   const { totalAdmins, activeAdmins, restrictedAdmins } = useMemo(() => {
     return {
       totalAdmins: allUsers.length,
-      activeAdmins: allUsers.filter(u => u.user_role?.active && !u.disabled).length,
-      restrictedAdmins: allUsers.filter(u => !u.user_role?.active || u.disabled).length
+      activeAdmins: allUsers.filter((u) => u.user_role?.active && !u.disabled)
+        .length,
+      restrictedAdmins: allUsers.filter(
+        (u) => !u.user_role?.active || u.disabled,
+      ).length,
     }
   }, [allUsers])
 
@@ -83,23 +93,26 @@ function CandidatesContent() {
       if (tokens.length === 0) return true
 
       // Searchable fields
-      const formattedDate = user.created_at 
-        ? format(new Date(parseInt(user.created_at)), "MMM dd yyyy MMM d") 
-        : ""
+      const formattedDate = user.created_at
+        ? format(new Date(parseInt(user.created_at)), 'MMM dd yyyy MMM d')
+        : ''
 
       const searchableBlob = [
-        user.display_name || "",
-        user.email || "",
-        user.uid || "",
-        user.user_role?.role || "",
+        user.display_name || '',
+        user.email || '',
+        user.uid || '',
+        user.user_role?.role || '',
         formattedDate,
-      ].join(" ").toLowerCase()
+      ]
+        .join(' ')
+        .toLowerCase()
 
       return tokens.every((token) => searchableBlob.includes(token))
     })
   }, [allUsers, searchQuery, statusFilter])
 
-  const hasFiltersApplied = searchQuery.trim().length > 0 || statusFilter !== 'all'
+  const hasFiltersApplied =
+    searchQuery.trim().length > 0 || statusFilter !== 'all'
 
   return (
     <div className="relative min-h-screen flex flex-col gap-6 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -118,21 +131,35 @@ function CandidatesContent() {
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl md:text-4xl font-black tracking-tight text-foreground">Access & Governance</h1>
-              <Badge variant="outline" className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20 px-2 py-0.5">
+              <h1 className="text-2xl md:text-4xl font-black tracking-tight text-foreground">
+                Access & Governance
+              </h1>
+              <Badge
+                variant="outline"
+                className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20 px-2 py-0.5"
+              >
                 {totalAdmins} Total
               </Badge>
             </div>
             <p className="text-xs md:text-sm text-muted-foreground font-medium flex items-center gap-1.5 mt-1">
               <Shield className="h-3.5 w-3.5 text-violet-500 shrink-0" />
-              <span>Administrator credentials, granular permission controls, and account status protocols.</span>
+              <span>
+                Administrator credentials, granular permission controls, and
+                account status protocols.
+              </span>
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <Badge variant="secondary" className="px-3 py-1.5 rounded-xl text-xs font-bold bg-muted/60 text-foreground border border-border/40">
-            Current Session: <span className="text-violet-600 dark:text-violet-400 uppercase ml-1 font-mono">{role}</span>
+          <Badge
+            variant="secondary"
+            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-muted/60 text-foreground border border-border/40"
+          >
+            Current Session:{' '}
+            <span className="text-violet-600 dark:text-violet-400 uppercase ml-1 font-mono">
+              {role}
+            </span>
           </Badge>
         </div>
       </div>
@@ -183,7 +210,7 @@ function CandidatesContent() {
             />
             {searchQuery && (
               <button
-                onClick={() => setSearchQuery("")}
+                onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
                 title="Clear search"
               >
@@ -200,10 +227,10 @@ function CandidatesContent() {
                 size="sm"
                 onClick={() => setStatusFilter('all')}
                 className={cn(
-                  "h-8 rounded-lg text-xs font-bold px-3 transition-all",
+                  'h-8 rounded-lg text-xs font-bold px-3 transition-all',
                   statusFilter === 'all'
-                    ? "bg-violet-600 text-white shadow-sm hover:bg-violet-700"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
+                    ? 'bg-violet-600 text-white shadow-sm hover:bg-violet-700'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/80',
                 )}
               >
                 All Status
@@ -213,10 +240,10 @@ function CandidatesContent() {
                 size="sm"
                 onClick={() => setStatusFilter('active')}
                 className={cn(
-                  "h-8 rounded-lg text-xs font-bold px-3 transition-all gap-1.5",
+                  'h-8 rounded-lg text-xs font-bold px-3 transition-all gap-1.5',
                   statusFilter === 'active'
-                    ? "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
+                    ? 'bg-emerald-600 text-white shadow-sm hover:bg-emerald-700'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/80',
                 )}
               >
                 <CheckCircle2 className="h-3 w-3 text-emerald-400" />
@@ -227,10 +254,10 @@ function CandidatesContent() {
                 size="sm"
                 onClick={() => setStatusFilter('restricted')}
                 className={cn(
-                  "h-8 rounded-lg text-xs font-bold px-3 transition-all gap-1.5",
+                  'h-8 rounded-lg text-xs font-bold px-3 transition-all gap-1.5',
                   statusFilter === 'restricted'
-                    ? "bg-rose-600 text-white shadow-sm hover:bg-rose-700"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
+                    ? 'bg-rose-600 text-white shadow-sm hover:bg-rose-700'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/80',
                 )}
               >
                 <ShieldAlert className="h-3 w-3 text-rose-400" />
@@ -239,7 +266,11 @@ function CandidatesContent() {
             </div>
 
             <span className="text-xs font-medium text-muted-foreground/70 ml-1">
-              Showing <strong className="text-foreground">{filteredUsers.length}</strong> of {allUsers.length} accounts
+              Showing{' '}
+              <strong className="text-foreground">
+                {filteredUsers.length}
+              </strong>{' '}
+              of {allUsers.length} accounts
             </span>
           </div>
         </div>
@@ -255,12 +286,14 @@ function CandidatesContent() {
               </div>
               <div className="space-y-1 max-w-sm">
                 <h3 className="text-lg font-bold tracking-tight text-foreground">
-                  {hasFiltersApplied ? "No matching accounts found" : "No users identified"}
+                  {hasFiltersApplied
+                    ? 'No matching accounts found'
+                    : 'No users identified'}
                 </h3>
                 <p className="text-xs text-muted-foreground">
                   {hasFiltersApplied
-                    ? "Try adjusting your search query or status filter."
-                    : "Administrator accounts will appear here once authenticated."}
+                    ? 'Try adjusting your search query or status filter.'
+                    : 'Administrator accounts will appear here once authenticated.'}
                 </p>
               </div>
               {hasFiltersApplied && (
@@ -268,8 +301,8 @@ function CandidatesContent() {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setSearchQuery("")
-                    setStatusFilter("all")
+                    setSearchQuery('')
+                    setStatusFilter('all')
                   }}
                   className="h-8 rounded-xl text-xs font-bold border-border/60"
                 >
@@ -284,21 +317,27 @@ function CandidatesContent() {
         <div className="flex flex-col gap-4 lg:hidden">
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user) => (
-              <UserProtocolCard key={user.uid} user={user} currentUserRole={role!} />
+              <UserProtocolCard
+                key={user.uid}
+                user={user}
+                currentUserRole={role!}
+              />
             ))
           ) : (
             <div className="text-center py-16 bg-white/30 dark:bg-zinc-950/30 rounded-[2rem] border border-dashed border-border/40 p-6 space-y-3">
               <Inbox className="h-8 w-8 mx-auto text-muted-foreground/40" />
               <p className="text-sm text-muted-foreground font-medium">
-                {hasFiltersApplied ? "No accounts match your search criteria." : "No administrators found."}
+                {hasFiltersApplied
+                  ? 'No accounts match your search criteria.'
+                  : 'No administrators found.'}
               </p>
               {hasFiltersApplied && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setSearchQuery("")
-                    setStatusFilter("all")
+                    setSearchQuery('')
+                    setStatusFilter('all')
                   }}
                   className="h-8 rounded-xl text-xs font-bold border-border/60"
                 >
@@ -313,8 +352,14 @@ function CandidatesContent() {
   )
 }
 
-const UserProtocolCard = ({ user, currentUserRole }: { user: UserData, currentUserRole: string }) => {
-  const displayName = user.display_name || user.email || "Unknown User"
+const UserProtocolCard = ({
+  user,
+  currentUserRole,
+}: {
+  user: UserData
+  currentUserRole: string
+}) => {
+  const displayName = user.display_name || user.email || 'Unknown User'
   const photoUrl = user.photo_url || undefined
 
   return (
@@ -328,32 +373,45 @@ const UserProtocolCard = ({ user, currentUserRole }: { user: UserData, currentUs
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col min-w-0">
-            <span className="font-bold text-sm tracking-tight text-foreground truncate">{displayName}</span>
-            <span className="text-[10px] text-muted-foreground font-mono opacity-70 truncate">{user.uid}</span>
+            <span className="font-bold text-sm tracking-tight text-foreground truncate">
+              {displayName}
+            </span>
+            <span className="text-[10px] text-muted-foreground font-mono opacity-70 truncate">
+              {user.uid}
+            </span>
           </div>
         </div>
         <AdminActions currentUserRole={currentUserRole} rowData={user} />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <RoleBadge role={user.user_role?.role || "user"} />
-        <StatusBadge active={user.user_role?.active ?? false} disabled={user.disabled} />
+        <RoleBadge role={user.user_role?.role || 'user'} />
+        <StatusBadge
+          active={user.user_role?.active ?? false}
+          disabled={user.disabled}
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-border/30">
         <div className="flex flex-col gap-1 min-w-0">
-          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Email</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+            Email
+          </span>
           <div className="flex items-center gap-1.5 text-xs font-medium text-foreground/80 truncate">
             <Mail className="h-3 w-3 text-muted-foreground/60 shrink-0" />
             <span className="truncate">{user.email}</span>
           </div>
         </div>
         <div className="flex flex-col gap-1 min-w-0">
-          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Registered Date</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+            Registered Date
+          </span>
           <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
             <Calendar className="h-3 w-3 opacity-60 shrink-0" />
             <span className="tabular-nums">
-              {user.created_at ? format(new Date(parseInt(user.created_at)), "MMM dd, yyyy") : "N/A"}
+              {user.created_at
+                ? format(new Date(parseInt(user.created_at)), 'MMM dd, yyyy')
+                : 'N/A'}
             </span>
           </div>
         </div>
@@ -362,38 +420,51 @@ const UserProtocolCard = ({ user, currentUserRole }: { user: UserData, currentUs
   )
 }
 
-const StatCard = ({ 
-  title, 
-  value, 
+const StatCard = ({
+  title,
+  value,
   subtitle,
-  icon, 
+  icon,
   gradient,
   isActive,
-  onClick
-}: { 
-  title: string, 
-  value: string, 
-  subtitle?: string,
-  icon: React.ReactNode, 
-  gradient: string,
-  isActive?: boolean,
+  onClick,
+}: {
+  title: string
+  value: string
+  subtitle?: string
+  icon: React.ReactNode
+  gradient: string
+  isActive?: boolean
   onClick?: () => void
 }) => (
-  <Card 
+  <Card
     onClick={onClick}
     className={cn(
-      "relative overflow-hidden group cursor-pointer transition-all duration-300 rounded-3xl backdrop-blur-xl border",
-      isActive 
-        ? "bg-white/80 dark:bg-zinc-900/80 border-violet-500/50 shadow-lg shadow-violet-500/10 ring-1 ring-violet-500/20" 
-        : "bg-white/50 dark:bg-zinc-950/50 border-border/60 hover:border-violet-500/30 hover:shadow-md"
+      'relative overflow-hidden group cursor-pointer transition-all duration-300 rounded-3xl backdrop-blur-xl border',
+      isActive
+        ? 'bg-white/80 dark:bg-zinc-900/80 border-violet-500/50 shadow-lg shadow-violet-500/10 ring-1 ring-violet-500/20'
+        : 'bg-white/50 dark:bg-zinc-950/50 border-border/60 hover:border-violet-500/30 hover:shadow-md',
     )}
   >
-    <div className={cn("absolute inset-0 bg-linear-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500", gradient)} />
+    <div
+      className={cn(
+        'absolute inset-0 bg-linear-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500',
+        gradient,
+      )}
+    />
     <CardContent className="p-5 sm:p-6 flex items-center justify-between relative z-10">
       <div className="space-y-1.5">
-        <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/70">{title}</p>
-        <h3 className="text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-foreground">{value}</h3>
-        {subtitle && <p className="text-[11px] text-muted-foreground font-medium">{subtitle}</p>}
+        <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/70">
+          {title}
+        </p>
+        <h3 className="text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-foreground">
+          {value}
+        </h3>
+        {subtitle && (
+          <p className="text-[11px] text-muted-foreground font-medium">
+            {subtitle}
+          </p>
+        )}
       </div>
       <div className="h-11 w-11 rounded-2xl bg-muted/50 dark:bg-zinc-900 border border-border/60 flex items-center justify-center group-hover:scale-105 transition-transform">
         {icon}

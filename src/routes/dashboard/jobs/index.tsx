@@ -1,37 +1,47 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { infiniteQueryOptions, useSuspenseInfiniteQuery } from '@tanstack/react-query'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import {
+  infiniteQueryOptions,
+  useSuspenseInfiniteQuery,
+} from '@tanstack/react-query'
 import { Suspense, useMemo, useState } from 'react'
 
-import { columns, JobIdBadge, JobTitleItem, JobStatusBadge, JobTypeBadge, JobActionsMenu, FacilityLocationItem } from "@/components/web/columns"
-import { DataTable } from "@/components/web/data-table"
+import {
+  AlertCircle,
+  Briefcase,
+  Calendar,
+  CheckCircle2,
+  ChevronsRight,
+  Clock,
+  Download,
+  Inbox,
+  LayoutGrid,
+  Loader2,
+  Plus,
+  Search, Sparkles, Table, X 
+} from 'lucide-react'
+import { format } from 'date-fns'
+import { toast } from 'sonner'
+import type { JobDetail } from '@/lib/types'
+import {
+  FacilityLocationItem,
+  JobActionsMenu,
+  JobIdBadge,
+  JobStatusBadge,
+  JobTitleItem,
+  JobTypeBadge,
+  columns,
+} from '@/components/web/columns'
+import { DataTable } from '@/components/web/data-table'
 import { getJobDetails } from '@/lib/server-function'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { JobTableSkeleton } from '@/components/web/Job-table-skeleton'
-import {
-  Briefcase,
-  Plus,
-  Sparkles,
-  Calendar,
-  Clock,
-  Loader2,
-  ChevronsRight,
-  Search,
-  X,
-  CheckCircle2,
-  AlertCircle,
-  Inbox
-} from 'lucide-react'
-import { Card } from "@/components/ui/card"
-import { format } from "date-fns"
-import { JobDetail } from "@/lib/types"
-import { cn } from "@/lib/utils"
-import { KanbanBoard } from "@/components/web/kanban-board"
-import { JobShareDialog } from "@/components/web/job-share-dialog"
-import { exportToCSV } from "@/lib/export-utils"
-import { LayoutGrid, Table, Download } from "lucide-react"
-import { toast } from "sonner"
+import { Card } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
+import { KanbanBoard } from '@/components/web/kanban-board'
+import { JobShareDialog } from '@/components/web/job-share-dialog'
+import { exportToCSV } from '@/lib/export-utils'
 
 const JOBS_PAGE_SIZE = 10
 
@@ -65,17 +75,16 @@ function RouteComponent() {
 
 function JobContent() {
   const { role } = Route.useRouteContext()
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useSuspenseInfiniteQuery(jobsInfiniteQueryOptions)
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useSuspenseInfiniteQuery(jobsInfiniteQueryOptions)
 
-  const [searchQuery, setSearchQuery] = useState<string>("")
-  const [statusFilter, setStatusFilter] = useState<'all' | 'Active' | 'Inactive' | 'Archived'>('all')
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'Active' | 'Inactive' | 'Archived'
+  >('all')
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table')
-  const [selectedJobForShare, setSelectedJobForShare] = useState<JobDetail | null>(null)
+  const [selectedJobForShare, setSelectedJobForShare] =
+    useState<JobDetail | null>(null)
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
 
   const allJobs = useMemo(
@@ -102,27 +111,36 @@ function JobContent() {
       }
 
       // 2. Build comprehensive searchable text string from all job fields
-      const formattedStartDate = job.start_date ? format(new Date(job.start_date), "MMM dd yyyy MMM d") : ""
-      const formattedEndDate = job.end_date ? format(new Date(job.end_date), "MMM dd yyyy MMM d") : ""
+      const formattedStartDate = job.start_date
+        ? format(new Date(job.start_date), 'MMM dd yyyy MMM d')
+        : ''
+      const formattedEndDate = job.end_date
+        ? format(new Date(job.end_date), 'MMM dd yyyy MMM d')
+        : ''
 
       const searchableBlob = [
-        job.job_title || "",
-        job.job_id || "",
-        job.location || "",
-        job.job_type || "",
-        job.status || "",
-        job.job_description || "",
-        job.experience !== undefined ? `${job.experience} years ${job.experience}yr ${job.experience}y` : "",
+        job.job_title || '',
+        job.job_id || '',
+        job.location || '',
+        job.job_type || '',
+        job.status || '',
+        job.job_description || '',
+        job.experience !== undefined
+          ? `${job.experience} years ${job.experience}yr ${job.experience}y`
+          : '',
         formattedStartDate,
         formattedEndDate,
-      ].join(" ").toLowerCase()
+      ]
+        .join(' ')
+        .toLowerCase()
 
       // Ensure all search tokens match (multi-keyword search)
       return tokens.every((token) => searchableBlob.includes(token))
     })
   }, [allJobs, searchQuery, statusFilter])
 
-  const hasFiltersApplied = searchQuery.trim().length > 0 || statusFilter !== 'all'
+  const hasFiltersApplied =
+    searchQuery.trim().length > 0 || statusFilter !== 'all'
 
   const handleOpenShare = (job: JobDetail) => {
     setSelectedJobForShare(job)
@@ -131,24 +149,31 @@ function JobContent() {
 
   const handleExportCSV = () => {
     if (filteredJobs.length === 0) {
-      toast.error("No job records available to export")
+      toast.error('No job records available to export')
       return
     }
 
     const exportRows = filteredJobs.map((job) => ({
-      "Job ID": job.job_id,
-      "Position Title": job.job_title,
-      "Status": job.status || "Active",
-      "Type": job.job_type || "Full-time",
-      "Location": job.location || "Remote",
-      "Experience (Years)": job.experience ?? "N/A",
-      "Salary": (job as any).salary || "Not Specified",
-      "Start Date": job.start_date ? format(new Date(job.start_date), "yyyy-MM-dd") : "",
-      "End Date": job.end_date ? format(new Date(job.end_date), "yyyy-MM-dd") : "",
-      "Job Description": job.job_description?.slice(0, 300) || "",
+      'Job ID': job.job_id,
+      'Position Title': job.job_title,
+      Status: job.status || 'Active',
+      Type: job.job_type || 'Full-time',
+      Location: job.location || 'Remote',
+      'Experience (Years)': job.experience ?? 'N/A',
+      Salary: (job as any).salary || 'Not Specified',
+      'Start Date': job.start_date
+        ? format(new Date(job.start_date), 'yyyy-MM-dd')
+        : '',
+      'End Date': job.end_date
+        ? format(new Date(job.end_date), 'yyyy-MM-dd')
+        : '',
+      'Job Description': job.job_description?.slice(0, 300) || '',
     }))
 
-    exportToCSV(exportRows, `eazyai-job-pipeline-${format(new Date(), "yyyyMMdd-HHmm")}`)
+    exportToCSV(
+      exportRows,
+      `eazyai-job-pipeline-${format(new Date(), 'yyyyMMdd-HHmm')}`,
+    )
     toast.success(`Exported ${exportRows.length} jobs to CSV`)
   }
 
@@ -169,8 +194,13 @@ function JobContent() {
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl md:text-4xl font-black tracking-tight text-foreground">Job Pipeline</h1>
-              <Badge variant="outline" className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 px-2 py-0.5">
+              <h1 className="text-2xl md:text-4xl font-black tracking-tight text-foreground">
+                Job Pipeline
+              </h1>
+              <Badge
+                variant="outline"
+                className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 px-2 py-0.5"
+              >
                 {totalCount} Total
               </Badge>
             </div>
@@ -203,10 +233,10 @@ function JobContent() {
               size="sm"
               onClick={() => setViewMode('table')}
               className={cn(
-                "h-8 sm:h-9 px-3 rounded-lg text-xs font-bold gap-1.5 transition-all",
+                'h-8 sm:h-9 px-3 rounded-lg text-xs font-bold gap-1.5 transition-all',
                 viewMode === 'table'
-                  ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60',
               )}
               title="Table Grid View"
             >
@@ -218,10 +248,10 @@ function JobContent() {
               size="sm"
               onClick={() => setViewMode('kanban')}
               className={cn(
-                "h-8 sm:h-9 px-3 rounded-lg text-xs font-bold gap-1.5 transition-all",
+                'h-8 sm:h-9 px-3 rounded-lg text-xs font-bold gap-1.5 transition-all',
                 viewMode === 'kanban'
-                  ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60',
               )}
               title="Kanban Board View"
             >
@@ -230,8 +260,8 @@ function JobContent() {
             </Button>
           </div>
 
-          {role === "admin" && (
-            <Link to='/dashboard/jobs/add' className="w-full sm:w-auto">
+          {role === 'admin' && (
+            <Link to="/dashboard/jobs/add" className="w-full sm:w-auto">
               <Button className="w-full sm:w-auto h-10 md:h-11 rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider">
                 <Plus className="h-4 w-4" />
                 <span className="px-1">Add Position</span>
@@ -256,7 +286,7 @@ function JobContent() {
             />
             {searchQuery && (
               <button
-                onClick={() => setSearchQuery("")}
+                onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
                 title="Clear search"
               >
@@ -273,10 +303,10 @@ function JobContent() {
                 size="sm"
                 onClick={() => setStatusFilter('all')}
                 className={cn(
-                  "h-8 rounded-lg text-xs font-bold px-3 transition-all",
+                  'h-8 rounded-lg text-xs font-bold px-3 transition-all',
                   statusFilter === 'all'
-                    ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
+                    ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/80',
                 )}
               >
                 All Status
@@ -286,10 +316,10 @@ function JobContent() {
                 size="sm"
                 onClick={() => setStatusFilter('Active')}
                 className={cn(
-                  "h-8 rounded-lg text-xs font-bold px-3 transition-all gap-1.5",
+                  'h-8 rounded-lg text-xs font-bold px-3 transition-all gap-1.5',
                   statusFilter === 'Active'
-                    ? "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
+                    ? 'bg-emerald-600 text-white shadow-sm hover:bg-emerald-700'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/80',
                 )}
               >
                 <CheckCircle2 className="h-3 w-3 text-emerald-400" />
@@ -300,10 +330,10 @@ function JobContent() {
                 size="sm"
                 onClick={() => setStatusFilter('Inactive')}
                 className={cn(
-                  "h-8 rounded-lg text-xs font-bold px-3 transition-all gap-1.5",
+                  'h-8 rounded-lg text-xs font-bold px-3 transition-all gap-1.5',
                   statusFilter === 'Inactive'
-                    ? "bg-rose-600 text-white shadow-sm hover:bg-rose-700"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
+                    ? 'bg-rose-600 text-white shadow-sm hover:bg-rose-700'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/80',
                 )}
               >
                 <AlertCircle className="h-3 w-3 text-rose-400" />
@@ -314,10 +344,10 @@ function JobContent() {
                 size="sm"
                 onClick={() => setStatusFilter('Archived')}
                 className={cn(
-                  "h-8 rounded-lg text-xs font-bold px-3 transition-all",
+                  'h-8 rounded-lg text-xs font-bold px-3 transition-all',
                   statusFilter === 'Archived'
-                    ? "bg-zinc-700 text-white shadow-sm hover:bg-zinc-800"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/80"
+                    ? 'bg-zinc-700 text-white shadow-sm hover:bg-zinc-800'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/80',
                 )}
               >
                 Archived
@@ -325,7 +355,9 @@ function JobContent() {
             </div>
 
             <span className="text-xs font-medium text-muted-foreground/70 ml-2">
-              Showing <strong className="text-foreground">{filteredJobs.length}</strong> of {allJobs.length} positions
+              Showing{' '}
+              <strong className="text-foreground">{filteredJobs.length}</strong>{' '}
+              of {allJobs.length} positions
             </span>
           </div>
         </div>
@@ -334,7 +366,7 @@ function JobContent() {
         {viewMode === 'kanban' ? (
           <KanbanBoard
             jobs={filteredJobs}
-            role={role || ""}
+            role={role || ''}
             onShareJob={handleOpenShare}
           />
         ) : (
@@ -356,12 +388,14 @@ function JobContent() {
                   </div>
                   <div className="space-y-1 max-w-sm">
                     <h3 className="text-lg font-bold tracking-tight text-foreground">
-                      {hasFiltersApplied ? "No matching positions found" : "No active deployments found"}
+                      {hasFiltersApplied
+                        ? 'No matching positions found'
+                        : 'No active deployments found'}
                     </h3>
                     <p className="text-xs text-muted-foreground">
                       {hasFiltersApplied
-                        ? "Try adjusting your search keywords or filter options."
-                        : "Create your first job listing to get started."}
+                        ? 'Try adjusting your search keywords or filter options.'
+                        : 'Create your first job listing to get started.'}
                     </p>
                   </div>
                   {hasFiltersApplied && (
@@ -369,8 +403,8 @@ function JobContent() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setSearchQuery("")
-                        setStatusFilter("all")
+                        setSearchQuery('')
+                        setStatusFilter('all')
                       }}
                       className="h-8 rounded-xl text-xs font-bold border-border/60"
                     >
@@ -391,15 +425,17 @@ function JobContent() {
                 <div className="text-center py-16 bg-white/30 dark:bg-zinc-950/30 rounded-[2rem] border border-dashed border-border/40 p-6 space-y-3">
                   <Inbox className="h-8 w-8 mx-auto text-muted-foreground/40" />
                   <p className="text-sm text-muted-foreground font-medium">
-                    {hasFiltersApplied ? "No positions match your search criteria." : "No active deployments found."}
+                    {hasFiltersApplied
+                      ? 'No positions match your search criteria.'
+                      : 'No active deployments found.'}
                   </p>
                   {hasFiltersApplied && (
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setSearchQuery("")
-                        setStatusFilter("all")
+                        setSearchQuery('')
+                        setStatusFilter('all')
                       }}
                       className="h-8 rounded-xl text-xs font-bold border-border/60"
                     >
@@ -460,7 +496,9 @@ const JobProtocolCard = ({ job }: { job: JobDetail }) => (
 
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-border/20">
       <div className="flex flex-col gap-1.5 min-w-0">
-        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Deployment Site</span>
+        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+          Deployment Site
+        </span>
         <FacilityLocationItem
           location={job.location}
           jobTitle={job.job_title}
@@ -469,16 +507,24 @@ const JobProtocolCard = ({ job }: { job: JobDetail }) => (
       </div>
 
       <div className="flex flex-col gap-1.5 min-w-0">
-        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">Timeline Protocol</span>
+        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+          Timeline Protocol
+        </span>
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-medium opacity-60">
             <Calendar className="h-3 w-3 shrink-0" />
-            <span>{job.start_date ? format(new Date(job.start_date), "MMM dd") : "TBD"}</span>
+            <span>
+              {job.start_date
+                ? format(new Date(job.start_date), 'MMM dd')
+                : 'TBD'}
+            </span>
           </div>
           <div className="h-1 w-1 rounded-full bg-border/40" />
           <div className="flex items-center gap-2 text-[11px] text-muted-foreground font-medium opacity-60">
             <Clock className="h-3 w-3 shrink-0" />
-            <span>{job.end_date ? format(new Date(job.end_date), "MMM dd") : "TBD"}</span>
+            <span>
+              {job.end_date ? format(new Date(job.end_date), 'MMM dd') : 'TBD'}
+            </span>
           </div>
         </div>
       </div>

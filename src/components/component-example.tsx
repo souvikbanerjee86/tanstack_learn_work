@@ -1,40 +1,41 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Link } from '@tanstack/react-router'
+import { onAuthStateChanged } from 'firebase/auth'
+import {
+  ArrowRightIcon,
+  BriefcaseIcon,
+  BuildingIcon,
+  ClockIcon,
+  Compass,
+  CpuIcon,
+  LineChartIcon,
+  LogInIcon,
+  MailIcon,
+  SparklesIcon,
+  UserIcon,
+} from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import type { User} from 'firebase/auth';
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { auth } from "@/lib/firebase"
-import { Link } from "@tanstack/react-router"
-import { onAuthStateChanged, User } from "firebase/auth"
-import {
-  BriefcaseIcon,
-  MailIcon,
-  LineChartIcon,
-  UserIcon,
-  LogInIcon,
-  CpuIcon,
-  ClockIcon,
-  SparklesIcon,
-  BuildingIcon,
-  ArrowRightIcon,
-  Compass
-} from "lucide-react"
-import { useCallback, useEffect, useRef, useState } from "react"
-import { cn } from "@/lib/utils"
+} from '@/components/ui/card'
+import { auth } from '@/lib/firebase'
+import { cn } from '@/lib/utils'
 
 // Reusable GlowCard wrapper — tracks mouse position and applies CSS custom properties
 function GlowCard({
   children,
-  className = "",
-  variant = "default"
+  className = '',
+  variant = 'default',
 }: {
   children: React.ReactNode
   className?: string
-  variant?: "default" | "sm"
+  variant?: 'default' | 'sm'
 }) {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -44,8 +45,8 @@ function GlowCard({
     const rect = el.getBoundingClientRect()
     const x = ((e.clientX - rect.left) / rect.width) * 100
     const y = ((e.clientY - rect.top) / rect.height) * 100
-    el.style.setProperty("--glow-x", `${x}%`)
-    el.style.setProperty("--glow-y", `${y}%`)
+    el.style.setProperty('--glow-x', `${x}%`)
+    el.style.setProperty('--glow-y', `${y}%`)
   }, [])
 
   return (
@@ -53,9 +54,9 @@ function GlowCard({
       ref={ref}
       onMouseMove={handleMouseMove}
       className={cn(
-        "glow-card transition-all duration-300",
-        variant === "sm" ? "glow-card-sm" : "",
-        className
+        'glow-card transition-all duration-300',
+        variant === 'sm' ? 'glow-card-sm' : '',
+        className,
       )}
     >
       {children}
@@ -68,10 +69,10 @@ export function ComponentExample() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
+      setUser(currentUser)
+    })
+    return () => unsubscribe()
+  }, [])
 
   return (
     <div className="w-full min-h-screen text-foreground py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 font-sans selection:bg-indigo-500/30 relative overflow-hidden">
@@ -89,19 +90,23 @@ export function ComponentExample() {
             variant="outline"
             className="px-4 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black uppercase tracking-widest rounded-full border-indigo-500/20 text-indigo-600 dark:text-indigo-400 bg-indigo-500/5 dark:bg-indigo-950/30 backdrop-blur-md shadow-sm gap-2 transition-all hover:border-indigo-500/40 hover:scale-105"
           >
-            <SparklesIcon className="w-3.5 h-3.5" /> Next-Gen Autonomous Hiring Engine
+            <SparklesIcon className="w-3.5 h-3.5" /> Next-Gen Autonomous Hiring
+            Engine
           </Badge>
         </div>
 
         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-foreground leading-[1.05] sm:leading-[0.95]">
-          The Future of<br />
+          The Future of
+          <br />
           <span className="bg-clip-text text-transparent bg-linear-to-r from-indigo-600 via-violet-600 to-fuchsia-600 dark:from-indigo-400 dark:via-violet-400 dark:to-fuchsia-400">
             Intelligent Hiring
           </span>
         </h1>
 
         <p className="text-base sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-medium">
-          Empowering modern enterprises with autonomous semantic candidate discovery, adaptive AI video interviews, and objective evaluation rubrics.
+          Empowering modern enterprises with autonomous semantic candidate
+          discovery, adaptive AI video interviews, and objective evaluation
+          rubrics.
         </p>
 
         {/* Action Buttons */}
@@ -142,20 +147,36 @@ export function ComponentExample() {
         {/* Quick Highlights Strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 max-w-4xl mx-auto">
           <div className="p-4 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-border/60 flex flex-col items-center justify-center text-center">
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">99.4%</span>
-            <span className="text-[11px] text-muted-foreground font-semibold">Semantic Match Score</span>
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+              99.4%
+            </span>
+            <span className="text-[11px] text-muted-foreground font-semibold">
+              Semantic Match Score
+            </span>
           </div>
           <div className="p-4 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-border/60 flex flex-col items-center justify-center text-center">
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">10x</span>
-            <span className="text-[11px] text-muted-foreground font-semibold">Faster Screening</span>
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+              10x
+            </span>
+            <span className="text-[11px] text-muted-foreground font-semibold">
+              Faster Screening
+            </span>
           </div>
           <div className="p-4 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-border/60 flex flex-col items-center justify-center text-center">
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">24/7</span>
-            <span className="text-[11px] text-muted-foreground font-semibold">Adaptive Sessions</span>
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+              24/7
+            </span>
+            <span className="text-[11px] text-muted-foreground font-semibold">
+              Adaptive Sessions
+            </span>
           </div>
           <div className="p-4 rounded-2xl bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md border border-border/60 flex flex-col items-center justify-center text-center">
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">Zero Bias</span>
-            <span className="text-[11px] text-muted-foreground font-semibold">Objective Rubrics</span>
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+              Zero Bias
+            </span>
+            <span className="text-[11px] text-muted-foreground font-semibold">
+              Objective Rubrics
+            </span>
           </div>
         </div>
       </section>
@@ -169,8 +190,12 @@ export function ComponentExample() {
               <BuildingIcon className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
             <div className="space-y-0.5">
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">For Enterprises</h2>
-              <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">End-to-End Orchestration</p>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                For Enterprises
+              </h2>
+              <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">
+                End-to-End Orchestration
+              </p>
             </div>
           </div>
 
@@ -187,7 +212,9 @@ export function ComponentExample() {
                 </CardHeader>
                 <CardContent className="p-6 pt-0">
                   <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    Create comprehensive job profiles instantly. Define experience brackets, core skills, location protocols, and evaluation rubrics with intuitive ease.
+                    Create comprehensive job profiles instantly. Define
+                    experience brackets, core skills, location protocols, and
+                    evaluation rubrics with intuitive ease.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -205,7 +232,9 @@ export function ComponentExample() {
                 </CardHeader>
                 <CardContent className="p-6 pt-0">
                   <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    Surface elite candidates using intelligent vector matching. Contextual RAG matching evaluates depth beyond mere resume keywords.
+                    Surface elite candidates using intelligent vector matching.
+                    Contextual RAG matching evaluates depth beyond mere resume
+                    keywords.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -216,10 +245,13 @@ export function ComponentExample() {
                 <Card className="rounded-2xl border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-lg shadow-black/5 overflow-hidden p-5 space-y-2 hover:border-violet-500/30">
                   <div className="flex items-center gap-2 text-violet-600 dark:text-violet-400">
                     <MailIcon className="w-4 h-4" />
-                    <CardTitle className="text-base font-bold">Magic Invitations</CardTitle>
+                    <CardTitle className="text-base font-bold">
+                      Magic Invitations
+                    </CardTitle>
                   </div>
                   <CardDescription className="text-xs text-muted-foreground leading-relaxed">
-                    Dispatch time-limited token links to shortlisted candidates with one click. Automated and secure.
+                    Dispatch time-limited token links to shortlisted candidates
+                    with one click. Automated and secure.
                   </CardDescription>
                 </Card>
               </GlowCard>
@@ -228,10 +260,13 @@ export function ComponentExample() {
                 <Card className="rounded-2xl border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-lg shadow-black/5 overflow-hidden p-5 space-y-2 hover:border-emerald-500/30">
                   <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                     <LineChartIcon className="w-4 h-4" />
-                    <CardTitle className="text-base font-bold">Instant Analytics</CardTitle>
+                    <CardTitle className="text-base font-bold">
+                      Instant Analytics
+                    </CardTitle>
                   </div>
                   <CardDescription className="text-xs text-muted-foreground leading-relaxed">
-                    Review automated speech analysis, response fidelity scoring, and downloadable PDF evaluation reports.
+                    Review automated speech analysis, response fidelity scoring,
+                    and downloadable PDF evaluation reports.
                   </CardDescription>
                 </Card>
               </GlowCard>
@@ -246,8 +281,12 @@ export function ComponentExample() {
               <UserIcon className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
             <div className="space-y-0.5 text-left">
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">For Candidates</h2>
-              <p className="text-xs font-bold text-fuchsia-600 dark:text-fuchsia-400 uppercase tracking-widest">Seamless Assessment</p>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                For Candidates
+              </h2>
+              <p className="text-xs font-bold text-fuchsia-600 dark:text-fuchsia-400 uppercase tracking-widest">
+                Seamless Assessment
+              </p>
             </div>
           </div>
 
@@ -264,7 +303,9 @@ export function ComponentExample() {
                 </CardHeader>
                 <CardContent className="p-6 pt-0">
                   <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    Access your personalized interview session instantly via secure magic link or authenticated access without complex onboarding hurdles.
+                    Access your personalized interview session instantly via
+                    secure magic link or authenticated access without complex
+                    onboarding hurdles.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -282,7 +323,9 @@ export function ComponentExample() {
                 </CardHeader>
                 <CardContent className="p-6 pt-0">
                   <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    Experience structured, interactive voice & video interview sessions with an AI agent that adapts questions in real-time to your answers.
+                    Experience structured, interactive voice & video interview
+                    sessions with an AI agent that adapts questions in real-time
+                    to your answers.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -300,7 +343,9 @@ export function ComponentExample() {
                 </CardHeader>
                 <CardContent className="p-6 pt-0">
                   <CardDescription className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    Complete your evaluation when you are at your peak readiness. Eliminate timezone friction, scheduling delays, and interview anxiety.
+                    Complete your evaluation when you are at your peak
+                    readiness. Eliminate timezone friction, scheduling delays,
+                    and interview anxiety.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -312,7 +357,10 @@ export function ComponentExample() {
       {/* --- Interactive 3-Step Flow --- */}
       <section className="max-w-5xl mx-auto mb-24 space-y-10">
         <div className="text-center space-y-2">
-          <Badge variant="outline" className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-500/5 border-indigo-500/20">
+          <Badge
+            variant="outline"
+            className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-500/5 border-indigo-500/20"
+          >
             Workflow Architecture
           </Badge>
           <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-foreground">
@@ -325,9 +373,12 @@ export function ComponentExample() {
             <div className="h-10 w-10 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-sm">
               01
             </div>
-            <h3 className="text-base font-bold text-foreground">Ingest & Vectorize</h3>
+            <h3 className="text-base font-bold text-foreground">
+              Ingest & Vectorize
+            </h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Archive bank ingests candidate resumes from cloud storage and automatically chunks, indexes, and vectorizes content.
+              Archive bank ingests candidate resumes from cloud storage and
+              automatically chunks, indexes, and vectorizes content.
             </p>
           </div>
 
@@ -335,9 +386,13 @@ export function ComponentExample() {
             <div className="h-10 w-10 rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center font-black text-sm">
               02
             </div>
-            <h3 className="text-base font-bold text-foreground">Match & Align</h3>
+            <h3 className="text-base font-bold text-foreground">
+              Match & Align
+            </h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Semantic AI evaluates job criteria against candidate CVs, producing ranked match scores, alignment points, and clarification notes.
+              Semantic AI evaluates job criteria against candidate CVs,
+              producing ranked match scores, alignment points, and clarification
+              notes.
             </p>
           </div>
 
@@ -345,9 +400,12 @@ export function ComponentExample() {
             <div className="h-10 w-10 rounded-2xl bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 flex items-center justify-center font-black text-sm">
               03
             </div>
-            <h3 className="text-base font-bold text-foreground">Assess & Score</h3>
+            <h3 className="text-base font-bold text-foreground">
+              Assess & Score
+            </h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Automated AI sessions conduct technical interviews, providing synthesized audio timelines, transcripts, and decision reports.
+              Automated AI sessions conduct technical interviews, providing
+              synthesized audio timelines, transcripts, and decision reports.
             </p>
           </div>
         </div>
@@ -361,17 +419,18 @@ export function ComponentExample() {
             Ready to Modernize Your Hiring Pipeline?
           </h2>
           <p className="text-xs sm:text-sm text-indigo-100 font-medium leading-relaxed">
-            Experience the next era of autonomous talent acquisition with streamlined workflows and transparent assessment rubrics.
+            Experience the next era of autonomous talent acquisition with
+            streamlined workflows and transparent assessment rubrics.
           </p>
         </div>
 
         <div className="relative z-10 flex justify-center gap-4 pt-2">
-          <Link to={user ? "/dashboard" : "/login"}>
+          <Link to={user ? '/dashboard' : '/login'}>
             <Button
               size="lg"
               className="h-12 sm:h-13 bg-white text-indigo-700 hover:bg-white/90 rounded-2xl px-8 font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105"
             >
-              <span>{user ? "Open Dashboard" : "Get Started Now"}</span>
+              <span>{user ? 'Open Dashboard' : 'Get Started Now'}</span>
               <ArrowRightIcon className="w-4 h-4 ml-2" />
             </Button>
           </Link>
@@ -385,7 +444,8 @@ export function ComponentExample() {
           <span>Talent Engine Core Operational</span>
         </div>
         <p className="text-center sm:text-right">
-          © {new Date().getFullYear()} Intelligent Hiring Protocol. All rights reserved.
+          © {new Date().getFullYear()} Intelligent Hiring Protocol. All rights
+          reserved.
         </p>
       </div>
     </div>

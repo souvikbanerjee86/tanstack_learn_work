@@ -40,7 +40,8 @@ export function GlobalProgressBar() {
         width: `${progress}%`,
         height: '3px',
         opacity: progress === 100 ? 0 : 1,
-        boxShadow: '0 0 12px rgba(139, 92, 246, 0.8), 0 0 4px rgba(139, 92, 246, 0.5)'
+        boxShadow:
+          '0 0 12px rgba(139, 92, 246, 0.8), 0 0 4px rgba(139, 92, 246, 0.5)',
       }}
     >
       {/* Intense leading glow effect */}

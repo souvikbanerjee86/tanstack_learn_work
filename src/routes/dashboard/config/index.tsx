@@ -1,29 +1,40 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { 
-  Loader2, 
-  Clock, 
-  Calendar, 
-  HelpCircle, 
-  Settings2, 
-  Sparkles, 
-  ShieldCheck, 
-  Zap, 
-  Check, 
+import {
+  Calendar,
+  Check,
+  Clock,
+  HelpCircle,
+  Hourglass,
+  Loader2,
+  Settings2,
+  ShieldCheck,
+  Sparkles,
   Timer,
-  Hourglass
+  Zap,
 } from 'lucide-react'
-import { queryOptions, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import {
+  queryOptions,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 import { Suspense, useState } from 'react'
 import { toast } from 'sonner'
+import { format, parseISO } from 'date-fns'
+import type { z } from 'zod'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { configSchema } from '@/schemas/evaluate'
 import { getSiteConfig, saveSiteConfig } from '@/lib/server-function'
 import { ConfigSkeleton } from '@/components/web/config-skeleton'
-import { format, parseISO } from 'date-fns'
 import { cn } from '@/lib/utils'
 
 export const siteConfigQueryOptions = queryOptions({
@@ -48,18 +59,24 @@ function RouteComponent() {
   )
 }
 
-const DURATION_OPTIONS = ["15", "30", "45", "60", "75", "90"]
-const VALIDITY_OPTIONS = ["3", "5", "7", "10", "14"]
-const QUESTION_OPTIONS = ["5", "6", "8", "10", "12", "15"]
+const DURATION_OPTIONS = ['15', '30', '45', '60', '75', '90']
+const VALIDITY_OPTIONS = ['3', '5', '7', '10', '14']
+const QUESTION_OPTIONS = ['5', '6', '8', '10', '12', '15']
 
 function ConfigSuspenseWrapper() {
   const queryClient = useQueryClient()
   const { data }: { data: any } = useSuspenseQuery(siteConfigQueryOptions)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const initialInterviewTime = data?.data?.interviewTime ? String(data.data.interviewTime) : "45"
-  const initialLinkValidity = data?.data?.linkValidity ? String(data.data.linkValidity) : "5"
-  const initialQuestionsCount = data?.data?.questionsCount ? String(data.data.questionsCount) : "8"
+  const initialInterviewTime = data?.data?.interviewTime
+    ? String(data.data.interviewTime)
+    : '45'
+  const initialLinkValidity = data?.data?.linkValidity
+    ? String(data.data.linkValidity)
+    : '5'
+  const initialQuestionsCount = data?.data?.questionsCount
+    ? String(data.data.questionsCount)
+    : '8'
 
   const form = useForm({
     defaultValues: {
@@ -104,13 +121,17 @@ function ConfigSuspenseWrapper() {
                 <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground">
                   Interview Engine Parameters
                 </h1>
-                <Badge variant="outline" className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 px-2 py-0.5">
+                <Badge
+                  variant="outline"
+                  className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 px-2 py-0.5"
+                >
                   Global
                 </Badge>
               </div>
               <p className="text-xs md:text-sm text-muted-foreground font-medium flex items-center gap-1.5 mt-1">
                 <Sparkles className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
-                Configure evaluation session duration, token lifespan, and prompt density.
+                Configure evaluation session duration, token lifespan, and
+                prompt density.
               </p>
             </div>
           </div>
@@ -132,9 +153,9 @@ function ConfigSuspenseWrapper() {
             <button
               type="button"
               onClick={() => {
-                form.setFieldValue("interviewTime", "60")
-                form.setFieldValue("linkValidity", "3")
-                form.setFieldValue("questionsCount", "10")
+                form.setFieldValue('interviewTime', '60')
+                form.setFieldValue('linkValidity', '3')
+                form.setFieldValue('questionsCount', '10')
                 toast.success("Applied 'Strict High-Security' preset")
               }}
               className="flex flex-col items-start p-3.5 rounded-xl border border-border/60 bg-muted/20 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left group"
@@ -152,9 +173,9 @@ function ConfigSuspenseWrapper() {
             <button
               type="button"
               onClick={() => {
-                form.setFieldValue("interviewTime", "45")
-                form.setFieldValue("linkValidity", "5")
-                form.setFieldValue("questionsCount", "8")
+                form.setFieldValue('interviewTime', '45')
+                form.setFieldValue('linkValidity', '5')
+                form.setFieldValue('questionsCount', '8')
                 toast.success("Applied 'Standard Balanced' preset")
               }}
               className="flex flex-col items-start p-3.5 rounded-xl border border-border/60 bg-muted/20 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left group"
@@ -172,9 +193,9 @@ function ConfigSuspenseWrapper() {
             <button
               type="button"
               onClick={() => {
-                form.setFieldValue("interviewTime", "15")
-                form.setFieldValue("linkValidity", "7")
-                form.setFieldValue("questionsCount", "5")
+                form.setFieldValue('interviewTime', '15')
+                form.setFieldValue('linkValidity', '7')
+                form.setFieldValue('questionsCount', '5')
                 toast.success("Applied 'Rapid Screening' preset")
               }}
               className="flex flex-col items-start p-3.5 rounded-xl border border-border/60 bg-muted/20 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left group"
@@ -214,7 +235,10 @@ function ConfigSuspenseWrapper() {
                         <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20 group-hover:scale-105 transition-transform">
                           <Clock className="h-5 w-5" />
                         </div>
-                        <Badge variant="outline" className="font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/5 border-indigo-500/20">
+                        <Badge
+                          variant="outline"
+                          className="font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/5 border-indigo-500/20"
+                        >
                           {currentVal} Mins
                         </Badge>
                       </div>
@@ -238,14 +262,16 @@ function ConfigSuspenseWrapper() {
                               type="button"
                               onClick={() => field.handleChange(min)}
                               className={cn(
-                                "h-11 rounded-xl text-xs font-bold transition-all border flex flex-col items-center justify-center",
+                                'h-11 rounded-xl text-xs font-bold transition-all border flex flex-col items-center justify-center',
                                 isSelected
-                                  ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-500/20"
-                                  : "bg-muted/40 text-muted-foreground border-border/60 hover:border-indigo-500/30 hover:text-foreground"
+                                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-500/20'
+                                  : 'bg-muted/40 text-muted-foreground border-border/60 hover:border-indigo-500/30 hover:text-foreground',
                               )}
                             >
                               <span>{min}</span>
-                              <span className="text-[9px] font-normal opacity-80">mins</span>
+                              <span className="text-[9px] font-normal opacity-80">
+                                mins
+                              </span>
                             </button>
                           )
                         })}
@@ -253,7 +279,9 @@ function ConfigSuspenseWrapper() {
 
                       <div className="p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/10 flex items-center gap-2 text-xs font-medium text-indigo-600 dark:text-indigo-400">
                         <Timer className="h-3.5 w-3.5 shrink-0" />
-                        <span>Candidate has {currentVal}m countdown upon starting</span>
+                        <span>
+                          Candidate has {currentVal}m countdown upon starting
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
@@ -273,7 +301,10 @@ function ConfigSuspenseWrapper() {
                         <div className="h-10 w-10 rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center border border-violet-500/20 group-hover:scale-105 transition-transform">
                           <Calendar className="h-5 w-5" />
                         </div>
-                        <Badge variant="outline" className="font-mono text-xs font-bold text-violet-600 dark:text-violet-400 bg-violet-500/5 border-violet-500/20">
+                        <Badge
+                          variant="outline"
+                          className="font-mono text-xs font-bold text-violet-600 dark:text-violet-400 bg-violet-500/5 border-violet-500/20"
+                        >
                           {currentVal} Days
                         </Badge>
                       </div>
@@ -297,14 +328,16 @@ function ConfigSuspenseWrapper() {
                               type="button"
                               onClick={() => field.handleChange(days)}
                               className={cn(
-                                "h-11 rounded-xl text-xs font-bold transition-all border flex flex-col items-center justify-center",
+                                'h-11 rounded-xl text-xs font-bold transition-all border flex flex-col items-center justify-center',
                                 isSelected
-                                  ? "bg-violet-600 text-white border-violet-600 shadow-md shadow-violet-500/20"
-                                  : "bg-muted/40 text-muted-foreground border-border/60 hover:border-violet-500/30 hover:text-foreground"
+                                  ? 'bg-violet-600 text-white border-violet-600 shadow-md shadow-violet-500/20'
+                                  : 'bg-muted/40 text-muted-foreground border-border/60 hover:border-violet-500/30 hover:text-foreground',
                               )}
                             >
                               <span>{days}</span>
-                              <span className="text-[9px] font-normal opacity-80">days</span>
+                              <span className="text-[9px] font-normal opacity-80">
+                                days
+                              </span>
                             </button>
                           )
                         })}
@@ -312,7 +345,9 @@ function ConfigSuspenseWrapper() {
 
                       <div className="p-3 rounded-xl bg-violet-500/5 border border-violet-500/10 flex items-center gap-2 text-xs font-medium text-violet-600 dark:text-violet-400">
                         <Hourglass className="h-3.5 w-3.5 shrink-0" />
-                        <span>Link expires automatically after {currentVal} days</span>
+                        <span>
+                          Link expires automatically after {currentVal} days
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
@@ -332,7 +367,10 @@ function ConfigSuspenseWrapper() {
                         <div className="h-10 w-10 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-500/20 group-hover:scale-105 transition-transform">
                           <HelpCircle className="h-5 w-5" />
                         </div>
-                        <Badge variant="outline" className="font-mono text-xs font-bold text-teal-600 dark:text-teal-400 bg-teal-500/5 border-teal-500/20">
+                        <Badge
+                          variant="outline"
+                          className="font-mono text-xs font-bold text-teal-600 dark:text-teal-400 bg-teal-500/5 border-teal-500/20"
+                        >
                           {currentVal} Prompts
                         </Badge>
                       </div>
@@ -356,14 +394,16 @@ function ConfigSuspenseWrapper() {
                               type="button"
                               onClick={() => field.handleChange(count)}
                               className={cn(
-                                "h-11 rounded-xl text-xs font-bold transition-all border flex flex-col items-center justify-center",
+                                'h-11 rounded-xl text-xs font-bold transition-all border flex flex-col items-center justify-center',
                                 isSelected
-                                  ? "bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-500/20"
-                                  : "bg-muted/40 text-muted-foreground border-border/60 hover:border-teal-500/30 hover:text-foreground"
+                                  ? 'bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-500/20'
+                                  : 'bg-muted/40 text-muted-foreground border-border/60 hover:border-teal-500/30 hover:text-foreground',
                               )}
                             >
                               <span>{count}</span>
-                              <span className="text-[9px] font-normal opacity-80">prompts</span>
+                              <span className="text-[9px] font-normal opacity-80">
+                                prompts
+                              </span>
                             </button>
                           )
                         })}
@@ -390,7 +430,9 @@ function ConfigSuspenseWrapper() {
                     <span>System Reliability & Scope Notice</span>
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Changes take effect immediately for all new candidate interview links. Active in-flight sessions will continue using their issued expiration tokens.
+                    Changes take effect immediately for all new candidate
+                    interview links. Active in-flight sessions will continue
+                    using their issued expiration tokens.
                   </p>
                 </div>
 
@@ -410,9 +452,13 @@ function ConfigSuspenseWrapper() {
                   Synchronization State
                 </span>
                 <span className="text-xs font-bold text-foreground">
-                  Last saved: {data?.data?.lastModified
-                    ? format(parseISO(data.data.lastModified), 'dd MMM yyyy • hh:mm a')
-                    : "Default Configuration"}
+                  Last saved:{' '}
+                  {data?.data?.lastModified
+                    ? format(
+                        parseISO(data.data.lastModified),
+                        'dd MMM yyyy • hh:mm a',
+                      )
+                    : 'Default Configuration'}
                 </span>
               </div>
 

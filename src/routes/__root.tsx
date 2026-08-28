@@ -1,35 +1,41 @@
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRouteWithContext,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import { QueryClientProvider, type QueryClient } from '@tanstack/react-query'
-
-
+import {  QueryClientProvider } from '@tanstack/react-query'
 import appCss from '../styles.css?url'
+import type {QueryClient} from '@tanstack/react-query';
+
 import '../styles.css'
 import { ThemeProvider } from '@/lib/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { GlobalProgressBar } from '@/components/web/global-progress-bar'
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'EazyAI Application',
-      },
-    ],
-  }),
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  {
+    head: () => ({
+      meta: [
+        {
+          charSet: 'utf-8',
+        },
+        {
+          name: 'viewport',
+          content: 'width=device-width, initial-scale=1',
+        },
+        {
+          title: 'EazyAI Application',
+        },
+      ],
+    }),
 
-
-  component: RootComponent,
-  shellComponent: RootDocument,
-})
+    component: RootComponent,
+    shellComponent: RootDocument,
+  },
+)
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext()
@@ -51,7 +57,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <GlobalProgressBar />
         <ThemeProvider>
           {children}
-          <Toaster closeButton position='top-center' />
+          <Toaster closeButton position="top-center" />
         </ThemeProvider>
         <TanStackDevtools
           config={{

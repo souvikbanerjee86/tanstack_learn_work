@@ -1,27 +1,29 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { 
-  Briefcase, 
-  LayoutDashboard, 
-  Sparkles, 
-  Users, 
-  UserCheck, 
-  Compass, 
-  HardDrive, 
-  Plus, 
+import {
   ArrowRight,
-  TrendingUp
-} from 'lucide-react';
-import { getDashbaordSummary } from '@/lib/server-function';
-import { DashboardStatsSkeleton } from '@/components/web/dashboard-stat-skeleton';
-import { Suspense, lazy } from 'react';
-import { cn } from '@/lib/utils';
+  Briefcase,
+  Compass,
+  HardDrive,
+  LayoutDashboard,
+  Plus,
+  Sparkles,
+  TrendingUp,
+  UserCheck,
+  Users,
+} from 'lucide-react'
+import { Suspense, lazy } from 'react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { getDashbaordSummary } from '@/lib/server-function'
+import { DashboardStatsSkeleton } from '@/components/web/dashboard-stat-skeleton'
+import { cn } from '@/lib/utils'
 
 // Lazy load the heavy charting library bundle
-const DashboardChartsGrid = lazy(() => import('@/components/web/dashboard-charts'))
+const DashboardChartsGrid = lazy(
+  () => import('@/components/web/dashboard-charts'),
+)
 
 export const dashboardQueryOptions = queryOptions({
   queryKey: ['dashboard'],
@@ -32,7 +34,7 @@ export const Route = createFileRoute('/dashboard/')({
   loader: ({ context }) => {
     void context.queryClient.prefetchQuery(dashboardQueryOptions)
   },
-  component: RouteComponent
+  component: RouteComponent,
 })
 
 function RouteComponent() {
@@ -54,15 +56,23 @@ function RouteComponent() {
             </div>
             <div>
               <div className="flex items-center gap-2.5">
-                <h1 className="text-2xl md:text-4xl font-black tracking-tight text-foreground">Talent Intelligence</h1>
-                <Badge variant="outline" className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 px-2 py-0.5 gap-1">
+                <h1 className="text-2xl md:text-4xl font-black tracking-tight text-foreground">
+                  Talent Intelligence
+                </h1>
+                <Badge
+                  variant="outline"
+                  className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 px-2 py-0.5 gap-1"
+                >
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.8)] animate-pulse" />
                   Live Sync
                 </Badge>
               </div>
               <p className="text-xs md:text-sm text-muted-foreground font-medium flex items-center gap-1.5 mt-1">
                 <Sparkles className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                <span>Real-time recruitment analytics and automated candidate performance metrics.</span>
+                <span>
+                  Real-time recruitment analytics and automated candidate
+                  performance metrics.
+                </span>
               </p>
             </div>
           </div>
@@ -76,7 +86,12 @@ function RouteComponent() {
               </Button>
             </Link>
             <Link to="/dashboard/discover">
-              <Button variant="outline" size="icon" className="h-10 md:h-11 w-10 md:w-11 rounded-xl border-border/60 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm hover:bg-muted/80 shadow-sm" title="Discover Candidates">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 md:h-11 w-10 md:w-11 rounded-xl border-border/60 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm hover:bg-muted/80 shadow-sm"
+                title="Discover Candidates"
+              >
                 <Compass className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
               </Button>
             </Link>
@@ -101,7 +116,9 @@ function RouteComponent() {
                     <h4 className="text-sm font-bold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                       Job Pipelines
                     </h4>
-                    <p className="text-[11px] text-muted-foreground font-medium">Manage open job listings</p>
+                    <p className="text-[11px] text-muted-foreground font-medium">
+                      Manage open job listings
+                    </p>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-1 transition-all" />
@@ -120,7 +137,9 @@ function RouteComponent() {
                     <h4 className="text-sm font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       AI Discovery
                     </h4>
-                    <p className="text-[11px] text-muted-foreground font-medium">Semantic candidate match</p>
+                    <p className="text-[11px] text-muted-foreground font-medium">
+                      Semantic candidate match
+                    </p>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-1 transition-all" />
@@ -139,7 +158,9 @@ function RouteComponent() {
                     <h4 className="text-sm font-bold text-foreground group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                       Archive Bank
                     </h4>
-                    <p className="text-[11px] text-muted-foreground font-medium">Storage & indexing status</p>
+                    <p className="text-[11px] text-muted-foreground font-medium">
+                      Storage & indexing status
+                    </p>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-1 transition-all" />
@@ -149,83 +170,99 @@ function RouteComponent() {
         </div>
 
         {/* --- Charts Grid --- */}
-        <Suspense fallback={
-          <div className="grid gap-6 md:gap-8 grid-cols-1 lg:grid-cols-2">
-            <div className="h-[432px] w-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm rounded-[2.5rem] border border-border/50 animate-pulse" />
-            <div className="h-[432px] w-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm rounded-[2.5rem] border border-border/50 animate-pulse delay-75" />
-            <div className="h-[432px] w-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm rounded-[2.5rem] border border-border/50 animate-pulse delay-150" />
-            <div className="h-[432px] w-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm rounded-[2.5rem] border border-border/50 animate-pulse delay-200" />
-          </div>
-        }>
+        <Suspense
+          fallback={
+            <div className="grid gap-6 md:gap-8 grid-cols-1 lg:grid-cols-2">
+              <div className="h-[432px] w-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm rounded-[2.5rem] border border-border/50 animate-pulse" />
+              <div className="h-[432px] w-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm rounded-[2.5rem] border border-border/50 animate-pulse delay-75" />
+              <div className="h-[432px] w-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm rounded-[2.5rem] border border-border/50 animate-pulse delay-150" />
+              <div className="h-[432px] w-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm rounded-[2.5rem] border border-border/50 animate-pulse delay-200" />
+            </div>
+          }
+        >
           <DashboardChartsGrid />
         </Suspense>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // --- Modern Metric Stat Card Component ---
 
 interface StatCardProps {
-  title: string;
-  value: string;
-  subtitle?: string;
-  icon: React.ReactNode;
-  theme: 'indigo' | 'blue' | 'emerald' | 'amber';
-  badgeText?: string;
+  title: string
+  value: string
+  subtitle?: string
+  icon: React.ReactNode
+  theme: 'indigo' | 'blue' | 'emerald' | 'amber'
+  badgeText?: string
 }
 
 const themeConfigs = {
   indigo: {
-    bg: "bg-indigo-500/10 dark:bg-indigo-500/15",
-    border: "border-indigo-500/20",
-    text: "text-indigo-600 dark:text-indigo-400",
-    glow: "from-indigo-500/15 via-transparent to-transparent",
-    badge: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
+    bg: 'bg-indigo-500/10 dark:bg-indigo-500/15',
+    border: 'border-indigo-500/20',
+    text: 'text-indigo-600 dark:text-indigo-400',
+    glow: 'from-indigo-500/15 via-transparent to-transparent',
+    badge:
+      'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
   },
   blue: {
-    bg: "bg-blue-500/10 dark:bg-blue-500/15",
-    border: "border-blue-500/20",
-    text: "text-blue-600 dark:text-blue-400",
-    glow: "from-blue-500/15 via-transparent to-transparent",
-    badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+    bg: 'bg-blue-500/10 dark:bg-blue-500/15',
+    border: 'border-blue-500/20',
+    text: 'text-blue-600 dark:text-blue-400',
+    glow: 'from-blue-500/15 via-transparent to-transparent',
+    badge: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
   },
   emerald: {
-    bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
-    border: "border-emerald-500/20",
-    text: "text-emerald-600 dark:text-emerald-400",
-    glow: "from-emerald-500/15 via-transparent to-transparent",
-    badge: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+    bg: 'bg-emerald-500/10 dark:bg-emerald-500/15',
+    border: 'border-emerald-500/20',
+    text: 'text-emerald-600 dark:text-emerald-400',
+    glow: 'from-emerald-500/15 via-transparent to-transparent',
+    badge:
+      'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
   },
   amber: {
-    bg: "bg-amber-500/10 dark:bg-amber-500/15",
-    border: "border-amber-500/20",
-    text: "text-amber-600 dark:text-amber-400",
-    glow: "from-amber-500/15 via-transparent to-transparent",
-    badge: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+    bg: 'bg-amber-500/10 dark:bg-amber-500/15',
+    border: 'border-amber-500/20',
+    text: 'text-amber-600 dark:text-amber-400',
+    glow: 'from-amber-500/15 via-transparent to-transparent',
+    badge:
+      'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
   },
-};
+}
 
-const StatCard = ({ title, value, subtitle, icon, theme, badgeText }: StatCardProps) => {
-  const config = themeConfigs[theme];
+const StatCard = ({
+  title,
+  value,
+  subtitle,
+  icon,
+  theme,
+  badgeText,
+}: StatCardProps) => {
+  const config = themeConfigs[theme]
 
   return (
     <Card className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 hover:shadow-2xl hover:border-primary/30 transition-all duration-300 group">
       {/* Corner Ambient Glow */}
-      <div className={cn(
-        "absolute -top-12 -right-12 w-32 h-32 bg-linear-to-br rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-opacity pointer-events-none",
-        config.glow
-      )} />
+      <div
+        className={cn(
+          'absolute -top-12 -right-12 w-32 h-32 bg-linear-to-br rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-opacity pointer-events-none',
+          config.glow,
+        )}
+      />
 
       <CardContent className="p-6 md:p-7 flex flex-col justify-between h-full space-y-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className={cn(
-              "h-10 w-10 rounded-2xl flex items-center justify-center border shadow-sm transition-transform duration-300 group-hover:scale-105",
-              config.bg,
-              config.border,
-              config.text
-            )}>
+            <div
+              className={cn(
+                'h-10 w-10 rounded-2xl flex items-center justify-center border shadow-sm transition-transform duration-300 group-hover:scale-105',
+                config.bg,
+                config.border,
+                config.text,
+              )}
+            >
               {icon}
             </div>
             <span className="text-[11px] font-black uppercase tracking-wider text-muted-foreground/80">
@@ -234,7 +271,13 @@ const StatCard = ({ title, value, subtitle, icon, theme, badgeText }: StatCardPr
           </div>
 
           {badgeText && (
-            <Badge variant="outline" className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5", config.badge)}>
+            <Badge
+              variant="outline"
+              className={cn(
+                'text-[9px] font-black uppercase tracking-widest px-2 py-0.5',
+                config.badge,
+              )}
+            >
               {badgeText}
             </Badge>
           )}
@@ -252,12 +295,12 @@ const StatCard = ({ title, value, subtitle, icon, theme, badgeText }: StatCardPr
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
 function DashboardStats() {
   const { data } = useSuspenseQuery(dashboardQueryOptions)
-  const growth = Math.round(data.growth_percentage);
+  const growth = Math.round(data.growth_percentage)
 
   return (
     <div className="grid gap-5 md:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
@@ -291,7 +334,7 @@ function DashboardStats() {
         subtitle="Period-over-period intake"
         icon={<TrendingUp className="h-5 w-5" />}
         theme="amber"
-        badgeText={growth >= 0 ? "Trending Up" : "Stable"}
+        badgeText={growth >= 0 ? 'Trending Up' : 'Stable'}
       />
     </div>
   )

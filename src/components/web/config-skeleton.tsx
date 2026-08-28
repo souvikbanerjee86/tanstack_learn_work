@@ -1,6 +1,12 @@
+import {
+  Calendar,
+  Clock,
+  HelpCircle,
+  Settings2,
+  ShieldCheck,
+} from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card'
-import { Settings2, ShieldCheck, Clock, Calendar, HelpCircle } from 'lucide-react'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 
 export function ConfigSkeleton() {
   return (

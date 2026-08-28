@@ -1,21 +1,16 @@
-import React, { useState, useMemo } from "react"
+import React, { useMemo, useState } from 'react'
+import { Globe2, Layers, MapPin, Search, X } from 'lucide-react'
+import { INDIA_MAP_REGIONS } from './india-map-data'
+import type { IndiaStateRegion } from './india-map-data';
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import {
-  MapPin,
-  Globe2,
-  Layers,
-  Search,
-  X,
-} from "lucide-react"
-import { INDIA_MAP_REGIONS, IndiaStateRegion } from "./india-map-data"
-import { cn } from "@/lib/utils"
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 
 interface FacilityMapDialogProps {
   locationString?: string | null
@@ -35,8 +30,10 @@ export function FacilityMapDialog({
   onOpenChange: controlledOnOpenChange,
 }: FacilityMapDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false)
-  const [hoveredRegion, setHoveredRegion] = useState<IndiaStateRegion | null>(null)
-  const [stateSearch, setStateSearch] = useState("")
+  const [hoveredRegion, setHoveredRegion] = useState<IndiaStateRegion | null>(
+    null,
+  )
+  const [stateSearch, setStateSearch] = useState('')
 
   const isControlled = controlledOpen !== undefined
   const isOpen = isControlled ? controlledOpen : uncontrolledOpen
@@ -60,13 +57,19 @@ export function FacilityMapDialog({
     const stateLower = region.state.toLowerCase()
     const slugLower = region.slug.toLowerCase()
 
-    if (activeLocationsSet.has(stateLower) || activeLocationsSet.has(slugLower)) {
+    if (
+      activeLocationsSet.has(stateLower) ||
+      activeLocationsSet.has(slugLower)
+    ) {
       return true
     }
 
     // Check partial containment for variations (e.g. "Delhi" -> "NCT of Delhi")
     for (const loc of activeLocationsSet) {
-      if (loc.length > 2 && (stateLower.includes(loc) || loc.includes(stateLower))) {
+      if (
+        loc.length > 2 &&
+        (stateLower.includes(loc) || loc.includes(stateLower))
+      ) {
         return true
       }
     }
@@ -82,7 +85,8 @@ export function FacilityMapDialog({
     if (!stateSearch.trim()) return activeRegions
     const q = stateSearch.toLowerCase()
     return activeRegions.filter(
-      (r) => r.state.toLowerCase().includes(q) || r.type.toLowerCase().includes(q)
+      (r) =>
+        r.state.toLowerCase().includes(q) || r.type.toLowerCase().includes(q),
     )
   }, [activeRegions, stateSearch])
 
@@ -103,10 +107,10 @@ export function FacilityMapDialog({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent
           className={cn(
-            "w-[95vw] sm:max-w-5xl md:max-w-6xl lg:max-w-7xl xl:max-w-310",
-            "max-h-[92vh] flex flex-col p-0 overflow-hidden",
-            "border border-zinc-200/80 dark:border-zinc-800",
-            "bg-white/98 dark:bg-zinc-950/98 backdrop-blur-2xl shadow-2xl rounded-2xl sm:rounded-3xl gap-0"
+            'w-[95vw] sm:max-w-5xl md:max-w-6xl lg:max-w-7xl xl:max-w-310',
+            'max-h-[92vh] flex flex-col p-0 overflow-hidden',
+            'border border-zinc-200/80 dark:border-zinc-800',
+            'bg-white/98 dark:bg-zinc-950/98 backdrop-blur-2xl shadow-2xl rounded-2xl sm:rounded-3xl gap-0',
           )}
         >
           {/* Header */}
@@ -120,16 +124,24 @@ export function FacilityMapDialog({
                   <DialogTitle className="text-lg sm:text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex flex-wrap items-center gap-2">
                     Facility Deployment Map
                     {jobId && (
-                      <Badge variant="outline" className="text-[10px] font-mono font-bold bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] font-mono font-bold bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300"
+                      >
                         {jobId}
                       </Badge>
                     )}
                   </DialogTitle>
                   <DialogDescription className="text-xs text-zinc-600 dark:text-zinc-400 font-medium mt-0.5">
                     {jobTitle ? (
-                      <span>Active locations for <strong className="text-zinc-900 dark:text-zinc-100 font-bold">{jobTitle}</strong></span>
+                      <span>
+                        Active locations for{' '}
+                        <strong className="text-zinc-900 dark:text-zinc-100 font-bold">
+                          {jobTitle}
+                        </strong>
+                      </span>
                     ) : (
-                      "Active regional deployment hubs highlighted with green boundaries."
+                      'Active regional deployment hubs highlighted with green boundaries.'
                     )}
                   </DialogDescription>
                 </div>
@@ -142,7 +154,8 @@ export function FacilityMapDialog({
                   className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 font-bold text-xs px-3 py-1 rounded-xl flex items-center gap-1.5 shadow-xs"
                 >
                   <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
-                  {activeLocations.length} Active Hub{activeLocations.length === 1 ? "" : "s"}
+                  {activeLocations.length} Active Hub
+                  {activeLocations.length === 1 ? '' : 's'}
                 </Badge>
               </div>
             </div>
@@ -176,11 +189,35 @@ export function FacilityMapDialog({
               {/* Map Glow Filter Definition */}
               <svg className="w-0 h-0 absolute pointer-events-none">
                 <defs>
-                  <filter id="emerald-glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#10b981" floodOpacity="0.8" />
+                  <filter
+                    id="emerald-glow"
+                    x="-20%"
+                    y="-20%"
+                    width="140%"
+                    height="140%"
+                  >
+                    <feDropShadow
+                      dx="0"
+                      dy="0"
+                      stdDeviation="4"
+                      floodColor="#10b981"
+                      floodOpacity="0.8"
+                    />
                   </filter>
-                  <filter id="emerald-glow-hover" x="-30%" y="-30%" width="160%" height="160%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#10b981" floodOpacity="1" />
+                  <filter
+                    id="emerald-glow-hover"
+                    x="-30%"
+                    y="-30%"
+                    width="160%"
+                    height="160%"
+                  >
+                    <feDropShadow
+                      dx="0"
+                      dy="0"
+                      stdDeviation="7"
+                      floodColor="#10b981"
+                      floodOpacity="1"
+                    />
                   </filter>
                 </defs>
               </svg>
@@ -204,17 +241,20 @@ export function FacilityMapDialog({
                         onMouseEnter={() => setHoveredRegion(region)}
                         onMouseLeave={() => setHoveredRegion(null)}
                         className={cn(
-                          "transition-all duration-300 cursor-pointer outline-none",
+                          'transition-all duration-300 cursor-pointer outline-none',
                           active
                             ? isHovered
-                              ? "fill-emerald-500/40 stroke-emerald-400 stroke-4 filter-[url(#emerald-glow-hover)]"
-                              : "fill-emerald-500/25 stroke-emerald-500 dark:stroke-emerald-400 stroke-[2.5] filter-[url(#emerald-glow)]"
+                              ? 'fill-emerald-500/40 stroke-emerald-400 stroke-4 filter-[url(#emerald-glow-hover)]'
+                              : 'fill-emerald-500/25 stroke-emerald-500 dark:stroke-emerald-400 stroke-[2.5] filter-[url(#emerald-glow)]'
                             : isHovered
-                              ? "fill-zinc-300/80 dark:fill-zinc-800 stroke-zinc-500 dark:stroke-zinc-400 stroke-[1.5]"
-                              : "fill-zinc-200/60 dark:fill-zinc-900/60 stroke-zinc-300 dark:stroke-zinc-700/80 stroke-[0.8]"
+                              ? 'fill-zinc-300/80 dark:fill-zinc-800 stroke-zinc-500 dark:stroke-zinc-400 stroke-[1.5]'
+                              : 'fill-zinc-200/60 dark:fill-zinc-900/60 stroke-zinc-300 dark:stroke-zinc-700/80 stroke-[0.8]',
                         )}
                       >
-                        <title>{region.state} ({region.type}){active ? " - Active Facility Hub" : ""}</title>
+                        <title>
+                          {region.state} ({region.type})
+                          {active ? ' - Active Facility Hub' : ''}
+                        </title>
                       </path>
                     )
                   })}
@@ -231,19 +271,21 @@ export function FacilityMapDialog({
                     <Badge
                       variant="outline"
                       className={cn(
-                        "text-[9px] font-black uppercase tracking-wider px-2 py-0.5",
+                        'text-[9px] font-black uppercase tracking-wider px-2 py-0.5',
                         isRegionActive(hoveredRegion)
-                          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/40 font-bold"
-                          : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700"
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/40 font-bold'
+                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700',
                       )}
                     >
-                      {isRegionActive(hoveredRegion) ? "Active Hub" : hoveredRegion.type}
+                      {isRegionActive(hoveredRegion)
+                        ? 'Active Hub'
+                        : hoveredRegion.type}
                     </Badge>
                   </div>
                   <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-1 font-medium">
                     {isRegionActive(hoveredRegion)
-                      ? "Operational deployment hub assigned to this position."
-                      : "Unassigned region for this requisition."}
+                      ? 'Operational deployment hub assigned to this position.'
+                      : 'Unassigned region for this requisition.'}
                   </p>
                 </div>
               )}
@@ -258,7 +300,10 @@ export function FacilityMapDialog({
                     <span className="text-xs font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
                       Assigned States & UTs
                     </span>
-                    <Badge variant="secondary" className="text-[10px] font-bold bg-zinc-200/70 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] font-bold bg-zinc-200/70 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
+                    >
                       {activeRegions.length} / 36 Identified
                     </Badge>
                   </div>
@@ -275,7 +320,7 @@ export function FacilityMapDialog({
                       />
                       {stateSearch && (
                         <button
-                          onClick={() => setStateSearch("")}
+                          onClick={() => setStateSearch('')}
                           className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded text-zinc-400 hover:text-zinc-600"
                         >
                           <X className="h-3 w-3" />
@@ -294,10 +339,10 @@ export function FacilityMapDialog({
                         onMouseEnter={() => setHoveredRegion(region)}
                         onMouseLeave={() => setHoveredRegion(null)}
                         className={cn(
-                          "p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2",
+                          'p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2',
                           hoveredRegion?.id === region.id
-                            ? "bg-emerald-500/15 border-emerald-500/50 shadow-sm dark:bg-emerald-950/40"
-                            : "bg-white/80 dark:bg-zinc-900/60 border-zinc-200/80 dark:border-zinc-800 hover:bg-emerald-500/5 dark:hover:bg-zinc-800/60"
+                            ? 'bg-emerald-500/15 border-emerald-500/50 shadow-sm dark:bg-emerald-950/40'
+                            : 'bg-white/80 dark:bg-zinc-900/60 border-zinc-200/80 dark:border-zinc-800 hover:bg-emerald-500/5 dark:hover:bg-zinc-800/60',
                         )}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
@@ -307,14 +352,16 @@ export function FacilityMapDialog({
                           </span>
                         </div>
                         <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono shrink-0">
-                          {region.type === "Union Territory" ? "UT" : "State"}
+                          {region.type === 'Union Territory' ? 'UT' : 'State'}
                         </span>
                       </div>
                     ))
                   ) : (
                     <div className="p-5 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-800 text-center space-y-1">
                       <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-                        {stateSearch ? "No matching states found." : "No specific state boundaries identified for this location."}
+                        {stateSearch
+                          ? 'No matching states found.'
+                          : 'No specific state boundaries identified for this location.'}
                       </p>
                     </div>
                   )}
@@ -330,13 +377,19 @@ export function FacilityMapDialog({
                 <div className="flex items-center gap-2.5">
                   <div className="h-4 w-4 rounded-md border-2 border-emerald-500 bg-emerald-500/25 shadow-[0_0_8px_rgba(16,185,129,0.5)] shrink-0" />
                   <span className="text-zinc-700 dark:text-zinc-300 text-[11px]">
-                    <strong className="text-zinc-900 dark:text-zinc-100 font-bold">Green Outline:</strong> Active Facility Hub
+                    <strong className="text-zinc-900 dark:text-zinc-100 font-bold">
+                      Green Outline:
+                    </strong>{' '}
+                    Active Facility Hub
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <div className="h-4 w-4 rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-200/50 dark:bg-zinc-800/50 shrink-0" />
                   <span className="text-zinc-600 dark:text-zinc-400 text-[11px]">
-                    <strong className="text-zinc-800 dark:text-zinc-200">Neutral Gray:</strong> Other Regions
+                    <strong className="text-zinc-800 dark:text-zinc-200">
+                      Neutral Gray:
+                    </strong>{' '}
+                    Other Regions
                   </span>
                 </div>
               </div>
