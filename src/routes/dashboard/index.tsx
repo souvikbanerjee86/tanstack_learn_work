@@ -243,58 +243,60 @@ const StatCard = ({
   const config = themeConfigs[theme]
 
   return (
-    <Card className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 hover:shadow-2xl hover:border-primary/30 transition-all duration-300 group">
-      {/* Corner Ambient Glow */}
-      <div
-        className={cn(
-          'absolute -top-12 -right-12 w-32 h-32 bg-linear-to-br rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-opacity pointer-events-none',
-          config.glow,
-        )}
-      />
+    <div className="glow-card h-full">
+      <Card className="glass-card relative overflow-hidden rounded-[2rem] border border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 hover:shadow-2xl hover:border-indigo-500/30 transition-all duration-300 group h-full flex flex-col justify-between">
+        {/* Corner Ambient Glow */}
+        <div
+          className={cn(
+            'absolute -top-12 -right-12 w-32 h-32 bg-linear-to-br rounded-full blur-2xl opacity-40 group-hover:opacity-75 transition-opacity pointer-events-none',
+            config.glow,
+          )}
+        />
 
-      <CardContent className="p-6 md:p-7 flex flex-col justify-between h-full space-y-4 relative z-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div
-              className={cn(
-                'h-10 w-10 rounded-2xl flex items-center justify-center border shadow-sm transition-transform duration-300 group-hover:scale-105',
-                config.bg,
-                config.border,
-                config.text,
-              )}
-            >
-              {icon}
+        <CardContent className="p-6 md:p-7 flex flex-col justify-between h-full space-y-4 relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div
+                className={cn(
+                  'h-10 w-10 rounded-2xl flex items-center justify-center border shadow-sm transition-transform duration-300 group-hover:scale-110',
+                  config.bg,
+                  config.border,
+                  config.text,
+                )}
+              >
+                {icon}
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-muted-foreground/80">
+                {title}
+              </span>
             </div>
-            <span className="text-[11px] font-black uppercase tracking-wider text-muted-foreground/80">
-              {title}
-            </span>
+
+            {badgeText && (
+              <Badge
+                variant="outline"
+                className={cn(
+                  'text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-lg shadow-2xs',
+                  config.badge,
+                )}
+              >
+                {badgeText}
+              </Badge>
+            )}
           </div>
 
-          {badgeText && (
-            <Badge
-              variant="outline"
-              className={cn(
-                'text-[9px] font-black uppercase tracking-widest px-2 py-0.5',
-                config.badge,
-              )}
-            >
-              {badgeText}
-            </Badge>
-          )}
-        </div>
-
-        <div className="space-y-1">
-          <h3 className="text-3xl sm:text-4xl font-black tracking-tight tabular-nums text-foreground">
-            {value}
-          </h3>
-          {subtitle && (
-            <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              {subtitle}
-            </p>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+          <div className="space-y-1">
+            <h3 className="font-heading text-3xl sm:text-4xl font-black tracking-tight tabular-nums text-foreground">
+              {value}
+            </h3>
+            {subtitle && (
+              <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                {subtitle}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 

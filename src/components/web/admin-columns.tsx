@@ -27,20 +27,24 @@ import { cn } from '@/lib/utils'
 import { ManagePermissionsDialog } from '@/components/web/manage-permissions-dialog'
 import { RestrictAccountDialog } from '@/components/web/restrict-account-dialog'
 
-export const RoleBadge = ({ role }: { role: string }) => (
-  <Badge
-    variant="secondary"
-    className={cn(
-      'rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-tighter border',
-      role === 'admin'
-        ? 'bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/40 dark:text-violet-300 dark:border-violet-800'
-        : 'bg-muted text-muted-foreground border-transparent',
-    )}
-  >
-    <Shield className="h-3 w-3 mr-1 opacity-70" />
-    {role}
-  </Badge>
-)
+export const RoleBadge = ({ role }: { role: string }) => {
+  const isRoleAdmin =
+    role?.toLowerCase() === 'admin' || role?.toLowerCase() === 'super admin'
+  return (
+    <Badge
+      variant="secondary"
+      className={cn(
+        'rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-tighter border',
+        isRoleAdmin
+          ? 'bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/40 dark:text-violet-300 dark:border-violet-800'
+          : 'bg-muted text-muted-foreground border-transparent',
+      )}
+    >
+      <Shield className="h-3 w-3 mr-1 opacity-70" />
+      {role}
+    </Badge>
+  )
+}
 
 export const StatusBadge = ({
   active,
@@ -88,7 +92,9 @@ export const AdminActions = ({
   currentUserRole: string
   rowData: UserData
 }) => {
-  const isAdmin = currentUserRole === 'admin'
+  const isAdmin =
+    currentUserRole?.toLowerCase() === 'admin' ||
+    currentUserRole?.toLowerCase() === 'super admin'
   const [permissionsOpen, setPermissionsOpen] = useState(false)
   const [restrictOpen, setRestrictOpen] = useState(false)
 

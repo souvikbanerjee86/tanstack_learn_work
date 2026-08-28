@@ -43,10 +43,13 @@ export const siteConfigQueryOptions = queryOptions({
 })
 
 export const Route = createFileRoute('/dashboard/config/')({
-  component: RouteComponent,
+  beforeLoad: ({ context }) => {
+    return { role: context.role?.role }
+  },
   loader: ({ context }) => {
     void context.queryClient.prefetchQuery(siteConfigQueryOptions)
   },
+  component: RouteComponent,
 })
 
 type ConfigForm = z.infer<typeof configSchema>

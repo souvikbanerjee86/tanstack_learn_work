@@ -20,6 +20,7 @@ export const loginFn = createServerFn({ method: 'POST' })
         maxAge: expiresIn,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
         path: '/',
       })
 
@@ -31,7 +32,7 @@ export const loginFn = createServerFn({ method: 'POST' })
   })
 
 export const logoutFn = createServerFn({ method: 'POST' }).handler(async () => {
-  deleteCookie('session')
+  deleteCookie('session', { path: '/' })
   return { success: true }
 })
 
@@ -46,7 +47,8 @@ export const getUserFn = createServerFn({ method: 'GET' }).handler(async () => {
     const decodedClaims = await adminAuth.verifySessionCookie(session, true)
     return decodedClaims
   } catch (error) {
-    return null
+    console.error('Session verification failed:', error)
+    throw redirect({ to: '/login' })
   }
 })
 

@@ -40,7 +40,7 @@ export const adminsQueryOptions = queryOptions({
 
 export const Route = createFileRoute('/dashboard/admin-user/')({
   beforeLoad: ({ context }) => {
-    return { role: context.role.role }
+    return { role: context.role?.role }
   },
   loader: ({ context }) => {
     void context.queryClient.prefetchQuery(adminsQueryOptions)

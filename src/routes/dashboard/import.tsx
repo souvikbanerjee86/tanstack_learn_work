@@ -80,6 +80,8 @@ function RouteComponent() {
 function ImportContent() {
   const queryClient = useQueryClient()
   const { role } = Route.useRouteContext()
+  const isAdmin =
+    role?.toLowerCase() === 'admin' || role?.toLowerCase() === 'super admin'
   const {
     data: { root_folders },
   } = useSuspenseQuery(bucketListQueryOptions)
@@ -462,7 +464,7 @@ function ImportContent() {
                     </div>
 
                     <div className="flex items-center gap-2 self-end sm:self-auto">
-                      {role === 'admin' && (
+                      {isAdmin && (
                         <Button
                           size="sm"
                           variant="outline"

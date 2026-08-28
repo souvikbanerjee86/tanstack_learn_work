@@ -82,6 +82,8 @@ function RouteComponent() {
 
 function CandidatesContent() {
   const { role } = Route.useRouteContext()
+  const isAdmin =
+    role?.toLowerCase() === 'admin' || role?.toLowerCase() === 'super admin'
   const [isAddMultipleOpen, setIsAddMultipleOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [selectedPosition, setSelectedPosition] = useState<string>('all')
@@ -263,11 +265,11 @@ function CandidatesContent() {
             <span className="hidden sm:inline">Export CSV</span>
           </Button>
 
-          {role === 'admin' && (
+          {isAdmin && (
             <>
               <Button
                 onClick={() => setIsAddMultipleOpen(true)}
-                className="w-full sm:w-auto h-10 md:h-11 rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider"
+                className="w-full sm:w-auto h-10 md:h-11 rounded-xl gap-2 shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider cursor-pointer"
               >
                 <UserPlus className="h-4 w-4" />
                 <span className="px-1">Add Multiple</span>

@@ -9,10 +9,17 @@ if (!getApps().length) {
   //     'The APP_FIREBASE_SERVICE_ACCOUNT_JSON environment variable is not set.',
   //   )
   // }
-  // const serviceAccount = JSON.parse(serviceAccountString)
-  // initializeApp({
-  //   credential: cert(serviceAccount),
-  // })
+  // try {
+  //   const serviceAccount = JSON.parse(serviceAccountString)
+  //   initializeApp({
+  //     credential: cert(serviceAccount),
+  //   })
+  // } catch (error) {
+  //   console.error(
+  //     'Failed to initialize Firebase Admin SDK: Invalid Service Account Configuration',
+  //   )
+  //   throw new Error('Firebase Admin SDK initialization failed.')
+  // }
   initializeApp()
 }
 

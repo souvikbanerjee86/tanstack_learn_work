@@ -33,8 +33,9 @@ import type {
 
 const auth = new GoogleAuth()
 
-export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(
-  async (): Promise<BucketListResponse> => {
+export const fetchBucketListInfo = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
+  .handler(async (): Promise<BucketListResponse> => {
     console.log(API_PATH.BUCKET_LIST_API.GET_BASE_URL)
     const client = await auth.getIdTokenClient(
       API_PATH.BUCKET_LIST_API.GET_BASE_URL,
@@ -47,10 +48,10 @@ export const fetchBucketListInfo = createServerFn({ method: 'GET' }).handler(
     })
     const data = await response.data
     return data as BucketListResponse
-  },
-)
+  })
 
 export const getSearchProfileDetails = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
   .inputValidator(
     (data: {
       jobDescription: string
@@ -99,23 +100,26 @@ export const getSearchProfileDetails = createServerFn({ method: 'GET' })
 
 export const getProcessedIndexFilesId = createServerFn({
   method: 'GET',
-}).handler(async (): Promise<Array<RagProcessRecord>> => {
-  console.log(API_PATH.PROCESSED_FILES_ID.GET_BASE_URL)
-  const client = await auth.getIdTokenClient(
-    API_PATH.PROCESSED_FILES_ID.GET_BASE_URL,
-  )
-  const url =
-    API_PATH.PROCESSED_FILES_ID.GET_BASE_URL +
-    API_PATH.PROCESSED_FILES_ID.PATH_URL
-  const response = await client.request({
-    url: url,
-    method: 'GET',
-  })
-  const data = await response.data
-  return data as Array<RagProcessRecord>
 })
+  .middleware([isLoginMiddleware])
+  .handler(async (): Promise<Array<RagProcessRecord>> => {
+    console.log(API_PATH.PROCESSED_FILES_ID.GET_BASE_URL)
+    const client = await auth.getIdTokenClient(
+      API_PATH.PROCESSED_FILES_ID.GET_BASE_URL,
+    )
+    const url =
+      API_PATH.PROCESSED_FILES_ID.GET_BASE_URL +
+      API_PATH.PROCESSED_FILES_ID.PATH_URL
+    const response = await client.request({
+      url: url,
+      method: 'GET',
+    })
+    const data = await response.data
+    return data as Array<RagProcessRecord>
+  })
 
 export const triggerIndexes = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
   .inputValidator((data: { date: string }) => data)
   .handler(async ({ data }): Promise<{ success: boolean; message: string }> => {
     const client = await auth.getIdTokenClient(
@@ -147,6 +151,7 @@ export const triggerIndexes = createServerFn({ method: 'GET' })
   })
 
 export const getJobDetails = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
   .inputValidator(
     (data: {
       limit: number | null
@@ -179,6 +184,7 @@ export const getJobDetails = createServerFn({ method: 'GET' })
   })
 
 export const jobInterviewCandidates = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
   .inputValidator((data: { job_id: string; candidates: Array<string> }) => data)
   .handler(async ({ data }): Promise<{ success: boolean; message: string }> => {
     const client = await auth.getIdTokenClient(
@@ -213,6 +219,7 @@ export const jobInterviewCandidates = createServerFn({ method: 'GET' })
   })
 
 export const getInterviewCandidateEmailList = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
   .inputValidator(
     (data: { limit: number | null; last_doc_id: string | null }) => data,
   )
@@ -240,6 +247,7 @@ export const getInterviewCandidateEmailList = createServerFn({ method: 'GET' })
   })
 
 export const getDownloadURL = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
   .inputValidator((data: { bucket_name: string; file_path: string }) => data)
   .handler(async ({ data }): Promise<{ download_url: string | null }> => {
     const client = await auth.getIdTokenClient(
@@ -270,7 +278,74 @@ export const getDownloadURL = createServerFn({ method: 'GET' })
     }
   })
 
+export const getResumePreviewData = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
+  .inputValidator((data: { bucket_name: string; file_path: string }) => data)
+  .handler(
+    async ({
+      data,
+    }): Promise<{ download_url: string | null; data_url: string | null }> => {
+      let targetDownloadUrl: string | null = null
+
+      if (
+        data.file_path.startsWith('http://') ||
+        data.file_path.startsWith('https://')
+      ) {
+        targetDownloadUrl = data.file_path
+      } else {
+        const client = await auth.getIdTokenClient(
+          API_PATH.DOWNLOAD_FILE_URL.GET_BASE_URL,
+        )
+        const url =
+          API_PATH.DOWNLOAD_FILE_URL.GET_BASE_URL +
+          API_PATH.DOWNLOAD_FILE_URL.PATH_URL
+
+        const postData = {
+          bucket_name: data.bucket_name,
+          full_path: data.file_path,
+        }
+        const sendData = JSON.stringify(postData)
+        try {
+          const response = await client.request({
+            url: url,
+            method: 'POST',
+            data: sendData,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          const finalData = (await response.data) as { download_url: string }
+          targetDownloadUrl = finalData?.download_url || null
+        } catch (e) {
+          console.error('Download URL fetch error:', e)
+        }
+      }
+
+      if (!targetDownloadUrl) {
+        return { download_url: null, data_url: null }
+      }
+
+      // Fetch file buffer on the server to prevent Content-Disposition: attachment auto-downloads
+      try {
+        const fileRes = await fetch(targetDownloadUrl)
+        if (fileRes.ok) {
+          const buffer = await fileRes.arrayBuffer()
+          const base64 = Buffer.from(buffer).toString('base64')
+          return {
+            download_url: targetDownloadUrl,
+            data_url: `data:application/pdf;base64,${base64}`,
+          }
+        }
+      } catch (fetchErr) {
+        console.error('Server PDF fetch error:', fetchErr)
+      }
+
+      return { download_url: targetDownloadUrl, data_url: null }
+    },
+  )
+
 export const getInterviewAnswersList = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
   .inputValidator((data: { candidate: string; job_id: string }) => data)
   .handler(async ({ data }): Promise<EvaluationResponse> => {
     const client = await auth.getIdTokenClient(
@@ -303,6 +378,7 @@ export const getInterviewAnswersList = createServerFn({ method: 'GET' })
   })
 
 export const getInterviewVoiceAnswersList = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
   .inputValidator((data: { candidate: string; job_id: string }) => data)
   .handler(async ({ data }): Promise<InterviewVoiceOutcomeResponse> => {
     const client = await auth.getIdTokenClient(
@@ -336,6 +412,7 @@ export const getInterviewVoiceAnswersList = createServerFn({ method: 'GET' })
   })
 
 export const createJob = createServerFn({ method: 'POST' })
+  .middleware([isLoginMiddleware])
   .inputValidator((data: JobPosting) => data)
   .handler(async ({ data }): Promise<{ id: string; message: string }> => {
     const client = await auth.getIdTokenClient(API_PATH.ADD_JOB.GET_BASE_URL)
@@ -501,6 +578,7 @@ export const getInterviewQuestions = createServerFn({ method: 'GET' })
   })
 
 export const addInterviewQuestion = createServerFn({ method: 'POST' })
+  .middleware([isLoginMiddleware])
   .inputValidator((data: { job_id: string; question: string }) => data)
   .handler(
     async ({
@@ -763,6 +841,7 @@ export const getEmailSyncs = createServerFn({ method: 'GET' })
   })
 
 export const editJob = createServerFn({ method: 'POST' })
+  .middleware([isLoginMiddleware])
   .inputValidator((data: JobPosting) => data)
   .handler(async ({ data }): Promise<{ id: string; message: string }> => {
     const client = await auth.getIdTokenClient(API_PATH.EDIT_JOB.GET_BASE_URL)
@@ -830,6 +909,7 @@ export const getMovementDetectionDetails = createServerFn({ method: 'GET' })
   })
 
 export const getVoiceDownloadURL = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
   .inputValidator((data: { bucket_name: string; file_path: string }) => data)
   .handler(async ({ data }): Promise<{ download_url: string | null }> => {
     const client = await auth.getIdTokenClient(

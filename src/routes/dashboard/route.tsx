@@ -18,13 +18,13 @@ import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: async ({ context }) => {
+    const user = await getUserFn()
     const role = await context.queryClient.ensureQueryData(userRoleQueryOptions)
-    return { role }
+    return { user, role }
   },
   component: RouteComponent,
-  loader: async () => {
-    const user = await getUserFn()
-    return user
+  loader: ({ context }) => {
+    return context.user
   },
 })
 
