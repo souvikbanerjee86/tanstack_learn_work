@@ -27,6 +27,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { getResumePreviewData } from '@/lib/server-function'
 import { CandidateDetailSkeleton } from '@/components/web/candidate-detail-skeleton'
+import { CandidateSkillRadar } from '@/components/web/candidate-skill-radar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 
@@ -192,6 +193,9 @@ function RouteComponent() {
                 </span>
               </div>
             </div>
+
+            {/* Candidate Competency Radar */}
+            <CandidateSkillRadar candidateName={candidateData.name} />
           </div>
 
           {/* Right Column: CV Preview */}

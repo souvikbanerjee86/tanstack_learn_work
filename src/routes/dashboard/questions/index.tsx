@@ -108,13 +108,19 @@ function QuestionsDashboardWrapper() {
     setSelectedJobId(job_id)
   }
 
-  async function deleteQuestion(question_id: string) {
+  const deleteQuestion = async (question_id: string) => {
+    if (!selectedJobId) return
     try {
-      await deleteInterviewQuestion({ data: { question_id: question_id } })
-      toast.success('Question removed from bank')
+      setLoading(true)
+      await deleteInterviewQuestion({
+        data: { question_id: question_id },
+      })
+      toast.success('Question removed')
       queryClient.invalidateQueries({ queryKey: ['questions', selectedJobId] })
     } catch {
       toast.error('Failed to delete question')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -177,7 +183,7 @@ function QuestionsDashboardWrapper() {
           <div className="hidden sm:flex items-center gap-2">
             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
               <AlertDialogTrigger asChild>
-                <Button className="h-10 px-4 rounded-xl gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-lg shadow-indigo-500/20">
+                <Button className="h-10 px-4 rounded-xl gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-lg shadow-indigo-500/20 cursor-pointer transition-all active:scale-[0.98]">
                   <Sparkles className="h-4 w-4" />
                   <span>AI Question Assistant</span>
                 </Button>

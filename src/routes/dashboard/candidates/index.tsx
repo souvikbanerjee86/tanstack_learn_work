@@ -8,15 +8,18 @@ import {
   Briefcase,
   Calendar,
   CalendarCheck2,
+  CheckSquare,
   ChevronsRight,
   Download,
   Inbox,
+  LayoutGrid,
   Loader2,
   Mail,
   Plus,
   Search,
   Sparkles,
   Star,
+  Table,
   User,
   UserPlus,
   Users,
@@ -46,6 +49,7 @@ import { AppliedCandidatesSkeleton } from '@/components/web/applied-candidates-s
 import { Card } from '@/components/ui/card'
 import { AddMultipleCandidatesDialog } from '@/components/web/add-multiple-candidates-dialog'
 import { CandidateScheduleDialog } from '@/components/web/candidate-schedule-dialog'
+import { CandidateComparisonDialog } from '@/components/web/candidate-comparison-dialog'
 import { exportToCSV } from '@/lib/export-utils'
 import { cn } from '@/lib/utils'
 
@@ -92,6 +96,34 @@ function CandidatesContent() {
   const [selectedCandidateForSchedule, setSelectedCandidateForSchedule] =
     useState<candidate | null>(null)
   const [scheduleDialogOpen, setScheduleDialogOpen] = useState<boolean>(false)
+  const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table')
+  const [compareList, setCompareList] = useState<Array<candidate>>([])
+  const [compareDialogOpen, setCompareDialogOpen] = useState<boolean>(false)
+
+  const toggleCompare = (cand: candidate) => {
+    setCompareList((prev) => {
+      const exists = prev.some((c) =>
+        c.id && cand.id ? c.id === cand.id : c.email === cand.email,
+      )
+      if (exists) {
+        return prev.filter((c) =>
+          c.id && cand.id ? c.id !== cand.id : c.email !== cand.email,
+        )
+      }
+      if (prev.length >= 4) {
+        toast.error('You can compare a maximum of 4 candidates at once')
+        return prev
+      }
+      toast.success(`Added ${cand.name || cand.email} to comparison`)
+      return [...prev, cand]
+    })
+  }
+
+  const removeFromCompare = (idOrEmail: string) => {
+    setCompareList((prev) =>
+      prev.filter((c) => c.id !== idOrEmail && c.email !== idOrEmail),
+    )
+  }
 
   // Load starred candidates from localStorage
   useEffect(() => {
@@ -253,6 +285,53 @@ function CandidatesContent() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
+          {/* View Mode Switcher (Table / Kanban) */}
+          <div className="flex items-center p-1 rounded-xl bg-muted/40 border border-border/60 shadow-inner">
+            <Button
+              variant={viewMode === 'table' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('table')}
+              className={cn(
+                'h-8 sm:h-9 px-3 rounded-lg text-xs font-bold gap-1.5 transition-all cursor-pointer',
+                viewMode === 'table'
+                  ? 'bg-violet-600 text-white shadow-sm hover:bg-violet-700'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60',
+              )}
+              title="Table Grid View"
+            >
+              <Table className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Table</span>
+            </Button>
+            <Button
+              variant={viewMode === 'kanban' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('kanban')}
+              className={cn(
+                'h-8 sm:h-9 px-3 rounded-lg text-xs font-bold gap-1.5 transition-all cursor-pointer',
+                viewMode === 'kanban'
+                  ? 'bg-violet-600 text-white shadow-sm hover:bg-violet-700'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/60',
+              )}
+              title="Kanban Board View"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Kanban</span>
+            </Button>
+          </div>
+
+          {/* Comparison Action Trigger */}
+          {compareList.length > 0 && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => setCompareDialogOpen(true)}
+              className="h-10 md:h-11 rounded-xl px-3.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold gap-2 shadow-lg shadow-indigo-500/20 transition-all active:scale-[0.98] cursor-pointer"
+            >
+              <CheckSquare className="h-4 w-4" />
+              <span>Compare ({compareList.length})</span>
+            </Button>
+          )}
+
           {/* Export Candidates CSV */}
           <Button
             variant="outline"
@@ -385,16 +464,37 @@ function CandidatesContent() {
           </div>
         </div>
 
-        {/* Desktop View: Table */}
+        {/* Desktop View: Table or Kanban */}
         <div className="hidden lg:block">
           {filteredCandidates.length > 0 ? (
-            <DataTable
-              columns={candidateColumns}
-              data={filteredCandidates}
-              hasNextPage={hasNextPage}
-              isFetchingNextPage={isFetchingNextPage}
-              onLoadMore={() => fetchNextPage()}
-            />
+            viewMode === 'table' ? (
+              <DataTable
+                columns={candidateColumns}
+                data={filteredCandidates}
+                hasNextPage={hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                onLoadMore={() => fetchNextPage()}
+              />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredCandidates.map((cand) => {
+                  const isCompared = compareList.some((c) =>
+                    c.id && cand.id ? c.id === cand.id : c.email === cand.email,
+                  )
+                  return (
+                    <CandidateKanbanCard
+                      key={cand.id}
+                      candidate={cand}
+                      isStarred={starredEmails.includes(cand.email)}
+                      isCompared={isCompared}
+                      onToggleStar={() => toggleStar(cand.email)}
+                      onToggleCompare={() => toggleCompare(cand)}
+                      onSchedule={() => handleOpenSchedule(cand)}
+                    />
+                  )
+                })}
+              </div>
+            )
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
               <div className="h-16 w-16 rounded-2xl bg-muted/40 flex items-center justify-center border border-border/40 shadow-inner">
@@ -497,6 +597,15 @@ function CandidatesContent() {
         open={scheduleDialogOpen}
         onOpenChange={setScheduleDialogOpen}
       />
+
+      {/* Candidate Comparison Dialog */}
+      <CandidateComparisonDialog
+        open={compareDialogOpen}
+        onOpenChange={setCompareDialogOpen}
+        candidates={compareList}
+        onRemoveCandidate={removeFromCompare}
+        onClearAll={() => setCompareList([])}
+      />
     </div>
   )
 }
@@ -588,6 +697,114 @@ const CandidateMobileCard = ({
       <span className="font-black text-[32px] uppercase tracking-tighter select-none">
         {candidate.job_id}
       </span>
+    </div>
+  </Card>
+)
+
+const CandidateKanbanCard = ({
+  candidate,
+  isStarred,
+  isCompared,
+  onToggleStar,
+  onToggleCompare,
+  onSchedule,
+}: {
+  candidate: candidate
+  isStarred: boolean
+  isCompared: boolean
+  onToggleStar: () => void
+  onToggleCompare: () => void
+  onSchedule: () => void
+}) => (
+  <Card className="relative overflow-hidden rounded-3xl border border-border/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl shadow-xl shadow-black/5 p-6 space-y-4 transition-all duration-300 hover:border-violet-500/40 hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between group">
+    <div className="space-y-3">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-violet-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 shadow-sm group-hover:scale-105 transition-transform">
+            <User className="h-5 w-5" />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-sm tracking-tight text-foreground truncate">
+                {candidate.name}
+              </span>
+              <button
+                type="button"
+                onClick={onToggleStar}
+                className="text-muted-foreground hover:text-amber-500 transition-colors p-0.5 cursor-pointer"
+                title={isStarred ? 'Unstar' : 'Star Candidate'}
+              >
+                <Star
+                  className={cn(
+                    'h-3.5 w-3.5',
+                    isStarred
+                      ? 'fill-amber-400 text-amber-400'
+                      : 'text-muted-foreground/40',
+                  )}
+                />
+              </button>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium truncate">
+              <Mail className="h-3 w-3 shrink-0" />
+              <span className="truncate">{candidate.email}</span>
+            </div>
+          </div>
+        </div>
+
+        <CandidateActions rowData={candidate} />
+      </div>
+
+      <div className="space-y-2 pt-2 border-t border-border/30 text-xs">
+        <div className="flex items-center justify-between">
+          <span className="text-muted-foreground font-medium flex items-center gap-1.5">
+            <Briefcase className="h-3.5 w-3.5 text-violet-500" />
+            Position:
+          </span>
+          <span className="font-bold text-foreground truncate max-w-[140px]">
+            {candidate.job_name}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-muted-foreground font-medium flex items-center gap-1.5">
+            <Calendar className="h-3.5 w-3.5 text-violet-500" />
+            Applied:
+          </span>
+          <span className="font-semibold text-foreground">
+            {candidate.uploaded_at
+              ? format(new Date(candidate.uploaded_at), 'MMM dd, yyyy')
+              : 'N/A'}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div className="flex items-center gap-2 pt-2">
+      <Button
+        variant={isCompared ? 'default' : 'outline'}
+        size="sm"
+        onClick={onToggleCompare}
+        className={cn(
+          'flex-1 h-9 rounded-xl text-xs font-bold gap-1.5 transition-all cursor-pointer',
+          isCompared
+            ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs'
+            : 'border-border/60 hover:bg-muted/60',
+        )}
+      >
+        <CheckSquare className="h-3.5 w-3.5" />
+        <span>{isCompared ? 'Comparing' : 'Compare'}</span>
+      </Button>
+
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onSchedule}
+        className="h-9 px-3 rounded-xl border-border/60 hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 text-xs font-bold gap-1.5 transition-all cursor-pointer"
+        title="Schedule Interview"
+      >
+        <CalendarCheck2 className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">Schedule</span>
+      </Button>
     </div>
   </Card>
 )

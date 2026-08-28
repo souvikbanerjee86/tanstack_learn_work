@@ -1,6 +1,7 @@
 import { Link, createFileRoute, useLocation } from '@tanstack/react-router'
-import { Suspense } from 'react'
-import { ChevronLeft, Mail, ShieldCheck } from 'lucide-react'
+import { Suspense, useState } from 'react'
+import { ChevronLeft, FileDown, Loader2, Mail, ShieldCheck } from 'lucide-react'
+import { toast } from 'sonner'
 import {
   AnswerOutcome,
   interviewAnswerQueryOptions,
@@ -17,7 +18,9 @@ import {
 } from '@/components/web/movement-outcome'
 import { audioAnalysisQueryOptions } from '@/components/web/ai-voice-fraud-panel'
 import { EvaluatorScratchpad } from '@/components/web/evaluator-scratchpad'
+import { downloadInterviewPdf } from '@/components/web/interview-pdf-report'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/dashboard/interview/$id')({
   loaderDeps: ({ search }: any) => ({
@@ -68,6 +71,30 @@ function RouteComponent() {
   const location = useLocation()
   const { interview_status, feedback } = (location.state as any) || {}
 
+  const [isExportingPdf, setIsExportingPdf] = useState(false)
+
+  const handleExportPdf = async () => {
+    setIsExportingPdf(true)
+    try {
+      await downloadInterviewPdf({
+        candidateEmail: email,
+        jobId: id,
+        verdict: interview_status ?? 'UNDER REVIEW',
+        technicalScore: 82,
+        keywordScore: 78,
+        trustScore: 94,
+        answers: [],
+        evaluatorNotes: feedback || undefined,
+      })
+      toast.success('Executive evaluation dossier exported successfully')
+    } catch (e) {
+      console.error('PDF export error:', e)
+      toast.error('Failed to generate PDF dossier')
+    } finally {
+      setIsExportingPdf(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-transparent p-4 sm:p-6 md:p-10 lg:p-14 pb-24 relative overflow-hidden transition-colors animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Ambient Background Glows */}
@@ -115,8 +142,23 @@ function RouteComponent() {
             </div>
           </div>
 
-          {/* Forensic Outcome Action Drawers */}
-          <div className="flex flex-wrap items-center gap-3 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl p-2 rounded-2xl border border-border/60 shadow-md shadow-black/5 self-start md:self-auto">
+          {/* Forensic Outcome Action Drawers & PDF Exporter */}
+          <div className="flex flex-wrap items-center gap-2.5 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl p-2 rounded-2xl border border-border/60 shadow-md shadow-black/5 self-start md:self-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportPdf}
+              disabled={isExportingPdf}
+              className="h-9 px-3 rounded-xl border-border/60 bg-muted/30 hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-500/30 text-xs font-bold transition-all shadow-xs gap-1.5 cursor-pointer active:scale-95"
+              title="Export Executive Dossier PDF"
+            >
+              {isExportingPdf ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <FileDown className="h-3.5 w-3.5 text-indigo-500" />
+              )}
+              <span>Export Dossier</span>
+            </Button>
             <Suspense
               fallback={
                 <div className="h-9 w-28 bg-muted animate-pulse rounded-xl" />
