@@ -23,6 +23,7 @@
     "format": "prettier",
     "check": "prettier --write . && eslint --fix",
     "post-cta-init": "npx create-db@latest --user-agent tanstack/tsrouter",
+    "docs:pdf": "tsx docs/generate-platform-pdf.tsx",
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",

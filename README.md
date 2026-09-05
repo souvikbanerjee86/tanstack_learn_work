@@ -12,7 +12,7 @@
 [![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20App%20Hosting-FFCA28?style=flat-square&logo=firebase)](https://firebase.google.com/)
 [![Vitest](https://img.shields.io/badge/Vitest-v3.0-6E9F18?style=flat-square&logo=vitest)](https://vitest.dev/)
 
-[System Architecture](docs/ARCHITECTURE.md) • [API Integrations](docs/API_INTEGRATIONS.md) • [Features Guide](docs/FEATURES_GUIDE.md) • [Developer Guide](docs/DEVELOPMENT_GUIDE.md)
+[Architecture & Platform PDF](docs/EazyAI_Architecture_and_Platform_Guide.pdf) • [System Architecture](docs/ARCHITECTURE.md) • [API Integrations](docs/API_INTEGRATIONS.md) • [Features Guide](docs/FEATURES_GUIDE.md) • [Developer Guide](docs/DEVELOPMENT_GUIDE.md)
 
 </div>
 
@@ -238,6 +238,7 @@ The repository includes [`apphosting.yaml`](apphosting.yaml) configured with:
 
 ## 📂 Documentation Sitemap
 
+- [docs/EazyAI_Architecture_and_Platform_Guide.pdf](docs/EazyAI_Architecture_and_Platform_Guide.pdf) — Complete executive technical whitepaper and platform guide (7-page PDF).
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — BFF design pattern, session security, caching layers, and system diagrams.
 - [docs/API_INTEGRATIONS.md](docs/API_INTEGRATIONS.md) — Downstream Cloud Run services registry, IAM tokens, Dialogflow CX, and OpenRouter.
 - [docs/FEATURES_GUIDE.md](docs/FEATURES_GUIDE.md) — Complete domain features walkthrough (Jobs, RAG Discovery, Anti-Fraud, PDF dossiers).
