@@ -17,6 +17,10 @@ import {
   movementDetectionDetailsQueryOptions,
 } from '@/components/web/movement-outcome'
 import { audioAnalysisQueryOptions } from '@/components/web/ai-voice-fraud-panel'
+import {
+  VideoRecordingOutcome,
+  interviewVideoQueryOptions,
+} from '@/components/web/video-outcome'
 import { EvaluatorScratchpad } from '@/components/web/evaluator-scratchpad'
 import { downloadInterviewPdf } from '@/components/web/interview-pdf-report'
 import { Badge } from '@/components/ui/badge'
@@ -44,6 +48,9 @@ export const Route = createFileRoute('/dashboard/interview/$id')({
         ),
         context.queryClient.prefetchQuery(
           audioAnalysisQueryOptions(email, id),
+        ),
+        context.queryClient.prefetchQuery(
+          interviewVideoQueryOptions(email, id),
         ),
       ])
 
@@ -172,6 +179,13 @@ function RouteComponent() {
               }
             >
               <MovementOutCome email={email} id={id} />
+            </Suspense>
+            <Suspense
+              fallback={
+                <div className="h-9 w-28 bg-muted animate-pulse rounded-xl" />
+              }
+            >
+              <VideoRecordingOutcome email={email} id={id} />
             </Suspense>
           </div>
         </div>

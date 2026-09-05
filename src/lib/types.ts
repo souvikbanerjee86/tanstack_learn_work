@@ -504,3 +504,26 @@ export interface AudioAnalysisInputSchema {
   candidateEmail: string
   jobId: string
 }
+
+export interface InterviewVideoRecord {
+  file_name: string
+  full_path: string
+  bucket_name: string
+  session_id?: string
+  size_bytes: number
+  size_formatted: string
+  content_type: string
+  created_at?: string
+  updated_at?: string
+  video_url: string
+  stream_url?: string
+  metadata?: Record<string, any>
+}
+
+export interface InterviewVideoResponse {
+  success: boolean
+  count: number
+  message?: string
+  data: Array<InterviewVideoRecord>
+}
+

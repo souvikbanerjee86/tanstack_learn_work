@@ -18,6 +18,7 @@ import type {
   GcsUriDetails,
   InterviewConfig,
   InterviewSessionInfo,
+  InterviewVideoResponse,
   InterviewVoiceOutcomeResponse,
   JobPosting,
   JobQuestionsResponse,
@@ -1169,3 +1170,46 @@ export const getAudioAnalysisResultFn = createServerFn({ method: 'GET' })
       return null
     }
   })
+
+export const getInterviewVideoList = createServerFn({ method: 'GET' })
+  .middleware([isLoginMiddleware])
+  .inputValidator(
+    (data: { candidate: string; job_id: string; session_id?: string }) => data,
+  )
+  .handler(async ({ data }): Promise<InterviewVideoResponse> => {
+    try {
+      const client = await auth.getIdTokenClient(
+        API_PATH.INTERVIEW_VIDEO_API.GET_BASE_URL,
+      )
+      const baseUrl = API_PATH.INTERVIEW_VIDEO_API.GET_BASE_URL
+      const pathUrl = API_PATH.INTERVIEW_VIDEO_API.PATH_URL
+      let url = `${baseUrl}${pathUrl}?candidate_email=${encodeURIComponent(data.candidate)}&job_id=${encodeURIComponent(data.job_id)}`
+      if (data.session_id) {
+        url += `&session_id=${encodeURIComponent(data.session_id)}`
+      }
+      console.log('Fetching interview video from:', url)
+
+      const response = await client.request({
+        url,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const finalData = await response.data
+      return finalData as InterviewVideoResponse
+    } catch (e: any) {
+      console.error(
+        'Failed to retrieve interview video recordings:',
+        e?.message || e,
+      )
+      return {
+        success: false,
+        count: 0,
+        message:
+          'Interview video service unavailable or recording not yet uploaded.',
+        data: [],
+      }
+    }
+  })
+

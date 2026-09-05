@@ -149,4 +149,11 @@ export const API_PATH = {
     GET_BASE_URL: 'https://voice-fraud-api-1081651239029.us-central1.run.app',
     PATH_URL: '/api/interview/audio-analysis',
   },
+  INTERVIEW_VIDEO_API: {
+    GET_BASE_URL:
+      process.env.INTERVIEW_VIDEO_API_URL ||
+      'https://interview-video-display-git-1081651239029.us-central1.run.app',
+    PATH_URL: '/api/interview-video',
+  },
 }
+
