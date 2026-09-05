@@ -252,8 +252,8 @@ function CandidatesContent() {
     <div className="relative min-h-screen flex flex-col gap-8 md:gap-10 p-4 md:p-10 lg:p-14 pb-20 bg-transparent overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* --- Ambient Background Elements --- */}
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-violet-500/10 dark:bg-violet-500/5 blur-[100px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[80px] rounded-full animate-pulse [animation-delay:2s]" />
+        <div className="absolute top-[-10%] right-[-5%] w-125 h-125 bg-violet-500/10 dark:bg-violet-500/5 blur-[100px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-100 h-100 bg-indigo-500/10 dark:bg-indigo-500/5 blur-[80px] rounded-full animate-pulse [animation-delay:2s]" />
       </div>
 
       {/* --- Executive Header --- */}
@@ -444,7 +444,7 @@ function CandidatesContent() {
                 value={selectedPosition}
                 onValueChange={setSelectedPosition}
               >
-                <SelectTrigger className="h-10 w-[200px] rounded-xl bg-muted/40 border-border/60 text-xs font-medium focus:bg-background">
+                <SelectTrigger className="h-10 w-50 rounded-xl bg-muted/40 border-border/60 text-xs font-medium focus:bg-background">
                   <SelectValue placeholder="All Positions" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl max-h-64">
@@ -760,7 +760,7 @@ const CandidateKanbanCard = ({
             <Briefcase className="h-3.5 w-3.5 text-violet-500" />
             Position:
           </span>
-          <span className="font-bold text-foreground truncate max-w-[140px]">
+          <span className="font-bold text-foreground truncate max-w-35">
             {candidate.job_name}
           </span>
         </div>
