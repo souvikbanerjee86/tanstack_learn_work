@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #090d16;
+    padding: 16px;
+    width: 1100px;
+  }
+  .diagram-container {
+    width: 1068px;
+    background: #0d1322;
+    border-radius: 12px;
+    border: 1.5px solid #1e293b;
+    padding: 22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  }
+  .diagram-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .diagram-title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #818cf8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diagram-badge {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(129, 140, 248, 0.4);
+    color: #c7d2fe;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .flow-step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 9px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+  .step-number {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-content { flex: 1; }
+  .step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+  .step-title { font-size: 12.5px; font-weight: 700; color: #ffffff; }
+  .step-role-badge {
+    font-size: 8.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .step-desc { font-size: 10px; color: #94a3b8; line-height: 1.35; }
+  .step-tech {
+    font-size: 9px;
+    color: #818cf8;
+    font-family: monospace;
+    margin-top: 4px;
+    background: rgba(0,0,0,0.25);
+    padding: 3px 6px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+  <div class="diagram-container" id="security-flow">
+    <div class="diagram-header">
+      <div class="diagram-title">
+        <span>🔒</span> Zero-Trust Security & Authentication Handshake
+      </div>
+      <div class="diagram-badge">IAM OIDC Bearer Token Verification</div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="flow-step-row">
+      <div class="step-number" style="background: #4f46e5;">1</div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">Client Authentication & Initial ID Token</div>
+          <span class="step-role-badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc;">Browser Client</span>
+        </div>
+        <div class="step-desc">
+          User enters credentials on login form. Firebase Client SDK authenticates against Google Identity Platform and returns a short-lived ID token.
+        </div>
+        <div class="step-tech">POST /_auth/login ➔ signInWithEmailAndPassword() ➔ idToken</div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="flow-step-row">
+      <div class="step-number" style="background: #7c3aed;">2</div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">Session Cookie Exchange via loginFn</div>
+          <span class="step-role-badge" style="background: rgba(124, 58, 237, 0.2); color: #c084fc;">BFF Layer</span>
+        </div>
+        <div class="step-desc">
+          Client dispatches idToken to BFF via loginFn. Server calls Firebase Admin SDK to mint a cryptographically signed 5-day session cookie with strict security flags.
+        </div>
+        <div class="step-tech">adminAuth.createSessionCookie(idToken, 5 days) ➔ Set-Cookie: session=...; HttpOnly; Secure; SameSite=Lax</div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="flow-step-row">
+      <div class="step-number" style="background: #0284c7;">3</div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">Request Interception & Session Verification</div>
+          <span class="step-role-badge" style="background: rgba(2, 132, 199, 0.2); color: #38bdf8;">isLoginMiddleware</span>
+        </div>
+        <div class="step-desc">
+          Every mutating server function passes through isLoginMiddleware. It extracts the cookie, calls verifySessionCookie(session, checkRevoked: true), and binds verified claims to request context.
+        </div>
+        <div class="step-tech">adminAuth.verifySessionCookie() ➔ context.userInfo { uid, email, role }</div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="flow-step-row">
+      <div class="step-number" style="background: #059669;">4</div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">Google Cloud IAM OIDC Token Minting</div>
+          <span class="step-role-badge" style="background: rgba(5, 150, 105, 0.2); color: #34d399;">google-auth-library</span>
+        </div>
+        <div class="step-desc">
+          Using Application Default Credentials (ADC), the BFF requests an OpenID Connect (OIDC) ID token audience-scoped to the exact base URL of the target Cloud Run microservice.
+        </div>
+        <div class="step-tech">auth.getIdTokenClient(targetUrl) ➔ OIDC ID Token [aud: targetBaseUrl]</div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="flow-step-row">
+      <div class="step-number" style="background: #d97706;">5</div>
+      <div class="step-content">
+        <div class="step-header">
+          <div class="step-title">Zero-Trust Microservice Invocation</div>
+          <span class="step-role-badge" style="background: rgba(217, 119, 6, 0.2); color: #fbbf24;">Cloud Run IAM</span>
+        </div>
+        <div class="step-desc">
+          Request is dispatched with Authorization: Bearer OIDC_TOKEN. Google Cloud IAM validates the token signature, audience, and service account invocation permissions, executing the private container.
+        </div>
+        <div class="step-tech">HTTP Request [Authorization: Bearer ...] ➔ Cloud Run Ingress Validation ➔ 200 OK</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #090d16;
+    padding: 16px;
+    width: 1100px;
+  }
+  .diagram-container {
+    width: 1068px;
+    background: #0d1322;
+    border-radius: 12px;
+    border: 1.5px solid #1e293b;
+    padding: 22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  }
+  .diagram-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .diagram-title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #818cf8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diagram-badge {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(129, 140, 248, 0.4);
+    color: #c7d2fe;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .node-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 14px;
+    position: relative;
+  }
+  .accent-face { border-top: 3px solid #34d399; }
+  .accent-voice { border-top: 3px solid #818cf8; }
+  .accent-proctor { border-top: 3px solid #fbbf24; }
+
+  .node-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .node-desc {
+    font-size: 10px;
+    color: #94a3b8;
+    line-height: 1.4;
+  }
+  .node-tag {
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 8px;
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+  .tag-face { background: rgba(52, 211, 153, 0.15); color: #6ee7b7; }
+  .tag-voice { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; }
+  .tag-proctor { background: rgba(245, 158, 11, 0.15); color: #fde68a; }
+
+  .penalty-text {
+    font-size: 9.5px;
+    color: #f87171;
+    margin-top: 6px;
+    font-weight: 700;
+  }
+
+  .trust-summary-card {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(124, 58, 237, 0.2));
+    border: 1.5px solid rgba(129, 140, 248, 0.4);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .trust-formula {
+    font-family: monospace;
+    font-size: 11px;
+    color: #c7d2fe;
+    background: rgba(0,0,0,0.35);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .risk-scale-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .risk-pill {
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .risk-safe { background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); color: #6ee7b7; }
+  .risk-caution { background: rgba(217, 119, 6, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; }
+  .risk-alert { background: rgba(225, 29, 72, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); color: #fda4af; }
+  .risk-score { font-size: 12px; font-weight: 800; }
+  .risk-label { font-size: 9px; margin-top: 2px; }
+</style>
+</head>
+<body>
+  <div class="diagram-container" id="trust-gauge">
+    <div class="diagram-header">
+      <div class="diagram-title">
+        <span>🛡️</span> Biometric Anti-Fraud & Composite Trust Gauge Architecture
+      </div>
+      <div class="diagram-badge">Weighted Multi-Pillar Verification</div>
+    </div>
+
+    <div class="grid-3">
+      <!-- Pillar 1 -->
+      <div class="node-card accent-face">
+        <div class="node-title" style="color: #34d399;">Pillar 1: Face Match (35% Weight)</div>
+        <div class="node-desc">
+          Neural facial embeddings match periodic webcam frames against the candidate's verified resume photo.
+        </div>
+        <div class="node-tag tag-face">Threshold: Cosine Match &gt; 0.82</div>
+        <div class="penalty-text">Penalty: -35 pts on face absence / mismatch</div>
+      </div>
+
+      <!-- Pillar 2 -->
+      <div class="node-card accent-voice">
+        <div class="node-title" style="color: #818cf8;">Pillar 2: Voice Authenticity (35% Weight)</div>
+        <div class="node-desc">
+          Spectral flux and acoustic harmonic analysis detect AI synthetic speech, voice cloning, and audio playback.
+        </div>
+        <div class="node-tag tag-voice">Threshold: Human Conf &gt; 85%</div>
+        <div class="penalty-text">Penalty: -35 pts on synthetic voice detection</div>
+      </div>
+
+      <!-- Pillar 3 -->
+      <div class="node-card accent-proctor">
+        <div class="node-title" style="color: #fbbf24;">Pillar 3: Gaze & Telemetry (30% Weight)</div>
+        <div class="node-desc">
+          Client telemetry tracks browser window blur events, active tab switching, and prolonged off-screen gaze shifts.
+        </div>
+        <div class="node-tag tag-proctor">Threshold: Focus Shifts &lt; 3</div>
+        <div class="penalty-text">Penalty: -15 pts per anomaly cluster</div>
+      </div>
+    </div>
+
+    <!-- Trust Summary Banner -->
+    <div class="trust-summary-card">
+      <div>
+        <div style="font-size: 13px; font-weight: 800; color: #ffffff; margin-bottom: 2px;">
+          COMPOSITE INTEGRITY TRUST GAUGE (0 - 100%)
+        </div>
+        <div style="font-size: 9.5px; color: #cbd5e1;">
+          Algorithmic multi-signal aggregation feeding the Evaluator Workbench and PDF Dossier
+        </div>
+      </div>
+      <div class="trust-formula">
+        Trust Score = (0.35 * Face) + (0.35 * Voice) + (0.30 * Proctor) - Penalties
+      </div>
+    </div>
+
+    <!-- Risk Tiers -->
+    <div class="risk-scale-row">
+      <div class="risk-pill risk-safe">
+        <div class="risk-score">90 - 100% : VERIFIED AUTHENTIC</div>
+        <div class="risk-label">High confidence, consistent biometric telemetry</div>
+      </div>
+      <div class="risk-pill risk-caution">
+        <div class="risk-score">70 - 89% : MINOR ANOMALIES</div>
+        <div class="risk-label">Occasional gaze shifts or temporary blur events</div>
+      </div>
+      <div class="risk-pill risk-alert">
+        <div class="risk-score">&lt; 70% : HIGH RISK / SUSPICIOUS</div>
+        <div class="risk-label">Significant mismatch, synthetic voice, or tampering</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

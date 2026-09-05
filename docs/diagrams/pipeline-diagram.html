@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #090d16;
+    padding: 16px;
+    width: 1100px;
+  }
+  .diagram-container {
+    width: 1068px;
+    background: #0d1322;
+    border-radius: 12px;
+    border: 1.5px solid #1e293b;
+    padding: 22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  }
+  .diagram-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .diagram-title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #818cf8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diagram-badge {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(129, 140, 248, 0.4);
+    color: #c7d2fe;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .pipeline-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    position: relative;
+  }
+  .stage-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 14px;
+    position: relative;
+  }
+  .stage-1 { border-top: 3px solid #38bdf8; }
+  .stage-2 { border-top: 3px solid #818cf8; }
+  .stage-3 { border-top: 3px solid #f472b6; }
+  .stage-4 { border-top: 3px solid #34d399; }
+
+  .stage-number {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .sn-1 { color: #38bdf8; }
+  .sn-2 { color: #818cf8; }
+  .sn-3 { color: #f472b6; }
+  .sn-4 { color: #34d399; }
+
+  .stage-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+  }
+  .stage-desc {
+    font-size: 9.8px;
+    color: #94a3b8;
+    line-height: 1.38;
+  }
+  .stage-items {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  }
+  .stage-item {
+    font-size: 9px;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 4px;
+  }
+  .bullet {
+    width: 4px;
+    height: 4px;
+    border-radius: 2px;
+    background: #818cf8;
+    display: inline-block;
+  }
+
+  .pipeline-flow-banner {
+    margin-top: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 6px;
+    padding: 8px 14px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 10px;
+    color: #94a3b8;
+    font-family: monospace;
+  }
+</style>
+</head>
+<body>
+  <div class="diagram-container" id="pipeline-diagram">
+    <div class="diagram-header">
+      <div class="diagram-title">
+        <span>🚀</span> End-to-End AI Hiring & Evaluation Lifecycle
+      </div>
+      <div class="diagram-badge">Continuous Autonomous Pipeline</div>
+    </div>
+
+    <div class="pipeline-grid">
+      <!-- Stage 1 -->
+      <div class="stage-card stage-1">
+        <div class="stage-number sn-1">Stage 01</div>
+        <div class="stage-title">Requisition & RAG</div>
+        <div class="stage-desc">
+          Recruiters create multi-location requisitions. Resumes are parsed and indexed into Vertex AI Corpus.
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><span class="bullet"></span> Requisition CRUD API</div>
+          <div class="stage-item"><span class="bullet"></span> Vertex AI Vector Embeddings</div>
+          <div class="stage-item"><span class="bullet"></span> Semantic Similarity Ranking</div>
+        </div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="stage-card stage-2">
+        <div class="stage-number sn-2">Stage 02</div>
+        <div class="stage-title">AI Voice Interview</div>
+        <div class="stage-desc">
+          Autonomous conversational interview conducting multi-turn technical dialogues with candidates.
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><span class="bullet"></span> Dialogflow CX Session Agent</div>
+          <div class="stage-item"><span class="bullet"></span> Real-Time Speech-to-Text</div>
+          <div class="stage-item"><span class="bullet"></span> Adaptive Question Bank</div>
+        </div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="stage-card stage-3">
+        <div class="stage-number sn-3">Stage 03</div>
+        <div class="stage-title">Multi-Modal Proctoring</div>
+        <div class="stage-desc">
+          Continuous biometric telemetry validating identity, voice authenticity, and exam integrity.
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><span class="bullet"></span> Acoustic Deepfake Detector</div>
+          <div class="stage-item"><span class="bullet"></span> Webcam Face Verification</div>
+          <div class="stage-item"><span class="bullet"></span> Off-Screen Gaze Tracking</div>
+        </div>
+      </div>
+
+      <!-- Stage 4 -->
+      <div class="stage-card stage-4">
+        <div class="stage-number sn-4">Stage 04</div>
+        <div class="stage-title">Workbench & PDF</div>
+        <div class="stage-desc">
+          Hiring managers review transcript rubrics, candidate scratchpads, and download formal PDF dossiers.
+        </div>
+        <div class="stage-items">
+          <div class="stage-item"><span class="bullet"></span> Evaluator Copilot Scratchpad</div>
+          <div class="stage-item"><span class="bullet"></span> Weighted Scoring Matrix</div>
+          <div class="stage-item"><span class="bullet"></span> Client PDF Dossier Synthesis</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipeline-flow-banner">
+      <span>Job Requisition</span> ➔
+      <span>Candidate Match</span> ➔
+      <span>Interactive Interview</span> ➔
+      <span>Biometric Verification</span> ➔
+      <span>Rubric Evaluation</span> ➔
+      <span>Hiring Decision</span>
+    </div>
+  </div>
+</body>
+</html>
