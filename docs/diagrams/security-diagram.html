@@ -1,188 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: #090d16;
-    padding: 16px;
-    width: 1100px;
-  }
-  .diagram-container {
-    width: 1068px;
-    background: #0d1322;
-    border-radius: 12px;
-    border: 1.5px solid #1e293b;
-    padding: 22px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-  }
-  .diagram-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #1e293b;
-  }
-  .diagram-title {
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #818cf8;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .diagram-badge {
-    background: rgba(99, 102, 241, 0.2);
-    border: 1px solid rgba(129, 140, 248, 0.4);
-    color: #c7d2fe;
-    font-size: 10.5px;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-  }
-
-  .flow-step-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 9px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-    padding: 10px 14px;
-  }
-  .step-number {
-    width: 26px;
-    height: 26px;
-    border-radius: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11.5px;
-    font-weight: 800;
-    color: white;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .step-content { flex: 1; }
-  .step-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3px;
-  }
-  .step-title { font-size: 12.5px; font-weight: 700; color: #ffffff; }
-  .step-role-badge {
-    font-size: 8.5px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .step-desc { font-size: 10px; color: #94a3b8; line-height: 1.35; }
-  .step-tech {
-    font-size: 9px;
-    color: #818cf8;
-    font-family: monospace;
-    margin-top: 4px;
-    background: rgba(0,0,0,0.25);
-    padding: 3px 6px;
-    border-radius: 4px;
-    display: inline-block;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #090d16;
+      padding: 14px;
+      width: 1140px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .diagram-container {
+      width: 1112px;
+      background: #0d1322;
+      border-radius: 12px;
+      border: 1.5px solid #1e293b;
+      padding: 16px 16px 18px 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+    .diagram-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .diagram-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: #818cf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .diagram-badge {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(129, 140, 248, 0.4);
+      color: #c7d2fe;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .phase-card {
+      background: #0b1120;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .phase-card-header {
+      font-size: 11px;
+      font-weight: 800;
+      color: #a5b4fc;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+    .mermaid svg {
+      width: 100% !important;
+      height: auto !important;
+    }
+    .actor {
+      font-size: 10.5px !important;
+      font-weight: 700 !important;
+    }
+    .messageText {
+      font-size: 9.5px !important;
+      font-weight: 500 !important;
+    }
+  </style>
 </head>
 <body>
-  <div class="diagram-container" id="security-flow">
+  <div class="diagram-container">
     <div class="diagram-header">
       <div class="diagram-title">
-        <span>🔒</span> Zero-Trust Security & Authentication Handshake
+        <span>🔒</span> Zero-Trust Authentication & Session Lifecycle Protocol
       </div>
-      <div class="diagram-badge">IAM OIDC Bearer Token Verification</div>
+      <div class="diagram-badge">Multi-Phase Mermaid Sequence Architecture</div>
     </div>
+    <div class="grid-2col">
+      <!-- Card 1 -->
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <span style="color: #6366f1;">●</span> Phase 1: Authentication & Session Creation
+        </div>
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as Recruiter
+    participant Client as Browser Client
+    participant BFF as TanStack BFF
+    participant Admin as Firebase Admin
 
-    <!-- Step 1 -->
-    <div class="flow-step-row">
-      <div class="step-number" style="background: #4f46e5;">1</div>
-      <div class="step-content">
-        <div class="step-header">
-          <div class="step-title">Client Authentication & Initial ID Token</div>
-          <span class="step-role-badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc;">Browser Client</span>
+    User->>Client: Enters credentials / SSO
+    Client->>Client: Firebase SDK gets ID Token
+    Client->>BFF: loginFn(idToken)
+    BFF->>Admin: createSessionCookie(5-day)
+    Admin-->>BFF: Signed session cookie
+    BFF-->>Client: Set-Cookie: session (HttpOnly, Secure)
+    Client->>BFF: getUserRole(user_id)
+    BFF-->>Client: Role verification (Super Admin, Recruiter)
         </div>
-        <div class="step-desc">
-          User enters credentials on login form. Firebase Client SDK authenticates against Google Identity Platform and returns a short-lived ID token.
-        </div>
-        <div class="step-tech">POST /_auth/login ➔ signInWithEmailAndPassword() ➔ idToken</div>
       </div>
-    </div>
 
-    <!-- Step 2 -->
-    <div class="flow-step-row">
-      <div class="step-number" style="background: #7c3aed;">2</div>
-      <div class="step-content">
-        <div class="step-header">
-          <div class="step-title">Session Cookie Exchange via loginFn</div>
-          <span class="step-role-badge" style="background: rgba(124, 58, 237, 0.2); color: #c084fc;">BFF Layer</span>
+      <!-- Card 2 -->
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <span style="color: #38bdf8;">●</span> Phase 2: Route Protection & SSR Loader Guard
         </div>
-        <div class="step-desc">
-          Client dispatches idToken to BFF via loginFn. Server calls Firebase Admin SDK to mint a cryptographically signed 5-day session cookie with strict security flags.
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as Recruiter
+    participant Client as TanStack Router
+    participant BFF as SSR Server
+    participant Admin as Firebase Admin
+
+    User->>Client: Navigates to /dashboard/*
+    Client->>BFF: Router beforeLoad -> getUserFn()
+    alt No session / revoked
+        BFF-->>Client: Redirect to /login
+    else Session cookie valid
+        BFF->>Admin: verifySessionCookie(checkRevoked=true)
+        Admin-->>BFF: Decoded claims (UID, email)
+        BFF->>Client: Return user context + prefetch role
+    end
         </div>
-        <div class="step-tech">adminAuth.createSessionCookie(idToken, 5 days) ➔ Set-Cookie: session=...; HttpOnly; Secure; SameSite=Lax</div>
       </div>
-    </div>
 
-    <!-- Step 3 -->
-    <div class="flow-step-row">
-      <div class="step-number" style="background: #0284c7;">3</div>
-      <div class="step-content">
-        <div class="step-header">
-          <div class="step-title">Request Interception & Session Verification</div>
-          <span class="step-role-badge" style="background: rgba(2, 132, 199, 0.2); color: #38bdf8;">isLoginMiddleware</span>
+      <!-- Card 3 -->
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <span style="color: #34d399;">●</span> Phase 3: Authenticated Request & IAM Delegation
         </div>
-        <div class="step-desc">
-          Every mutating server function passes through isLoginMiddleware. It extracts the cookie, calls verifySessionCookie(session, checkRevoked: true), and binds verified claims to request context.
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Client as Browser Client
+    participant BFF as TanStack BFF
+    participant IAM as Google Cloud IAM
+    participant Run as Cloud Run Microservice
+
+    Client->>BFF: Server function (e.g. getJobsList)
+    BFF->>BFF: isLoginMiddleware verifies session
+    BFF->>IAM: GoogleAuth mints OIDC Token (aud: serviceUrl)
+    IAM-->>BFF: Signed OIDC Bearer Token
+    BFF->>Run: POST /api/v1/... [Bearer GCP_OIDC_TOKEN]
+    Run->>Run: Verify token signature & roles/run.invoker
+    Run-->>BFF: 200 OK + JSON domain payload
+    BFF-->>Client: Typed domain response
         </div>
-        <div class="step-tech">adminAuth.verifySessionCookie() ➔ context.userInfo { uid, email, role }</div>
       </div>
-    </div>
 
-    <!-- Step 4 -->
-    <div class="flow-step-row">
-      <div class="step-number" style="background: #059669;">4</div>
-      <div class="step-content">
-        <div class="step-header">
-          <div class="step-title">Google Cloud IAM OIDC Token Minting</div>
-          <span class="step-role-badge" style="background: rgba(5, 150, 105, 0.2); color: #34d399;">google-auth-library</span>
+      <!-- Card 4 -->
+      <div class="phase-card">
+        <div class="phase-card-header">
+          <span style="color: #f43f5e;">●</span> Phase 4: Session Invalidation & Logout
         </div>
-        <div class="step-desc">
-          Using Application Default Credentials (ADC), the BFF requests an OpenID Connect (OIDC) ID token audience-scoped to the exact base URL of the target Cloud Run microservice.
-        </div>
-        <div class="step-tech">auth.getIdTokenClient(targetUrl) ➔ OIDC ID Token [aud: targetBaseUrl]</div>
-      </div>
-    </div>
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as Recruiter
+    participant Client as Browser Client
+    participant BFF as TanStack BFF
+    participant Auth as Firebase Client Auth
 
-    <!-- Step 5 -->
-    <div class="flow-step-row">
-      <div class="step-number" style="background: #d97706;">5</div>
-      <div class="step-content">
-        <div class="step-header">
-          <div class="step-title">Zero-Trust Microservice Invocation</div>
-          <span class="step-role-badge" style="background: rgba(217, 119, 6, 0.2); color: #fbbf24;">Cloud Run IAM</span>
+    User->>Client: Clicks Logout button
+    Client->>BFF: logoutFn()
+    BFF->>BFF: deleteCookie('session', { path: '/' })
+    BFF-->>Client: Set-Cookie: session (Max-Age=0)
+    Client->>Auth: signOut()
+    Client->>Client: queryClient.clear() (Purge cache)
+    Client-->>User: Redirect to /_auth/login
         </div>
-        <div class="step-desc">
-          Request is dispatched with Authorization: Bearer OIDC_TOKEN. Google Cloud IAM validates the token signature, audience, and service account invocation permissions, executing the private container.
-        </div>
-        <div class="step-tech">HTTP Request [Authorization: Bearer ...] ➔ Cloud Run Ingress Validation ➔ 200 OK</div>
       </div>
     </div>
   </div>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#0b1120',
+        mainBkg: '#1e293b',
+        primaryColor: '#4f46e5',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#6366f1',
+        lineColor: '#818cf8',
+        secondaryColor: '#7c3aed',
+        tertiaryColor: '#0f172a',
+        textColor: '#e2e8f0',
+        noteBkgColor: '#1e293b',
+        noteTextColor: '#93c5fd',
+        noteBorderColor: '#3b82f6',
+        actorBkg: '#312e81',
+        actorBorder: '#6366f1',
+        actorTextColor: '#ffffff',
+        signalColor: '#818cf8',
+        signalTextColor: '#e2e8f0',
+        labelBoxBkgColor: '#1e293b',
+        labelBoxBorderColor: '#475569',
+        labelTextColor: '#f8fafc',
+        loopTextColor: '#e2e8f0',
+        activationBorderColor: '#6366f1',
+        activationBkgColor: '#3730a3',
+        sequenceNumberColor: '#ffffff'
+      },
+      sequence: {
+        diagramMarginX: 2,
+        diagramMarginY: 2,
+        actorMargin: 18,
+        width: 100,
+        height: 28,
+        boxMargin: 2,
+        boxTextMargin: 1,
+        noteMargin: 2,
+        messageMargin: 10,
+        mirrorActors: false,
+        bottomMarginAdj: 1,
+        useMaxWidth: true
+      }
+    });
+  </script>
 </body>
 </html>

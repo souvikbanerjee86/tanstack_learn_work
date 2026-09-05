@@ -162,25 +162,25 @@ The sequence below illustrates the complete lifecycle across all operational pha
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User as Recruiter / Admin
-    participant Client as Browser (React / TanStack Router)
-    participant BFF as TanStack Start BFF (Server Functions)
-    participant AdminAuth as Firebase Admin SDK
-    participant CloudRun as Google Cloud Run (IAM Protected)
+    actor User as "Recruiter / Admin"
+    participant Client as "Browser (React / Router)"
+    participant BFF as "TanStack Start BFF"
+    participant AdminAuth as "Firebase Admin SDK"
+    participant CloudRun as "Cloud Run (IAM Protected)"
 
     %% -----------------------------------------------------------
     %% PHASE 1: LOGIN & SESSION CREATION
     %% -----------------------------------------------------------
     rect rgb(15, 23, 42)
-        Note over User,CloudRun: Phase 1: Authentication & Session Creation
+        Note over User,CloudRun: Phase 1: Authentication and Session Creation
         User->>Client: Enters credentials or clicks Google SSO
-        Client->>Client: Firebase Client SDK signs in & acquires short-lived ID Token
+        Client->>Client: Firebase Client SDK signs in and acquires short-lived ID Token
         Client->>BFF: loginFn({ data: idToken })
-        BFF->>AdminAuth: createSessionCookie(idToken, { expiresIn: 5 days })
+        BFF->>AdminAuth: createSessionCookie(idToken, 5-day expiry)
         AdminAuth-->>BFF: Signed session cookie
-        BFF-->>Client: Set-Cookie: session=...; HttpOnly; Secure; SameSite=Lax; Path=/
+        BFF-->>Client: Set-Cookie: session (HttpOnly, Secure, SameSite=Lax, Path=/)
         Client->>BFF: getUserRole({ data: { user_id: uid } })
-        BFF-->>Client: Role verification (Super Admin / Recruiter / Evaluator)
+        BFF-->>Client: Role verification (Super Admin, Recruiter, Evaluator)
         Note over Client: If role is unassigned, client triggers signOut and halts
     end
 
@@ -188,20 +188,20 @@ sequenceDiagram
     %% PHASE 2: ROUTE GUARDS & SSR DATA PREFETCH
     %% -----------------------------------------------------------
     rect rgb(30, 41, 59)
-        Note over User,CloudRun: Phase 2: Route Protection & SSR Loader Guard (/dashboard)
+        Note over User,CloudRun: Phase 2: Route Protection and SSR Loader Guard (/dashboard)
         User->>Client: Navigates to /dashboard/*
         Client->>BFF: Router beforeLoad hook triggers getUserFn()
         BFF->>BFF: Reads getCookie('session')
         alt No session cookie present
-            BFF-->>Client: throw redirect({ to: '/login' })
+            BFF-->>Client: Redirect to /login
         else Session cookie exists
-            BFF->>AdminAuth: verifySessionCookie(session, checkRevoked: true)
+            BFF->>AdminAuth: verifySessionCookie(session, checkRevoked=true)
             alt Token revoked or expired
                 AdminAuth-->>BFF: Verification Error
-                BFF-->>Client: throw redirect({ to: '/login' })
+                BFF-->>Client: Redirect to /login
             else Token valid
                 AdminAuth-->>BFF: Decoded claims (UID, email)
-                BFF->>Client: Return user context & prefetch userRoleQueryOptions
+                BFF->>Client: Return user context and prefetch role options
             end
         end
     end
@@ -210,15 +210,15 @@ sequenceDiagram
     %% PHASE 3: AUTHENTICATED REQUEST & M2M IAM DELEGATION
     %% -----------------------------------------------------------
     rect rgb(15, 23, 42)
-        Note over User,CloudRun: Phase 3: Authenticated Server Function & M2M IAM Delegation
-        Client->>BFF: Server function invocation (e.g., getJobsList())
-        BFF->>BFF: isLoginMiddleware intercepts & calls getUserFn()
-        BFF->>AdminAuth: verifySessionCookie(session, checkRevoked: true)
+        Note over User,CloudRun: Phase 3: Authenticated Server Function and M2M IAM Delegation
+        Client->>BFF: Server function invocation (e.g. getJobsList)
+        BFF->>BFF: isLoginMiddleware intercepts and calls getUserFn()
+        BFF->>AdminAuth: verifySessionCookie(session, checkRevoked=true)
         AdminAuth-->>BFF: Claims verified -> context.userInfo attached
         BFF->>BFF: GoogleAuth().getIdTokenClient(serviceBaseUrl)
-        Note over BFF: Mints GCP OIDC Token scoped to target service URL (aud: serviceUrl)
+        Note over BFF: Mints GCP OIDC Token scoped to target service URL
         BFF->>CloudRun: POST /api/v1/... [Authorization: Bearer GCP_OIDC_TOKEN]
-        CloudRun->>CloudRun: Cloud IAM verifies OIDC token & roles/run.invoker
+        CloudRun->>CloudRun: Cloud IAM verifies OIDC token and roles/run.invoker
         CloudRun-->>BFF: 200 OK + JSON domain payload
         BFF-->>Client: Typed domain response
     end
@@ -227,13 +227,13 @@ sequenceDiagram
     %% PHASE 4: SESSION INVALIDATION & LOGOUT
     %% -----------------------------------------------------------
     rect rgb(30, 41, 59)
-        Note over User,CloudRun: Phase 4: Session Invalidation & Logout
+        Note over User,CloudRun: Phase 4: Session Invalidation and Logout
         User->>Client: Clicks Logout button
         Client->>BFF: logoutFn()
         BFF->>BFF: deleteCookie('session', { path: '/' })
-        BFF-->>Client: Set-Cookie: session=; Max-Age=0; Path=/
+        BFF-->>Client: Set-Cookie: session (Max-Age=0, Path=/)
         Client->>Client: firebase.auth().signOut()
-        Client->>Client: queryClient.clear() (Purges cached permissions & user data)
+        Client->>Client: queryClient.clear() (Purges cached permissions and data)
         Client-->>User: Redirect to /_auth/login
     end
 ```
