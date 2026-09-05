@@ -1,297 +1,250 @@
-Welcome to your new TanStack app!
+<div align="center">
 
-# Getting Started
+# ⚡ EazyAI — Intelligent Hiring & AI Interview Automation Platform
 
-To run this application:
+**Next-generation talent intelligence, multimodal candidate evaluation, vector RAG matching, and proctored interview intelligence.**
+
+[![TanStack Start](https://img.shields.io/badge/TanStack%20Start-v1.132-FF4154?style=flat-square&logo=react)](https://tanstack.com/start)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat-square&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-v4.0-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![Google Cloud](https://img.shields.io/badge/Google%20Cloud-Run%20%7C%20Dialogflow-4285F4?style=flat-square&logo=googlecloud)](https://cloud.google.com/)
+[![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20App%20Hosting-FFCA28?style=flat-square&logo=firebase)](https://firebase.google.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-v3.0-6E9F18?style=flat-square&logo=vitest)](https://vitest.dev/)
+
+[System Architecture](docs/ARCHITECTURE.md) • [API Integrations](docs/API_INTEGRATIONS.md) • [Features Guide](docs/FEATURES_GUIDE.md) • [Developer Guide](docs/DEVELOPMENT_GUIDE.md)
+
+</div>
+
+---
+
+## 📖 Overview
+
+**EazyAI** is an enterprise-grade, automated talent intelligence and hiring orchestration platform. Built on **TanStack Start** with a full **Backend-For-Frontend (BFF)** architecture, it unifies candidate discovery, automated resume ingestion, AI question generation, conversational voice interviewing, and anti-fraud proctoring into a single, cohesive, glassmorphic recruitment portal.
+
+### Why EazyAI?
+
+- **Vector RAG Matching**: Semantic search across candidate resume archives with match percentage scoring and skill gap analysis.
+- **Multimodal Interview Evaluation**: Automated transcription, technical rubric grading, acoustic voice playback, and video recording previews.
+- **Enterprise Anti-Fraud Suite**: Synthetic voice & deepfake audio detection, webcam face anti-impersonation, and movement/proctoring anomaly tracking.
+- **Evaluator Workbench Copilot**: Real-time evaluator scratchpad, weighted scoring rubrics, quick verdict templates, and client-rendered PDF dossier exports.
+- **Distributed Microservices Mesh**: Backed by 20+ Google Cloud Run microservices with zero-trust Google Cloud IAM authentication.
+
+---
+
+## 🏛️ High-Level Architecture
+
+EazyAI utilizes the **TanStack Start BFF pattern** to ensure zero-trust security between the browser client and private Cloud Run microservices.
+
+```mermaid
+flowchart LR
+    subgraph Client["Client Tier (Browser)"]
+        UI["TanStack Router (File-Based)"]
+        ReactQuery["TanStack React Query v5"]
+        Theme["OKLCH Glassmorphism Engine"]
+        AudioVis["Web Audio API Waveform Visualizer"]
+    end
+
+    subgraph BFF["BFF Server Layer (Nitro + TanStack Start)"]
+        ServerFns["Server Functions (createServerFn)"]
+        Middleware["isLoginMiddleware & Session Guard"]
+        GoogleAuth["GoogleAuth ID Token Client"]
+        SessionStore["HTTP-Only Session Cookie"]
+    end
+
+    subgraph GCP["Google Cloud Platform (Run, GCS, IAM)"]
+        Microservices["20+ Cloud Run Services (us-central1 / europe-west1)"]
+        DialogflowCX["Dialogflow CX Conversational Interviewer"]
+        GCS["Google Cloud Storage Bucket Explorer"]
+    end
+
+    subgraph External["AI & Identity"]
+        FirebaseAuth["Firebase Auth (Identity & Admin SDK)"]
+        OpenRouter["OpenRouter LLMs (Nvidia Nemotron 120B)"]
+    end
+
+    Client <-->|SSR / Hydration / HTTP| BFF
+    BFF <-->|Session Verification| FirebaseAuth
+    BFF -->|OIDC Bearer Auth| GCP
+    BFF <-->|Sessions Client| DialogflowCX
+    BFF <-->|Chat API| OpenRouter
+```
+
+For in-depth architectural specifications, sequence diagrams, and session lifecycle details, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+---
+
+## 🚀 Key Features & Modules
+
+| Module                              | Route                                                                  | Highlights                                                                                                                                                                            |
+| :---------------------------------- | :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Talent Intelligence Dashboard**   | [`/dashboard`](src/routes/dashboard/index.tsx)                         | Live sync recruitment KPIs, active requisitions, applicant volume, hiring rates, and Recharts analytics grid.                                                                         |
+| **Job Pipeline Management**         | [`/dashboard/jobs`](src/routes/dashboard/jobs/index.tsx)               | Interactive Data Table, Kanban view, India Geo-distribution map ([facility-map-dialog.tsx](src/components/web/facility-map-dialog.tsx)), QR sharing, and OpenRouter AI JD generation. |
+| **Candidate Repository**            | [`/dashboard/candidates`](src/routes/dashboard/candidates/index.tsx)   | Candidate cards, resume preview, skill competency radar, candidate comparison dialog, and interview scheduler.                                                                        |
+| **Bulk Resume Ingestion**           | [`/dashboard/candidates/add`](src/routes/dashboard/candidates/add.tsx) | Single upload or drag-and-drop batch upload ([add-multiple-candidates-dialog.tsx](src/components/web/add-multiple-candidates-dialog.tsx)) with multipart streaming.                   |
+| **Archive Bank & Explorer**         | [`/dashboard/import`](src/routes/dashboard/import.tsx)                 | Google Cloud Storage file tree explorer, metadata inspection, and asynchronous vector indexing triggers.                                                                              |
+| **AI Semantic RAG Discovery**       | [`/dashboard/discover`](src/routes/dashboard/discover.tsx)             | Vector embeddings search over indexed CVs with match criteria breakdown, seniority levels, and skill gap detection.                                                                   |
+| **Question Bank & Simulator**       | [`/dashboard/questions`](src/routes/dashboard/questions/index.tsx)     | Requisition question curation, GenAI question synthesis, and interactive sandbox interview simulator.                                                                                 |
+| **Multimodal Interview Review**     | [`/dashboard/interview`](src/routes/dashboard/interview/index.tsx)     | Spoken answer transcripts, Web Audio frequency waveform player, and Dialogflow CX turn-by-turn timeline.                                                                              |
+| **Anti-Fraud & Deepfake Detection** | [`/dashboard/interview/$id`](src/routes/dashboard/interview/$id.tsx)   | Acoustic synthetic voice detection, webcam face verification, proctoring/tab switch logs, and composite Trust Gauge.                                                                  |
+| **Evaluator Workbench Copilot**     | [`/dashboard/interview/$id`](src/routes/dashboard/interview/$id.tsx)   | Persistent local scratchpad, weighted scoring matrix, verdict templates, and client-rendered multi-page PDF reports.                                                                  |
+| **Automated Email Sync**            | [`/dashboard/email-sync`](src/routes/dashboard/email-sync/index.tsx)   | Ingestion and parsing of inbound candidate application emails and attached CVs.                                                                                                       |
+| **Admin Management & RBAC**         | [`/dashboard/admin-user`](src/routes/dashboard/admin-user/index.tsx)   | Role assignments (`Super Admin`, `Recruiter`, `Interviewer`), account restriction controls, and access logs.                                                                          |
+| **Global System Configuration**     | [`/dashboard/config`](src/routes/dashboard/config/index.tsx)           | Interview duration limits, candidate link expiry, and question quota controls.                                                                                                        |
+| **Command Palette & Tour**          | _Global_ (⌘K)                                                          | Universal search dialog ([global-search-dialog.tsx](src/components/web/global-search-dialog.tsx)) and guided platform tour.                                                           |
+
+For detailed walkthroughs and user flows, see [docs/FEATURES_GUIDE.md](docs/FEATURES_GUIDE.md).
+
+---
+
+## 🔌 Microservices Ecosystem
+
+All downstream endpoints are centrally mapped in [`src/lib/api-path.ts`](src/lib/api-path.ts). Cloud Run calls are authenticated via `GoogleAuth` ID tokens:
+
+```
+src/lib/api-path.ts
+├── BUCKET_LIST_API                   # Lists GCS resumes & prefixes
+├── RAG_SEARCH_API                    # Semantic vector search
+├── PROCESSED_FILES_ID                # Indexed document tracking
+├── TRIGGER_INDEX                     # Re-indexing pipeline trigger
+├── JOB_DETAILS / ADD_JOB / EDIT_JOB  # Requisition CRUD operations
+├── CANDIDATE_LIST / ADD_CANDIDATE    # Candidate storage & indexing
+├── ADD_MULTIPLE_CANDIDATES           # Batch CV parsing
+├── QUESTION_LIST / ADD / DELETE      # Requisition question bank
+├── QUESTION_ADD_AI                   # AI question synthesizer
+├── SPEECH_TO_TEXT                    # Audio voice transcription
+├── CANDIDATE_INTERVIEW_ANSWER_LIST   # Transcript answer outcomes
+├── VOICE_FRAUD_DETECTION             # Voice deepfake & synthetic audio detector
+├── MOVEMENT_OUTCOME                  # Proctoring & gaze tracking
+├── FACE_DETECTION                    # Face anti-impersonation
+├── INTERVIEW_SESSION_INFO            # Dialogflow CX session state & tokens
+├── INTERVIEW_VIDEO_API               # Candidate video streaming
+└── ADMIN_USER_LIST / ACTIVITY        # RBAC user & role governance
+```
+
+For complete endpoint schemas, payload specifications, and integration recipes, see [docs/API_INTEGRATIONS.md](docs/API_INTEGRATIONS.md).
+
+---
+
+## 🎨 Design System: Frosted Glassmorphism
+
+EazyAI features a futuristic glassmorphic user interface designed in the **OKLCH** color space:
+
+- **Typography**:
+  - Headings: `Outfit Variable`
+  - Body / UI: `Geist Variable`
+  - Monospace / Data: `Geist Mono Variable`
+- **Standardized Glass Classes**:
+  - `glass-header`: Top navigation with dynamic blur (`backdrop-blur-2xl`).
+  - `glass-sidebar`: Elevated application sidebar (`bg-sidebar/40`).
+  - `glass-card`: Interactive card surfaces with hover elevation and scaling.
+  - `glass-morphism`: High-performance frosted glass container.
+- **Ambient Lighting**: Slow-pulsing background ambient glow elements defined in `src/styles.css`.
+- **Theme Modes**: First-class support for both Light and Dark themes with seamless switching.
+
+---
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- **Node.js**: `v20.x` or higher
+- **pnpm**: `v9.x` or `v10.x`
+- **Google Cloud SDK**: For local authentication against Cloud Run
+
+### 1. Clone & Install
 
 ```bash
+git clone https://github.com/your-org/eazyai.git
+cd eazyai
 pnpm install
+```
+
+### 2. Configure Environment
+
+Create a `.env.local` file in the project root:
+
+```ini
+# Client Firebase Config (Public)
+VITE_FIREBASE_API_KEY="AIzaSyBmsSuXNYdUWIafuokHXVjY9fL6SyVGe_Q"
+VITE_FIREBASE_AUTH_DOMAIN="project-a1d8640b-7060-47f8-929.firebaseapp.com"
+VITE_FIREBASE_PROJECT_ID="project-a1d8640b-7060-47f8-929"
+VITE_FIREBASE_STORAGE_BUCKET="project-a1d8640b-7060-47f8-929.firebasestorage.app"
+VITE_FIREBASE_MESSAGING_SENDER_ID="1081651239029"
+VITE_FIREBASE_APP_ID="1:1081651239029:web:4a5c0887419af53276403c"
+VITE_FIREBASE_MEASUREMENT_ID="G-55SGBBM0ZN"
+
+# Server Secrets
+APP_FIREBASE_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}'
+APP_OPENROUTER_KEY="sk-or-v1-..."
+```
+
+Authenticate your local terminal with Google Cloud ADC:
+
+```bash
+gcloud auth application-default login
+```
+
+### 3. Run Development Server
+
+```bash
 pnpm dev
 ```
 
-# Building For Production
+Open `http://localhost:3000` in your browser.
 
-To build this application for production:
+---
 
-```bash
-pnpm build
-```
+## 📋 Available Scripts
 
-## Testing
+| Script             | Purpose                                             |
+| :----------------- | :-------------------------------------------------- |
+| `pnpm dev`         | Starts local dev server with HMR on port 3000       |
+| `pnpm build`       | Compiles application for production                 |
+| `pnpm preview`     | Runs production bundle locally                      |
+| `pnpm test`        | Runs unit test suites using Vitest                  |
+| `pnpm lint`        | Validates TypeScript and JSX with ESLint            |
+| `pnpm format`      | Formats codebase with Prettier                      |
+| `pnpm check`       | Runs Prettier format write + ESLint auto-fix        |
+| `pnpm db:generate` | Generates Prisma client into `src/generated/prisma` |
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+For developer guidelines, route recipes, and testing patterns, see [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md).
 
-```bash
-pnpm test
-```
+---
 
-## Styling
+## 🚢 Production Deployment
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+### Docker Multi-Stage Build
 
-## Linting & Formatting
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
-
-```bash
-pnpm lint
-pnpm format
-pnpm check
-```
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add another a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from '@tanstack/react-router'
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/people',
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json() as Promise<{
-      results: {
-        name: string
-      }[]
-    }>
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData()
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    )
-  },
-})
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
+The multi-stage [`Dockerfile`](Dockerfile) compiles the app and packages a lean Nitro server:
 
 ```bash
-pnpm add @tanstack/react-query @tanstack/react-query-devtools
+docker build -t eazyai-app .
+docker run -p 8080:8080 \
+  -e APP_FIREBASE_SERVICE_ACCOUNT_JSON="$APP_FIREBASE_SERVICE_ACCOUNT_JSON" \
+  -e APP_OPENROUTER_KEY="$APP_OPENROUTER_KEY" \
+  eazyai-app
 ```
 
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
+### Firebase App Hosting
 
-```tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+The repository includes [`apphosting.yaml`](apphosting.yaml) configured with:
 
-// ...
+- Automatic builds with `pnpm`
+- Google Secret Manager secret resolution
+- Dynamic autoscaling (0 to 10 instances, concurrency 80)
 
-const queryClient = new QueryClient()
+---
 
-// ...
+## 📂 Documentation Sitemap
 
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — BFF design pattern, session security, caching layers, and system diagrams.
+- [docs/API_INTEGRATIONS.md](docs/API_INTEGRATIONS.md) — Downstream Cloud Run services registry, IAM tokens, Dialogflow CX, and OpenRouter.
+- [docs/FEATURES_GUIDE.md](docs/FEATURES_GUIDE.md) — Complete domain features walkthrough (Jobs, RAG Discovery, Anti-Fraud, PDF dossiers).
+- [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md) — Contribution workflows, route conventions, styling tokens, and testing.
 
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  )
-}
-```
+---
 
-You can also add TanStack Query Devtools to the root route (optional).
+## 📄 License
 
-```tsx
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from '@tanstack/react-query'
-
-import './App.css'
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ['people'],
-    queryFn: () =>
-      fetch('https://swapi.dev/api/people')
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  })
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-export default App
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
-```bash
-pnpm add @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from '@tanstack/react-store'
-import { Store } from '@tanstack/store'
-import './App.css'
-
-const countStore = new Store(0)
-
-function App() {
-  const count = useStore(countStore)
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  )
-}
-
-export default App
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from '@tanstack/react-store'
-import { Store, Derived } from '@tanstack/store'
-import './App.css'
-
-const countStore = new Store(0)
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-})
-doubledStore.mount()
-
-function App() {
-  const count = useStore(countStore)
-  const doubledCount = useStore(doubledStore)
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  )
-}
-
-export default App
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+This project is proprietary and confidential. All rights reserved.
