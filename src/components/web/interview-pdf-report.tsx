@@ -241,8 +241,8 @@ export const InterviewPdfDocument = ({
       <Text style={styles.sectionTitle}>
         Question Analysis & Transcript Log ({answers.length})
       </Text>
-      {answers.slice(0, 4).map((item, idx) => (
-        <View key={idx} style={styles.qnaBlock}>
+      {answers.map((item, idx) => (
+        <View key={idx} style={styles.qnaBlock} wrap={false}>
           <Text style={styles.questionText}>
             Q{idx + 1}: {item.question}
           </Text>
@@ -259,9 +259,13 @@ export const InterviewPdfDocument = ({
       ))}
 
       {/* Footer */}
-      <View style={styles.footer}>
+      <View style={styles.footer} fixed>
         <Text>EazyAI Multimodal Hiring Intelligence • Confidential</Text>
-        <Text>Page 1 of 1</Text>
+        <Text
+          render={({ pageNumber, totalPages }) =>
+            `Page ${pageNumber} of ${totalPages}`
+          }
+        />
       </View>
     </Page>
   </Document>

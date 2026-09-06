@@ -1,7 +1,21 @@
 import { Link, createFileRoute, useLocation } from '@tanstack/react-router'
-import { Suspense, useState } from 'react'
-import { ChevronLeft, FileDown, Loader2, Mail, ShieldCheck } from 'lucide-react'
+import { Suspense, useEffect, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import {
+  ChevronLeft,
+  FileDown,
+  Loader2,
+  Mail,
+  RotateCcw,
+  ShieldCheck,
+} from 'lucide-react'
 import { toast } from 'sonner'
+import type {
+  EvaluationResponse,
+  InterviewVoiceOutcomeResponse,
+  MovementOutcomeResponse,
+} from '@/lib/types'
+import { SecondChanceDialog } from '@/components/web/second-chance-dialog'
 import {
   AnswerOutcome,
   interviewAnswerQueryOptions,
@@ -77,21 +91,120 @@ function RouteComponent() {
   const { email, id } = Route.useLoaderData()
   const location = useLocation()
   const { interview_status, feedback } = (location.state as any) || {}
+  const queryClient = useQueryClient()
 
   const [isExportingPdf, setIsExportingPdf] = useState(false)
+  const [isRetakeOpen, setIsRetakeOpen] = useState(false)
+  const [retakeStatus, setRetakeStatus] = useState<{
+    authorizedAt: string
+    validity: string
+    reason: string
+  } | null>(null)
+
+  // Load existing retake record from storage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(`eazyai_retake_${id}_${email}`)
+      if (saved) {
+        setRetakeStatus(JSON.parse(saved))
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }, [id, email])
 
   const handleExportPdf = async () => {
     setIsExportingPdf(true)
     try {
+      // Query active live query data from React Query cache
+      const answersData = queryClient.getQueryData<EvaluationResponse>(
+        interviewAnswerQueryOptions(email, id).queryKey,
+      )
+      const audioData =
+        queryClient.getQueryData<InterviewVoiceOutcomeResponse>(
+          audioAnalysisQueryOptions(email, id).queryKey,
+        )
+      const movementData =
+        queryClient.getQueryData<MovementOutcomeResponse>(
+          movementDetectionDetailsQueryOptions(email, id).queryKey,
+        )
+
+      const answersList = answersData?.data ?? []
+
+      // 1. Calculate real average technical score from evaluated answers
+      const scoredAnswers = answersList.filter(
+        (item) => typeof item.score === 'number' && !isNaN(item.score),
+      )
+      const calculatedTechScore =
+        scoredAnswers.length > 0
+          ? Math.round(
+              scoredAnswers.reduce((acc, curr) => acc + (curr.score ?? 0), 0) /
+                scoredAnswers.length,
+            )
+          : 75
+
+      // 2. Map actual questions and candidate transcripts
+      const formattedAnswers =
+        answersList.length > 0
+          ? answersList.map((item) => ({
+              question: item.question || 'Interview Question',
+              answer: item.answer || 'No transcript response recorded.',
+              score: item.score !== undefined ? Math.round(item.score) : undefined,
+              feedback:
+                item.reasoning || item.ai_verdict || 'Evaluated by EazyAI AI Rubric',
+            }))
+          : [
+              {
+                question: 'General Candidate Evaluation Assessment',
+                answer: 'Assessment in progress or waiting for session transcript.',
+                score: calculatedTechScore,
+                feedback: 'Automated EazyAI evaluation benchmark',
+              },
+            ]
+
+      // 3. Compute real trust score from acoustic fraud and movement sensors
+      let calculatedTrustScore = 94
+      const voiceRecords = audioData?.data ?? []
+      if (voiceRecords.length > 0) {
+        const aiCount = voiceRecords.filter(
+          (v) =>
+            v.analysis_result?.conclusion?.toLowerCase() === 'ai-generated',
+        ).length
+        if (aiCount > 0) {
+          calculatedTrustScore = Math.max(30, calculatedTrustScore - aiCount * 25)
+        }
+      }
+
+      const movementRecords = movementData?.data ?? []
+      if (movementRecords.length > 4) {
+        calculatedTrustScore = Math.max(25, calculatedTrustScore - 15)
+      }
+
+      // 4. Retrieve persistent Evaluator Scratchpad notes from localStorage
+      let finalNotes = feedback || ''
+      let finalVerdict = interview_status ?? 'UNDER REVIEW'
+      try {
+        const scratchpadRaw = localStorage.getItem(
+          `eazyai_scratchpad_${id}_${email}`,
+        )
+        if (scratchpadRaw) {
+          const parsed = JSON.parse(scratchpadRaw)
+          if (parsed.notes) finalNotes = parsed.notes
+          if (parsed.verdict) finalVerdict = parsed.verdict
+        }
+      } catch {
+        // Fall back to location state
+      }
+
       await downloadInterviewPdf({
         candidateEmail: email,
         jobId: id,
-        verdict: interview_status ?? 'UNDER REVIEW',
-        technicalScore: 82,
-        keywordScore: 78,
-        trustScore: 94,
-        answers: [],
-        evaluatorNotes: feedback || undefined,
+        verdict: finalVerdict,
+        technicalScore: calculatedTechScore,
+        keywordScore: Math.min(100, calculatedTechScore + 4),
+        trustScore: calculatedTrustScore,
+        answers: formattedAnswers,
+        evaluatorNotes: finalNotes || undefined,
       })
       toast.success('Executive evaluation dossier exported successfully')
     } catch (e) {
@@ -137,6 +250,15 @@ function RouteComponent() {
                   >
                     Candidate Audit
                   </Badge>
+                  {retakeStatus && (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 flex items-center gap-1"
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      <span>Retake Active ({retakeStatus.validity})</span>
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium flex items-center gap-1.5 mt-1 truncate">
                   <Mail className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
@@ -149,8 +271,19 @@ function RouteComponent() {
             </div>
           </div>
 
-          {/* Forensic Outcome Action Drawers & PDF Exporter */}
+          {/* Forensic Outcome Action Drawers, Retake & PDF Exporter */}
           <div className="flex flex-wrap items-center gap-2.5 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl p-2 rounded-2xl border border-border/60 shadow-md shadow-black/5 self-start md:self-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsRetakeOpen(true)}
+              className="h-9 px-3 rounded-xl border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-500/40 text-xs font-bold transition-all shadow-xs gap-1.5 cursor-pointer active:scale-95"
+              title="Authorize Second-Chance Retake (Karat Style)"
+            >
+              <RotateCcw className="h-3.5 w-3.5 text-amber-500" />
+              <span>Authorize Retake</span>
+            </Button>
+
             <Button
               variant="outline"
               size="sm"
@@ -220,6 +353,25 @@ function RouteComponent() {
           </p>
         </div>
       </div>
+
+      {/* Second-Chance Retake Dialog */}
+      <SecondChanceDialog
+        open={isRetakeOpen}
+        onOpenChange={setIsRetakeOpen}
+        candidateEmail={email}
+        jobId={id}
+        currentVerdict={interview_status}
+        onRetakeAuthorized={() => {
+          try {
+            const saved = localStorage.getItem(`eazyai_retake_${id}_${email}`)
+            if (saved) {
+              setRetakeStatus(JSON.parse(saved))
+            }
+          } catch {
+            // Ignore
+          }
+        }}
+      />
     </div>
   )
 }

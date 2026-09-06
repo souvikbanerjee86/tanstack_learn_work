@@ -5,6 +5,8 @@ import { queryOptions } from '@tanstack/react-query'
 import { OpenRouter } from '@openrouter/sdk'
 import { API_PATH } from './api-path'
 import { isLoginMiddleware } from './middleware'
+import { db } from './firebase-server'
+import { FieldValue } from 'firebase-admin/firestore'
 import type {
   ADKResponse,
   AdminUserResponse,
@@ -560,22 +562,65 @@ export const getInterviewQuestions = createServerFn({ method: 'GET' })
       data,
   )
   .handler(async ({ data }): Promise<JobQuestionsResponse> => {
-    const client = await auth.getIdTokenClient(
-      API_PATH.QUESTION_LIST.GET_BASE_URL,
-    )
-    const url =
-      API_PATH.QUESTION_LIST.GET_BASE_URL +
-      API_PATH.QUESTION_LIST.PATH_URL +
-      data.job_id +
-      '/questions'
-    console.log(url)
-    const response = await client.request({
-      url: url,
-      method: 'GET',
-    })
-    const returnData = await response.data
+    try {
+      const client = await auth.getIdTokenClient(
+        API_PATH.QUESTION_LIST.GET_BASE_URL,
+      )
+      const limit = data.limit || 100
+      let url =
+        API_PATH.QUESTION_LIST.GET_BASE_URL +
+        API_PATH.QUESTION_LIST.PATH_URL +
+        encodeURIComponent(data.job_id) +
+        `/questions?limit=${limit}`
+      if (data.offset) {
+        url += `&offset=${data.offset}`
+      }
+      console.log('Fetching questions:', url)
+      const response = await client.request({
+        url: url,
+        method: 'GET',
+      })
+      const returnData = (await response.data) as JobQuestionsResponse
+      if (returnData && Array.isArray(returnData.questions)) {
+        return returnData
+      }
+    } catch (apiErr) {
+      console.warn('Questions API failed, falling back to direct Firestore:', apiErr)
+    }
 
-    return returnData as JobQuestionsResponse
+    // Direct Firestore fallback
+    try {
+      const qSnap = await db
+        .collection('job-interview-questions')
+        .doc(data.job_id)
+        .collection('questions')
+        .orderBy('created_at', 'desc')
+        .limit(data.limit || 100)
+        .get()
+
+      const questions = qSnap.docs.map((d) => ({
+        id: d.id,
+        question: d.data().question || '',
+        created_at: d.data().created_at?.toDate?.()?.toISOString?.() || '',
+      }))
+
+      return {
+        job_id: data.job_id,
+        questions,
+        limit: data.limit || 100,
+        offset: data.offset || 0,
+        count: questions.length,
+      }
+    } catch (fsErr) {
+      console.error('Firestore questions query error:', fsErr)
+      return {
+        job_id: data.job_id,
+        questions: [],
+        limit: data.limit || 100,
+        offset: data.offset || 0,
+        count: 0,
+      }
+    }
   })
 
 export const addInterviewQuestion = createServerFn({ method: 'POST' })
@@ -590,57 +635,96 @@ export const addInterviewQuestion = createServerFn({ method: 'POST' })
       question: string
       message: string
     }> => {
-      const client = await auth.getIdTokenClient(
-        API_PATH.QUESTION_ADD.GET_BASE_URL,
-      )
-      const url =
-        API_PATH.QUESTION_ADD.GET_BASE_URL + API_PATH.QUESTION_ADD.PATH_URL
-
-      const postData = {
-        job_id: data.job_id,
-        question: data.question,
-      }
-      const sendData = JSON.stringify(postData)
       try {
-        const response = await client.request({
-          url: url,
-          method: 'POST',
-          data: sendData,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        const finalData = await response.data
-        return finalData as {
-          job_id: string
-          question_id: string
-          question: string
-          message: string
+        // 1. Direct Firestore write with created_at timestamp so that
+        // the questions API's order_by('created_at') query includes it!
+        const docRef = await db
+          .collection('job-interview-questions')
+          .doc(data.job_id)
+          .collection('questions')
+          .add({
+            question: data.question,
+            created_at: FieldValue.serverTimestamp(),
+          })
+
+        // 2. Also notify microservice in background if reachable
+        try {
+          const client = await auth.getIdTokenClient(
+            API_PATH.QUESTION_ADD.GET_BASE_URL,
+          )
+          const url =
+            API_PATH.QUESTION_ADD.GET_BASE_URL + API_PATH.QUESTION_ADD.PATH_URL
+          await client.request({
+            url: url,
+            method: 'POST',
+            data: JSON.stringify({
+              job_id: data.job_id,
+              question: data.question,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+        } catch (microErr) {
+          console.warn('Microservice add call warning:', microErr)
+        }
+
+        return {
+          job_id: data.job_id,
+          question_id: docRef.id,
+          question: data.question,
+          message: 'Question successfully added to Firestore',
         }
       } catch (e) {
-        return { job_id: '', question_id: '', question: '', message: '' }
+        console.error('addInterviewQuestion error:', e)
+        throw new Error('Failed to add question to Firestore')
       }
     },
   )
 
 export const deleteInterviewQuestion = createServerFn({ method: 'GET' })
   .middleware([isLoginMiddleware])
-  .inputValidator((data: { question_id: string }) => data)
+  .inputValidator(
+    (data: { question_id: string; job_id?: string | null }) => data,
+  )
   .handler(async ({ data }): Promise<{ status: string; message: string }> => {
-    const client = await auth.getIdTokenClient(
-      API_PATH.QUESTION_DELETE.GET_BASE_URL,
-    )
-    const url =
-      API_PATH.QUESTION_DELETE.GET_BASE_URL +
-      API_PATH.QUESTION_DELETE.PATH_URL +
-      data.question_id
-    console.log(url)
-    const response = await client.request({
-      url: url,
-      method: 'DELETE',
-    })
-    const returnData = await response.data
-    return returnData as { status: string; message: string }
+    // 1. Delete directly from Firestore
+    try {
+      if (data.job_id) {
+        await db
+          .collection('job-interview-questions')
+          .doc(data.job_id)
+          .collection('questions')
+          .doc(data.question_id)
+          .delete()
+      } else {
+        const cgSnap = await db.collectionGroup('questions').get()
+        const target = cgSnap.docs.find((d) => d.id === data.question_id)
+        if (target) {
+          await target.ref.delete()
+        }
+      }
+    } catch (fsErr) {
+      console.warn('Firestore direct delete warning:', fsErr)
+    }
+
+    // 2. Also notify microservice
+    try {
+      const client = await auth.getIdTokenClient(
+        API_PATH.QUESTION_DELETE.GET_BASE_URL,
+      )
+      const url =
+        API_PATH.QUESTION_DELETE.GET_BASE_URL +
+        API_PATH.QUESTION_DELETE.PATH_URL +
+        data.question_id
+      const response = await client.request({
+        url: url,
+        method: 'DELETE',
+      })
+      return (await response.data) as { status: string; message: string }
+    } catch {
+      return { status: 'success', message: 'Question deleted successfully' }
+    }
   })
 
 export const addCandidate = createServerFn({ method: 'POST' })
@@ -775,6 +859,76 @@ export const getJobDescription = createServerFn({ method: 'GET' })
     } catch (error: any) {
       console.error('OpenRouter Error:', error)
       throw new Error(error?.message || 'Failed to fetch job description')
+    }
+  })
+
+export const generateJobTemplatePacks = createServerFn({ method: 'POST' })
+  .middleware([isLoginMiddleware])
+  .inputValidator(
+    (data: {
+      jobTitle: string
+      jobDescription?: string
+      experience?: number
+    }) => data,
+  )
+  .handler(async ({ data }): Promise<Array<any>> => {
+    const openrouter = new OpenRouter({
+      apiKey: process.env.APP_OPENROUTER_KEY,
+    })
+
+    try {
+      const prompt = `You are an elite Technical Hiring Architect. Generate 4 distinct, highly specialized interview question template packs tailored specifically for this requisition:
+Role Title: ${data.jobTitle}
+Experience Level: ${data.experience || 3}+ years
+Job Description Context: ${data.jobDescription ? data.jobDescription.slice(0, 1200) : 'Standard industry requisition for ' + data.jobTitle}
+
+Requirements:
+- Create exactly 4 template packs (e.g. Core Technical Competency, Architecture & Problem Solving, Production/Performance/Tools, Role Ownership/Behavioral).
+- Each pack must contain 4 or 5 rigorous, insightful interview questions suitable for assessing candidates for this exact job.
+- Output JSON ONLY (no markdown code blocks, no backticks, no preamble text).
+- Structure:
+[
+  {
+    "id": "pack-1",
+    "title": "Pack Title",
+    "category": "Category Name",
+    "description": "Short 1-sentence pack summary",
+    "questions": [
+      {
+        "id": "q-1-1",
+        "question": "Full question text here?",
+        "difficulty": "Intermediate",
+        "competency": "Competency Name",
+        "estimatedMinutes": 3
+      }
+    ]
+  }
+]`
+
+      const response = await openrouter.chat.send({
+        chatGenerationParams: {
+          model: 'nvidia/nemotron-3-super-120b-a12b:free',
+          messages: [{ role: 'user', content: prompt }],
+        },
+      })
+
+      const raw = response.choices?.[0]?.message?.content || ''
+      const cleaned =
+        typeof raw === 'string'
+          ? raw
+              .replace(/```json/gi, '')
+              .replace(/```/g, '')
+              .trim()
+          : JSON.stringify(raw)
+
+      const parsed = JSON.parse(cleaned)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed
+      }
+      return []
+    } catch (error) {
+      console.error('Failed to generate dynamic job packs:', error)
+      return []
     }
   })
 

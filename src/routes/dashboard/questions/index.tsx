@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import {
   ArrowLeft,
+  BookOpen,
   CornerDownLeft,
   HelpCircle,
   Info,
@@ -10,6 +11,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { Suspense, useState } from 'react'
+import { QuestionPacksDialog } from '@/components/web/question-packs-dialog'
 import {
   queryOptions,
   useQueryClient,
@@ -81,6 +83,7 @@ function QuestionsDashboardWrapper() {
     jobs[0]?.job_id ?? null,
   )
   const [isOpen, setIsOpen] = useState(false)
+  const [isPacksOpen, setIsPacksOpen] = useState(false)
   const [questionCount, setQuestionCount] = useState(5)
   const [newQuestion, setNewQuestion] = useState('')
   const [loading, setLoading] = useState(false)
@@ -95,7 +98,12 @@ function QuestionsDashboardWrapper() {
         data: { job_id: selectedJobId, question: newQuestion.trim() },
       })
       toast.success('Question added to bank')
-      queryClient.invalidateQueries({ queryKey: ['questions', selectedJobId] })
+      await queryClient.invalidateQueries({
+        queryKey: ['questions', selectedJobId],
+      })
+      await queryClient.refetchQueries({
+        queryKey: ['questions', selectedJobId],
+      })
       setNewQuestion('')
     } catch {
       toast.error('Failed to add question')
@@ -113,10 +121,15 @@ function QuestionsDashboardWrapper() {
     try {
       setLoading(true)
       await deleteInterviewQuestion({
-        data: { question_id: question_id },
+        data: { question_id: question_id, job_id: selectedJobId },
       })
       toast.success('Question removed')
-      queryClient.invalidateQueries({ queryKey: ['questions', selectedJobId] })
+      await queryClient.invalidateQueries({
+        queryKey: ['questions', selectedJobId],
+      })
+      await queryClient.refetchQueries({
+        queryKey: ['questions', selectedJobId],
+      })
     } catch {
       toast.error('Failed to delete question')
     } finally {
@@ -136,7 +149,12 @@ function QuestionsDashboardWrapper() {
         data: { job_id: selectedJobId, num_of_questions: questionCount },
       })
       toast.success(`Generated ${questionCount} questions with AI`)
-      queryClient.invalidateQueries({ queryKey: ['questions', selectedJobId] })
+      await queryClient.invalidateQueries({
+        queryKey: ['questions', selectedJobId],
+      })
+      await queryClient.refetchQueries({
+        queryKey: ['questions', selectedJobId],
+      })
       setIsOpen(false)
     } catch {
       toast.error('AI question generation failed')
@@ -180,7 +198,15 @@ function QuestionsDashboardWrapper() {
         </div>
 
         {selectedJobId && (
-          <div className="hidden sm:flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-2.5">
+            <Button
+              variant="outline"
+              onClick={() => setIsPacksOpen(true)}
+              className="h-10 px-3.5 rounded-xl gap-2 border-indigo-500/30 bg-indigo-500/5 hover:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold text-xs shadow-xs cursor-pointer transition-all active:scale-[0.98]"
+            >
+              <BookOpen className="h-4 w-4" />
+              <span>Template Packs</span>
+            </Button>
             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
               <AlertDialogTrigger asChild>
                 <Button className="h-10 px-4 rounded-xl gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-lg shadow-indigo-500/20 cursor-pointer transition-all active:scale-[0.98]">
@@ -251,12 +277,20 @@ function QuestionsDashboardWrapper() {
                   </div>
                 </div>
 
-                <div className="flex sm:hidden w-full items-center gap-2">
+                <div className="grid grid-cols-2 sm:hidden w-full items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsPacksOpen(true)}
+                    className="w-full h-10 rounded-xl gap-1.5 border-indigo-500/30 bg-indigo-500/5 text-indigo-600 dark:text-indigo-400 font-bold text-xs cursor-pointer"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    <span>Template Packs</span>
+                  </Button>
                   <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                     <AlertDialogTrigger asChild>
-                      <Button className="w-full h-10 rounded-xl gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs">
+                      <Button className="w-full h-10 rounded-xl gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs">
                         <Sparkles className="h-4 w-4" />
-                        <span>AI Draft Assistant</span>
+                        <span>AI Assistant</span>
                       </Button>
                     </AlertDialogTrigger>
                     <AlertComponent
@@ -344,6 +378,26 @@ function QuestionsDashboardWrapper() {
           )}
         </div>
       </div>
+
+      {/* Template Packs Dialog */}
+      <QuestionPacksDialog
+        open={isPacksOpen}
+        onOpenChange={setIsPacksOpen}
+        selectedJobId={selectedJobId}
+        jobTitle={selectedJob?.job_title}
+        jobDescription={selectedJob?.job_description}
+        experience={selectedJob?.experience}
+        onImportComplete={() => {
+          if (selectedJobId) {
+            queryClient.invalidateQueries({
+              queryKey: ['questions', selectedJobId],
+            })
+            queryClient.refetchQueries({
+              queryKey: ['questions', selectedJobId],
+            })
+          }
+        }}
+      />
     </div>
   )
 }
