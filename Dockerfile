@@ -38,7 +38,8 @@ ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
 ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
 ENV VITE_FIREBASE_MEASUREMENT_ID=$VITE_FIREBASE_MEASUREMENT_ID
 
-# Build the application
+# Build the application with increased Node.js heap space to prevent OOM under Docker emulation
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN pnpm build
 
 # Stage 2: Production dependencies stage
